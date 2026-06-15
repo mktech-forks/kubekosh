@@ -13,6 +13,31 @@ export default function Header({ clusterReady }) {
 
   const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark')
 
+  const handleReloadCache = async () => {
+    const sendReloadRequest = async () => {
+      return fetch('/api/cache/reload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    };
+
+    try {
+      let response = await sendReloadRequest();
+      if (response.ok) {
+        const data = await response.json();
+        alert(`Success: ${data.message}\nScenarios: ${data.scenarios_count}\nBundles: ${data.bundles_count}`);
+        window.location.reload();
+      } else {
+        const data = await response.json().catch(() => ({}));
+        alert(`Error reloading cache: ${data.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      alert(`Network error reloading cache: ${err.message}`);
+    }
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.brand}>
@@ -53,6 +78,20 @@ export default function Header({ clusterReady }) {
         <div className={`${styles.clusterBadge} ${clusterReady ? styles.ready : styles.notReady}`}>
           <span className={styles.dot} />
           <span>{clusterReady ? 'Cluster Ready' : 'Connecting…'}</span>
+        </div>
+
+        {/* Reload cache */}
+        <div className={styles.reloadBtnContainer}>
+          <button
+            className={styles.reloadBtn}
+            onClick={handleReloadCache}
+            aria-label="Reload scenario cache"
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M23 4v6h-6" />
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+            </svg>
+          </button>
         </div>
       </div>
     </header>

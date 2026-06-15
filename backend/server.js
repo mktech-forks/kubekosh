@@ -90,12 +90,28 @@ function loadJsonDir(dir) {
     .map(f => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')));
 }
 
+let scenariosCache = [];
+let bundlesCache = [];
+
+function reloadCache() {
+  try {
+    scenariosCache = loadJsonDir(SCENARIOS_DIR);
+    bundlesCache = loadJsonDir(BUNDLES_DIR);
+    console.log(`Loaded ${scenariosCache.length} scenarios and ${bundlesCache.length} bundles into cache.`);
+  } catch (e) {
+    console.error('Failed to reload cache:', e.message);
+  }
+}
+
+// Initial cache populate
+reloadCache();
+
 function loadScenarios() {
-  return loadJsonDir(SCENARIOS_DIR);
+  return scenariosCache;
 }
 
 function loadBundles() {
-  return loadJsonDir(BUNDLES_DIR);
+  return bundlesCache;
 }
 
 async function runCommand(cmd, timeoutMs = 15000) {
@@ -464,6 +480,17 @@ app.post('/api/progress/reset/:id', (req, res) => {
   delete progress[req.params.id];
   saveProgress(progress);
   res.json({ ok: true });
+});
+
+// POST /api/cache/reload — reload scenarios and bundles cache
+app.post('/api/cache/reload', (req, res) => {
+  reloadCache();
+  res.json({
+    ok: true,
+    message: 'Cache reloaded successfully',
+    scenarios_count: loadScenarios().length,
+    bundles_count: loadBundles().length
+  });
 });
 
 // GET /api/health
