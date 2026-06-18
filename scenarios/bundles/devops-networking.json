@@ -1,0 +1,20 @@
+{
+  "id": "devops-networking",
+  "subject": "devops",
+  "name": "Networking, Protocols & Web Servers",
+  "icon": "♾️",
+  "tagline": "OSI, HTTP, DNS, TLS and proxies",
+  "color": "#8b5cf6",
+  "colorDim": "rgba(139,92,246,0.12)",
+  "exam_minutes": 45,
+  "scenario_ids": [
+    "devops-osi-lesson",
+    "devops-web-server-lesson",
+    "devops-http-mcq",
+    "devops-dns-mcq",
+    "devops-ssl-tls-mcq",
+    "devops-proxy-lb-mcq",
+    "devops-ports-mcq",
+    "devops-nginx-config-task"
+  ]
+}

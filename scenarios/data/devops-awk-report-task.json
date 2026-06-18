@@ -1,0 +1,34 @@
+{
+  "id": "devops-awk-report-task",
+  "title": "Aggregate a CSV With awk",
+  "category": "Shell",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Sum a Column\n\nA CSV has been placed at **`/root/sales.csv`** with a header row:\n\n```\nregion,amount\nus,100\neu,200\nus,150\neu,50\n```\n\n**Your task:** using **`awk`**, compute the **total of the `amount` column** (skip the header row) and write just the number to **`/root/total.txt`**.\n\n> 💡 Set the field separator with `-F,`, skip the header with `NR>1`, accumulate into a variable, and print it in an `END` block.",
+  "hints": [
+    {
+      "title": "Field-based summation",
+      "body": "awk processes line by line; NR is the record number, $2 is the second comma-separated field, and END runs after the last line.",
+      "command": "awk -F, 'NR>1 {sum += $2} END {print sum}' /root/sales.csv > /root/total.txt"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/total.txt" },
+    { "command": "printf 'region,amount\\nus,100\\neu,200\\nus,150\\neu,50\\n' > /root/sales.csv" }
+  ],
+  "validation": {
+    "description": "Checks that /root/total.txt contains the column total (500).",
+    "commands": [
+      {
+        "description": "total.txt contains 500",
+        "command": "cat /root/total.txt 2>/dev/null | tr -d ' '",
+        "expected_output": "500",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/total.txt /root/sales.csv" }
+  ]
+}

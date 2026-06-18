@@ -1,0 +1,23 @@
+{
+  "id": "aws-cognito-mfa-mcq",
+  "title": "Application Sign-In with Mandatory MFA",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Authenticating Employees in a Web App\n\nAn internal web application must authenticate company employees and enforce **mandatory multi-factor authentication**. The business requires support for **TOTP authenticator apps** (e.g., Google Authenticator) and, as a fallback, **SMS one-time codes**. The team wants an AWS-native, managed identity service for **application end-user sign-in** that handles user directories, password policies, and MFA without building custom auth. Which is the BEST approach?",
+  "options": [
+    { "id": "a", "text": "Create an IAM user for each employee and require IAM MFA at sign-in" },
+    { "id": "b", "text": "Use an Amazon Cognito user pool with MFA set to required, enabling TOTP and SMS factors (SMS delivered via Amazon SNS)" },
+    { "id": "c", "text": "Build a custom authentication service storing password hashes in DynamoDB and generate your own TOTP/SMS codes" },
+    { "id": "d", "text": "Issue static API keys to each employee and validate them at the application's API Gateway" }
+  ],
+  "correct_option": "b",
+  "explanation": "An **Amazon Cognito user pool** is AWS's managed identity provider for **application end users**. It provides a hosted user directory, password policies, sign-up/sign-in flows, and **MFA that can be set to *required***, supporting **software token (TOTP)** authenticator apps and **SMS** one-time codes. SMS codes are delivered through **Amazon SNS** — in production you must move the account **out of the SNS SMS sandbox** and set an SMS **spend limit**, and AWS now recommends TOTP as the primary factor with SMS as fallback.\n\n(a) **IAM users are not meant for application end-user login** — IAM identities are for accessing the AWS API/console and management plane. Creating an IAM user per employee to log into your app is an anti-pattern: it doesn't scale, mixes app auth with AWS account access, and isn't designed for app sign-in flows. (c) **Building custom auth** reinvents password storage, MFA, and token issuance — high effort and high risk versus a managed service. (d) **Static API keys** are not user authentication and provide no MFA, no user identity, and no rotation of a human credential.",
+  "hints": [
+    { "title": "App users vs. AWS users", "body": "IAM identities authenticate to AWS itself (console/API). Application end users belong in a Cognito user pool." },
+    { "title": "MFA factors and SMS plumbing", "body": "Cognito user pools support required MFA with TOTP and SMS; the SMS path uses Amazon SNS and requires leaving the SMS sandbox in production." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

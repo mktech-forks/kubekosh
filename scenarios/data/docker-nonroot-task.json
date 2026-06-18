@@ -1,0 +1,47 @@
+{
+  "id": "docker-nonroot-task",
+  "title": "Run a Container as Non-Root",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Drop Root in the Image\n\nRunning as root inside a container is a common, avoidable risk. A build context is prepared at **`/root/nrlab`** with this `Dockerfile`:\n\n```dockerfile\nFROM alpine:latest\nRUN adduser -D appuser\nUSER appuser\nCMD [\"id\", \"-u\"]\n```\n\n**Requirements:**\n1. Build it and tag it **`nonroot:1.0`**\n2. The image's default user must be **`appuser`** (so the container runs as a non-zero UID)\n\n> 💡 `cd /root/nrlab && docker build -t nonroot:1.0 .` — then `docker run --rm nonroot:1.0` prints the UID (which must not be 0).",
+  "hints": [
+    {
+      "title": "Build the image",
+      "body": "The Dockerfile already creates a user and sets USER; you just need to build it with the right tag.",
+      "command": "cd /root/nrlab && docker build -t nonroot:1.0 ."
+    },
+    {
+      "title": "Confirm the effective user",
+      "body": "Running the image prints its UID; a non-root user has a UID other than 0.",
+      "command": "docker run --rm nonroot:1.0"
+    }
+  ],
+  "setup_commands": [
+    { "command": "mkdir -p /root/nrlab" },
+    { "command": "printf 'FROM alpine:latest\\nRUN adduser -D appuser\\nUSER appuser\\nCMD [\"id\", \"-u\"]\\n' > /root/nrlab/Dockerfile" },
+    { "command": "docker rmi -f nonroot:1.0 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that nonroot:1.0 defaults to the appuser user and runs as a non-zero UID.",
+    "commands": [
+      {
+        "description": "Image default user is 'appuser'",
+        "command": "docker image inspect nonroot:1.0 -f '{{.Config.User}}' 2>/dev/null",
+        "expected_output": "appuser",
+        "match": "exact"
+      },
+      {
+        "description": "Container runs as a non-root (non-zero) UID",
+        "command": "docker run --rm nonroot:1.0 2>/dev/null",
+        "expected_output": "^[1-9][0-9]*$",
+        "match": "regex"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rmi -f nonroot:1.0 2>/dev/null || true" },
+    { "command": "rm -rf /root/nrlab" }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "docker-cmd-entrypoint-mcq",
+  "title": "CMD vs ENTRYPOINT",
+  "category": "Building Images",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## What Runs, and What Can Be Overridden?\n\nA Dockerfile ends with:\n\n```dockerfile\nENTRYPOINT [\"python3\", \"app.py\"]\nCMD [\"--port\", \"8080\"]\n```\n\nThe image is run as:\n\n```bash\ndocker run myapp --port 9090\n```\n\nWhat command does the container actually execute?",
+  "options": [
+    { "id": "a", "text": "python3 app.py --port 8080" },
+    { "id": "b", "text": "python3 app.py --port 9090" },
+    { "id": "c", "text": "--port 9090" },
+    { "id": "d", "text": "python3 app.py --port 8080 --port 9090" }
+  ],
+  "correct_option": "b",
+  "explanation": "`ENTRYPOINT` defines the fixed executable (`python3 app.py`) and `CMD` supplies **default arguments** (`--port 8080`). Any arguments you pass to `docker run` **replace** the `CMD` defaults but are appended to the `ENTRYPOINT`. So `docker run myapp --port 9090` runs `python3 app.py --port 9090`. (With only a `CMD` and no `ENTRYPOINT`, the run arguments would replace the whole command instead.)",
+  "hints": [
+    {
+      "title": "The rule of thumb",
+      "body": "ENTRYPOINT = the thing that always runs. CMD = default arguments that docker-run arguments override. They combine as ENTRYPOINT + (run args OR CMD)."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

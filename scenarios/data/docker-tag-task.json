@@ -1,0 +1,34 @@
+{
+  "id": "docker-tag-task",
+  "title": "Tag an Image",
+  "category": "Images & Registries",
+  "difficulty": "Easy",
+  "type": "task",
+  "weight": 3,
+  "description": "## Add a New Reference to an Image\n\nTagging gives an existing image an additional name — for example to prepare it for a registry or to mark a release.\n\n**Requirements:**\n1. Starting from the **`alpine:latest`** image, create a new tag **`myalpine:stable`** pointing at it\n\n> 💡 `docker tag <source> <target>`. The `alpine:latest` image has been pulled for you. Verify with `docker images myalpine`.",
+  "hints": [
+    {
+      "title": "Re-tag an image",
+      "body": "docker tag creates another reference to the same underlying image ID — no rebuild or copy.",
+      "command": "docker tag alpine:latest myalpine:stable"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker pull alpine:latest 2>/dev/null || true" },
+    { "command": "docker rmi myalpine:stable 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that an image tagged myalpine:stable exists.",
+    "commands": [
+      {
+        "description": "Image 'myalpine:stable' exists",
+        "command": "docker image inspect myalpine:stable -f '{{.RepoTags}}' 2>/dev/null",
+        "expected_output": "myalpine:stable",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rmi myalpine:stable 2>/dev/null || true" }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "devops-cloud-serverless",
+  "subject": "devops",
+  "name": "Cloud & Serverless",
+  "icon": "♾️",
+  "tagline": "Providers, serverless and design patterns",
+  "color": "#8b5cf6",
+  "colorDim": "rgba(139,92,246,0.12)",
+  "exam_minutes": 40,
+  "scenario_ids": [
+    "devops-cloud-lesson",
+    "devops-serverless-lesson",
+    "devops-cloud-models-mcq",
+    "devops-cloud-providers-mcq",
+    "devops-serverless-mcq",
+    "devops-design-patterns-mcq"
+  ]
+}

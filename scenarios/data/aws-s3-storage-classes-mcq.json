@@ -1,0 +1,23 @@
+{
+  "id": "aws-s3-storage-classes-mcq",
+  "title": "Optimizing Cost for Unknown Access Patterns",
+  "category": "Storage",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Storage Class for Unpredictable Access\n\nA data platform stores millions of objects in Amazon S3. The access pattern is **genuinely unknown and changes over time** — some objects are read frequently for weeks then go cold, others are dormant then suddenly become hot again. The team wants to **minimize storage cost automatically** without operational tuning, and they cannot tolerate **per-retrieval fees or retrieval latency** if a \"cold\" object is accessed unexpectedly. Objects must remain available for millisecond access at all times.\n\nWhich S3 storage class BEST meets these requirements?",
+  "options": [
+    { "id": "a", "text": "S3 Standard-IA, accepting the per-GB retrieval charge when objects are read" },
+    { "id": "b", "text": "S3 Intelligent-Tiering" },
+    { "id": "c", "text": "S3 Glacier Flexible Retrieval with expedited retrievals enabled" },
+    { "id": "d", "text": "S3 One Zone-IA to cut cost further by using a single AZ" }
+  ],
+  "correct_option": "b",
+  "explanation": "**S3 Intelligent-Tiering** is purpose-built for unknown or changing access patterns: it automatically moves objects between frequent- and infrequent-access tiers (and optionally archive tiers) based on observed access, for a small monitoring fee, and — crucially — it charges **no retrieval fees** in the frequent/infrequent tiers, so an unexpected read of a \"cold\" object incurs no penalty and no latency. **Standard-IA** (A) is cheaper at rest but charges a per-GB retrieval fee, which is exactly the penalty the requirement forbids when access is unpredictable. **Glacier Flexible Retrieval** (C) is archival — it adds retrieval latency and cost, violating the millisecond-access requirement. **One Zone-IA** (D) reduces durability to a single AZ (lower availability/resilience) and still carries retrieval fees; it suits re-creatable data, not unknown-criticality objects.",
+  "hints": [
+    { "title": "What is the disqualifier?", "body": "The phrase \"cannot tolerate per-retrieval fees or latency\" rules out IA classes and all Glacier tiers — leaving one class that auto-optimizes with no retrieval penalty." },
+    { "title": "Unknown pattern = let AWS decide", "body": "When you cannot predict access, you want the class that monitors and tiers automatically rather than one you must match to a pattern you don't know." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,20 @@
+{
+  "id": "aws-networking",
+  "subject": "aws",
+  "name": "Networking at Scale",
+  "icon": "☁️",
+  "tagline": "VPC, Transit Gateway, PrivateLink and Route 53",
+  "color": "#ff9900",
+  "colorDim": "rgba(255,153,0,0.13)",
+  "exam_minutes": 55,
+  "scenario_ids": [
+    "aws-vpc-lesson",
+    "aws-vpc-design-mcq",
+    "aws-transit-gateway-mcq",
+    "aws-privatelink-mcq",
+    "aws-route53-mcq",
+    "aws-hybrid-connectivity-mcq",
+    "aws-vpc-cidr-task",
+    "aws-cidr-split-task"
+  ]
+}

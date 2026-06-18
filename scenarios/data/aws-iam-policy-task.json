@@ -1,0 +1,39 @@
+{
+  "id": "aws-iam-policy-task",
+  "title": "Write a Least-Privilege IAM Policy",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Read-Only to One Bucket\n\nLeast privilege means granting exactly the actions and resources needed — nothing more.\n\n**Your task:** write an IAM policy at **`/root/policy.json`** that allows **only** **`s3:GetObject`** on the objects of the bucket **`my-reports`** (resource ARN `arn:aws:s3:::my-reports/*`), with `Effect: Allow`.\n\n> 💡 The resource for object-level S3 actions is the bucket ARN with `/*`. Keep it to the single action.",
+  "hints": [
+    {
+      "title": "Scoped Allow statement",
+      "body": "Allow s3:GetObject on the bucket's object ARN only.",
+      "command": "printf '{\\n  \"Version\": \"2012-10-17\",\\n  \"Statement\": [\\n    {\\n      \"Effect\": \"Allow\",\\n      \"Action\": \"s3:GetObject\",\\n      \"Resource\": \"arn:aws:s3:::my-reports/*\"\\n    }\\n  ]\\n}\\n' > /root/policy.json"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/policy.json" }
+  ],
+  "validation": {
+    "description": "Checks for an Allow of s3:GetObject scoped to the my-reports bucket.",
+    "commands": [
+      {
+        "description": "Allows s3:GetObject",
+        "command": "python3 -c \"import json; d=json.load(open('/root/policy.json')); s=d['Statement']; s=s if isinstance(s,list) else [s]; ok=any(st.get('Effect')=='Allow' and 's3:GetObject' in (st['Action'] if isinstance(st['Action'],list) else [st['Action']]) for st in s); print('ok' if ok else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      },
+      {
+        "description": "Scoped to the my-reports bucket ARN",
+        "command": "grep -q 'arn:aws:s3:::my-reports' /root/policy.json && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/policy.json" }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "aws-multiregion-mcq",
+  "title": "Cross-Region Replication for a Relational DB",
+  "category": "Resilience",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Low-Lag Cross-Region Reads with Fast Failover\n\nA company runs a **relational** workload on Amazon Aurora (MySQL-compatible) in one Region. They need to serve **low-latency reads from a second Region** for users there, keep cross-Region replication lag **below one second**, and be able to **promote the second Region to primary quickly** (in roughly a minute) if the primary Region becomes impaired. They want a managed solution purpose-built for this, not a custom replication pipeline.\n\nWhich approach BEST meets these requirements?",
+  "options": [
+    { "id": "a", "text": "Use an Aurora Global Database with the secondary Region as a read endpoint and managed planned/unplanned failover" },
+    { "id": "b", "text": "Schedule periodic cross-Region Aurora snapshot copies and restore them in the second Region when needed" },
+    { "id": "c", "text": "Replace Aurora with DynamoDB Global Tables for multi-Region active-active access" },
+    { "id": "d", "text": "Create a same-Region Aurora read replica and route the second Region's users to it over the internet" }
+  ],
+  "correct_option": "a",
+  "explanation": "**Aurora Global Database** is purpose-built for exactly this: it uses storage-level replication to a secondary Region with **typically sub-second lag**, serves **low-latency local reads** in the secondary Region, and supports **managed cross-Region failover** that promotes the secondary to a full read/write primary in about a minute. **Cross-Region snapshot copies** (B) give an RPO measured in hours and a slow restore — far from sub-second lag or fast failover. **DynamoDB Global Tables** (C) provide multi-Region active-active, but the workload is **relational**; switching to a NoSQL key-value store changes the data model and is not a drop-in for an Aurora relational app. A **same-Region read replica** (D) does nothing for cross-Region latency or regional failover and forces remote users to read across Regions over the internet.",
+  "hints": [
+    { "title": "Sub-second + relational", "body": "The data is relational and the lag target is <1s. Which managed feature is designed for sub-second cross-Region replication of Aurora?" },
+    { "title": "Snapshots vs streaming replication", "body": "Periodic snapshot copies imply an RPO of hours. \"Below one second\" demands continuous streaming replication." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,33 @@
+{
+  "id": "aws-iam-mfa-condition-task",
+  "title": "Require MFA in an IAM Policy",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Gate Sensitive Actions Behind MFA\n\nA strong control is to allow privileged actions **only when the caller authenticated with MFA**, using the `aws:MultiFactorAuthPresent` condition.\n\n**Your task:** write an IAM policy at **`/root/mfa-policy.json`** with a statement whose **`Condition`** requires **`aws:MultiFactorAuthPresent`** to be **`true`** (e.g. an Allow gated on MFA, or a Deny when MFA is absent).\n\n> 💡 `\"Condition\": { \"Bool\": { \"aws:MultiFactorAuthPresent\": \"true\" } }` on an Allow, or `\"BoolIfExists\": { \"aws:MultiFactorAuthPresent\": \"false\" }` on a Deny.",
+  "hints": [
+    {
+      "title": "MFA-gated Allow",
+      "body": "Add a Bool condition on aws:MultiFactorAuthPresent so the statement only applies to MFA-authenticated sessions.",
+      "command": "printf '{\\n  \"Version\": \"2012-10-17\",\\n  \"Statement\": [\\n    {\\n      \"Effect\": \"Allow\",\\n      \"Action\": \"ec2:TerminateInstances\",\\n      \"Resource\": \"*\",\\n      \"Condition\": { \"Bool\": { \"aws:MultiFactorAuthPresent\": \"true\" } }\\n    }\\n  ]\\n}\\n' > /root/mfa-policy.json"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/mfa-policy.json" }
+  ],
+  "validation": {
+    "description": "Checks that a statement is conditioned on aws:MultiFactorAuthPresent.",
+    "commands": [
+      {
+        "description": "A statement requires MFA via aws:MultiFactorAuthPresent",
+        "command": "python3 -c \"import json; d=json.load(open('/root/mfa-policy.json')); s=d['Statement']; s=s if isinstance(s,list) else [s]; ok=any('multifactorauthpresent' in json.dumps(st.get('Condition',{})).lower() for st in s); print('ok' if ok else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/mfa-policy.json" }
+  ]
+}

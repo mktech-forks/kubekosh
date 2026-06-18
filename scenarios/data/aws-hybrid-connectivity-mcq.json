@@ -1,0 +1,23 @@
+{
+  "id": "aws-hybrid-connectivity-mcq",
+  "title": "Consistent Low-Latency Link to On-Prem",
+  "category": "Networking",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Predictable Hybrid Bandwidth\n\nA financial-services firm is moving part of its estate to AWS but keeps a large on-premises data center. The hybrid link must provide:\n\n- **Consistent, predictable low latency** (their current internet-based VPN suffers from jitter that breaks a latency-sensitive trading data feed),\n- **High, dedicated bandwidth** (multiple Gbps sustained),\n- **Private connectivity** that does not traverse the public internet,\n- Resilience so a single failure doesn't sever connectivity.\n\nWhich connectivity design best meets these requirements?",
+  "options": [
+    { "id": "a", "text": "Provision **AWS Direct Connect** for the dedicated private link, and add a **Site-to-Site VPN as a backup** path for resilience if the Direct Connect link fails." },
+    { "id": "b", "text": "Use a **Site-to-Site VPN** alone over the public internet; it is encrypted, so latency and bandwidth will be consistent." },
+    { "id": "c", "text": "Deploy a **Transit Gateway** by itself; it provides the dedicated low-latency physical link to the data center." },
+    { "id": "d", "text": "Establish **VPC peering** between the on-premises network and the VPC for a private, high-bandwidth path." }
+  ],
+  "correct_option": "a",
+  "explanation": "**AWS Direct Connect** is a **dedicated, private physical connection** between the data center and AWS. Because it bypasses the public internet, it delivers **consistent low latency and predictable high bandwidth** — exactly what the jittery trading feed needs. Best practice for resilience is to pair it with a **Site-to-Site VPN backup** (or a second Direct Connect) so a single link failure doesn't cut connectivity. Option B is wrong: a VPN runs **over the public internet**, so latency and throughput are inherently **variable** — it cannot guarantee the consistency required. Option C misunderstands **Transit Gateway**: TGW is an AWS-side routing hub; it is *not* itself a link to on-prem (it would still need a Direct Connect or VPN attachment to reach the data center). Option D is invalid — **VPC peering only connects AWS VPCs to each other**, not on-premises networks.",
+  "hints": [
+    { "title": "Internet = variable", "body": "Anything that rides the public internet (a plain VPN) cannot promise consistent latency. Dedicated private fiber (Direct Connect) can." },
+    { "title": "TGW and peering aren't on-prem links", "body": "Transit Gateway routes within AWS; VPC peering joins two VPCs. Neither is a physical connection to a data center." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,22 @@
+{
+  "id": "aws-responsible-ai-mcq",
+  "title": "Defense-in-Depth for GenAI",
+  "category": "Generative AI",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Layered Responsible-AI Controls\n\nAn architect must present a **responsible-AI control design** for a regulated, agentic Bedrock application. Which combination of controls best reflects defense-in-depth across **identity, content safety, oversight, and auditability**?",
+  "options": [
+    { "id": "a", "text": "AgentCore Identity for scoped agent access, Bedrock Guardrails for content/PII policy, Step Functions for human approval of high-impact actions, and model-invocation logging for audit" },
+    { "id": "b", "text": "A single broad IAM role for the agent and trust in the model to behave correctly" },
+    { "id": "c", "text": "Only enable Guardrails; identity and oversight are unnecessary if content is filtered" },
+    { "id": "d", "text": "Disable logging to avoid storing any sensitive prompts, and skip approvals to reduce latency" }
+  ],
+  "correct_option": "a",
+  "explanation": "Responsible-AI design is layered: scope the agent's identity and permissions (AgentCore Identity), enforce content and PII policy at the model boundary (Bedrock Guardrails), gate high-impact actions behind human approval (Step Functions), and keep an audit trail (model-invocation logging). Each layer addresses a different failure mode. A single broad role and blind trust (b) ignores least privilege and safety. Guardrails alone (c) leaves identity and oversight gaps. Disabling logging and approvals (d) trades away auditability and governance — the opposite of what a regulated workload needs.",
+  "hints": [
+    { "title": "Each control covers a different risk", "body": "Identity limits what the agent can do, guardrails limit what it can say, oversight limits what executes, and logging proves what happened." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

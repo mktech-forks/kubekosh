@@ -1,0 +1,25 @@
+{
+  "id": "devops-git-merge-rebase-mcq",
+  "title": "Merge vs Rebase",
+  "category": "Git",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Integrating Changes\n\nYour `feature` branch has fallen behind `main`. You're deciding between `git merge main` and `git rebase main`.\n\nWhich statement correctly describes the difference and the key safety rule?",
+  "options": [
+    { "id": "a", "text": "`merge` rewrites your commits onto a new base and should never be used on shared branches; `rebase` simply records a merge commit." },
+    { "id": "b", "text": "`rebase` replays your commits onto a new base producing a **linear** history, while `merge` preserves the original history and adds a merge commit — and you should not rebase commits already pushed/shared with others." },
+    { "id": "c", "text": "Both produce identical history; the only difference is that `rebase` is faster." },
+    { "id": "d", "text": "`merge` deletes the source branch automatically, whereas `rebase` keeps both branches forever." }
+  ],
+  "correct_option": "b",
+  "explanation": "**Rebase** takes the commits unique to your branch and **replays them on top of a new base** (here, the tip of `main`), creating *new* commits with new hashes and yielding a clean, linear history with no merge commit. **Merge** instead joins the two histories and records a **merge commit**, preserving the exact original commit graph. Because rebase rewrites commit hashes, the golden rule is **never rebase commits that have already been pushed or shared** — doing so diverges from what teammates have and forces disruptive history rewrites. Option (a) swaps the definitions, (c) is false (the resulting graphs differ), and (d) describes branch deletion, which neither command does automatically.",
+  "hints": [
+    {
+      "title": "Which one rewrites history?",
+      "body": "One operation creates brand-new commits with new hashes; that is the one that is unsafe to run on commits others have already pulled."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

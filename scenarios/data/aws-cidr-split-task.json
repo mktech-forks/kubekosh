@@ -1,0 +1,33 @@
+{
+  "id": "aws-cidr-split-task",
+  "title": "Split a Subnet for Multi-AZ",
+  "category": "Networking",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Carve a /24 Into /26s\n\nYou have a **`/24`** subnet and need to split it into the **largest equal subnets** that still give you **at least 4** non-overlapping ranges (one per AZ).\n\n**Your task:** determine how many **`/26`** subnets a **`/24`** yields, and write just that number to **`/root/azsubnets.txt`**.\n\n> 💡 /24 → /26 is 2 bits, so 2^2 subnets. Verify with Python's `ipaddress`.",
+  "hints": [
+    {
+      "title": "Subnet the network",
+      "body": "subnets(new_prefix=26) on a /24 enumerates the /26 blocks; count them.",
+      "command": "python3 -c \"import ipaddress; print(len(list(ipaddress.ip_network('10.0.0.0/24').subnets(new_prefix=26))))\" > /root/azsubnets.txt"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/azsubnets.txt" }
+  ],
+  "validation": {
+    "description": "Checks that /root/azsubnets.txt contains the number of /26s in a /24 (4).",
+    "commands": [
+      {
+        "description": "azsubnets.txt contains 4",
+        "command": "cat /root/azsubnets.txt 2>/dev/null | tr -d ' '",
+        "expected_output": "4",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/azsubnets.txt" }
+  ]
+}

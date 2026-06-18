@@ -1,0 +1,23 @@
+{
+  "id": "devops-cost-optimization-mcq",
+  "title": "On-Demand vs Reserved/Savings Plans vs Spot",
+  "category": "Cloud",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Pricing a steady baseline (and a batch job)\n\nA workload runs **24/7 at a steady, predictable baseline** for the foreseeable future and must always be available. Separately, the team also runs a fault-tolerant, checkpointed batch-processing job that can be paused and resumed at any time. Which purchasing strategy is most cost-effective for the steady 24/7 baseline?",
+  "options": [
+    { "id": "a", "text": "Cover the steady 24/7 baseline with a commitment-based discount (Reserved Instances or a Savings Plan), trading a 1- or 3-year usage commitment for a substantial discount versus On-Demand, since the baseline is predictable and always running. (The interruptible, fault-tolerant batch job is the natural fit for Spot capacity, which is cheapest but can be reclaimed with little notice.)" },
+    { "id": "b", "text": "Run the steady baseline entirely on Spot instances; because the baseline is predictable, Spot reclamation will never actually happen, making it the cheapest always-on option." },
+    { "id": "c", "text": "Keep the steady baseline on pure On-Demand pricing; On-Demand is cheaper than Reserved for anything that runs continuously because you avoid an upfront commitment, and reservations only pay off for spiky traffic." },
+    { "id": "d", "text": "Put the steady baseline on Spot and the fault-tolerant batch job on a 3-year Reserved Instance, since long-running reservations should be reserved for jobs that can tolerate interruption." }
+  ],
+  "correct_option": "a",
+  "explanation": "A **steady, predictable, always-on** baseline is the canonical case for a **commitment-based discount** — Reserved Instances or a Savings Plan — where you commit to a level of usage for 1 or 3 years in exchange for a large discount off On-Demand. Because the workload runs continuously and predictably, you will actually consume the committed capacity, so the discount is realized: that is (a). **Spot (b/d)** offers the deepest discount but the provider can reclaim the capacity with little notice; predictability of *your* load does not stop the provider from reclaiming Spot capacity, so an always-available baseline must never depend on Spot — (b)'s premise is false. Spot is instead ideal for **interruptible, fault-tolerant, checkpointed** work like the batch job — which is why (d) is backwards (it puts the must-stay-up baseline on Spot and wastes a 3-year reservation on the interruptible job). **Pure On-Demand (c)** is the right tool for short-lived or unpredictable spikes, but for steady 24/7 usage it is more expensive than a reservation/Savings Plan, so (c)'s claim that On-Demand beats Reserved for continuous workloads is exactly wrong. The cost-optimal mix: reservation/Savings Plan for the predictable baseline, On-Demand for unpredictable bursts, and Spot for fault-tolerant batch.",
+  "hints": [
+    { "title": "Match commitment to predictability", "body": "Steady, always-on usage justifies a 1- or 3-year commitment (Reserved/Savings Plan) because you'll use the capacity you committed to and earn the discount." },
+    { "title": "Spot's catch", "body": "Spot is cheapest but interruptible at short notice regardless of how predictable your own demand is — only safe for fault-tolerant/checkpointed/batch work, never a must-stay-up baseline." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

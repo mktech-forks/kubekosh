@@ -1,0 +1,45 @@
+{
+  "id": "devops-tf-variables-task",
+  "title": "Parameterize Terraform With Variables",
+  "category": "Infrastructure as Code",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Make the Config Reusable\n\n**Your task:** write **`/root/main.tf`** that:\n1. declares a **`variable \"environment\"`** with a **`default`** of **`\"dev\"`**\n2. declares a **`local_file`** resource named **`config`** whose **`content`** **references the variable** (uses `var.environment`)\n\n```hcl\nvariable \"environment\" {\n  default = \"dev\"\n}\n\nresource \"local_file\" \"config\" {\n  content  = \"env=${var.environment}\"\n  filename = \"/tmp/app.env\"\n}\n```\n\n> 💡 No `terraform` binary is needed — this checks that the HCL declares the variable and references it via `var.environment`.",
+  "hints": [
+    {
+      "title": "Variable + interpolation",
+      "body": "Declare the variable block with a default, then interpolate it in the resource with var.<name>.",
+      "command": "printf 'variable \"environment\" {\\n  default = \"dev\"\\n}\\n\\nresource \"local_file\" \"config\" {\\n  content  = \"env=${var.environment}\"\\n  filename = \"/tmp/app.env\"\\n}\\n' > /root/main.tf"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/main.tf" }
+  ],
+  "validation": {
+    "description": "Checks for a variable block with a dev default and a resource referencing var.environment.",
+    "commands": [
+      {
+        "description": "Declares variable \"environment\"",
+        "command": "grep -qE 'variable[[:space:]]+\"environment\"' /root/main.tf && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "Has a default of \"dev\"",
+        "command": "grep -qE 'default[[:space:]]*=[[:space:]]*\"dev\"' /root/main.tf && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "References the variable with var.environment",
+        "command": "grep -q 'var.environment' /root/main.tf && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/main.tf" }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "aws-costopt",
+  "subject": "aws",
+  "name": "Cost Optimization & Performance",
+  "icon": "☁️",
+  "tagline": "Savings Plans, rightsizing and performance efficiency",
+  "color": "#ff9900",
+  "colorDim": "rgba(255,153,0,0.13)",
+  "exam_minutes": 45,
+  "scenario_ids": [
+    "aws-cost-lesson",
+    "aws-pricing-commitment-mcq",
+    "aws-cost-tools-mcq",
+    "aws-rightsizing-mcq",
+    "aws-storage-cost-mcq",
+    "aws-performance-mcq"
+  ]
+}

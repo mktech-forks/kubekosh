@@ -1,0 +1,23 @@
+{
+  "id": "aws-cost-tools-mcq",
+  "title": "Proactive Spend Alerts and Forecasts",
+  "category": "Cost",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Getting Warned Before You Overspend\n\nA finance team wants to be **proactively notified** when the company's monthly AWS spend is **forecasted to exceed a defined threshold**, and again when **actual** spend crosses it — so they can act before the bill closes. They also want these thresholds set per team via tags and to trigger notifications (email/SNS) automatically. Which AWS capability BEST meets this need?",
+  "options": [
+    { "id": "a", "text": "AWS Budgets, configured with cost budgets, forecasted and actual alert thresholds, and SNS/email notifications" },
+    { "id": "b", "text": "AWS Cost Explorer, reviewed weekly to look for trends" },
+    { "id": "c", "text": "The Cost & Usage Report (CUR) delivered to S3 and queried with Athena" },
+    { "id": "d", "text": "AWS Trusted Advisor cost-optimization checks" }
+  ],
+  "correct_option": "a",
+  "explanation": "**AWS Budgets** is purpose-built for proactive cost governance: you define cost/usage budgets (scoped by tags, accounts, services, etc.) and set alert thresholds on **both actual and forecasted** spend, with notifications via email or Amazon SNS — exactly the \"warn me before I exceed X\" requirement. **Cost Explorer** (B) is an analysis/visualization tool for historical spend; it offers forecasting in its views but does not push proactive threshold alerts. **CUR** (C) is raw line-item data for querying — it has no native alerting; you'd have to build the alerting yourself. **Trusted Advisor** (D) surfaces best-practice and idle-resource checks, not budget-threshold spend alerts.",
+  "hints": [
+    { "title": "Proactive vs analytical", "body": "Cost Explorer and CUR tell you what happened; the requirement is to be alerted before/when a threshold is crossed. Which tool's job is alerting?" },
+    { "title": "Forecast + actual", "body": "Look for the service that can alert on forecasted spend, not just actual." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

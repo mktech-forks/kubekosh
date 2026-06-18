@@ -1,0 +1,17 @@
+{
+  "id": "aws-emerging",
+  "subject": "aws",
+  "name": "Emerging: GenAI & Responsible AI",
+  "icon": "☁️",
+  "tagline": "Bedrock Guardrails, agent identity and human oversight",
+  "color": "#ff9900",
+  "colorDim": "rgba(255,153,0,0.13)",
+  "exam_minutes": 30,
+  "scenario_ids": [
+    "aws-genai-lesson",
+    "aws-bedrock-guardrails-mcq",
+    "aws-agentcore-identity-mcq",
+    "aws-human-oversight-mcq",
+    "aws-responsible-ai-mcq"
+  ]
+}

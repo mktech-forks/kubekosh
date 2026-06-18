@@ -1,0 +1,26 @@
+{
+  "id": "linux-permissions-mcq",
+  "title": "Understanding File Permissions",
+  "category": "Permissions",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Reading `ls -l` Permissions\n\nYou run `ls -l` and see the following line for a script:\n\n```\n-rwxr-xr-- 1 root root 482 Jun 16 10:00 deploy.sh\n```\n\nWhich `chmod` command would set **exactly** these permissions on `deploy.sh`?",
+  "options": [
+    { "id": "a", "text": "chmod 755 deploy.sh" },
+    { "id": "b", "text": "chmod 754 deploy.sh" },
+    { "id": "c", "text": "chmod 644 deploy.sh" },
+    { "id": "d", "text": "chmod +x deploy.sh" }
+  ],
+  "correct_option": "b",
+  "explanation": "Permissions are read in three groups of three bits: owner, group, others. `rwx` = 4+2+1 = 7 (owner), `r-x` = 4+0+1 = 5 (group), `r--` = 4+0+0 = 4 (others). So the octal mode is `754`. Option `a` (755) would give others execute too, and `c` (644) removes all execute bits.",
+  "hints": [
+    {
+      "title": "Octal permission values",
+      "body": "Each permission group is a sum of read (4), write (2), and execute (1). Add the values within each group to get its digit.",
+      "command": "stat -c '%a %n' deploy.sh"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

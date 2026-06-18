@@ -1,0 +1,23 @@
+{
+  "id": "aws-serverless-mcq",
+  "title": "Spiky API with Pay-Per-Use Economics",
+  "category": "Compute",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Unpredictable Traffic, No Servers to Run\n\nA startup is launching a public REST API for a mobile app. Traffic is **highly spiky and unpredictable** — it can sit near zero for hours, then jump to thousands of requests per second during a marketing push. The business wants to **pay only for what it uses**, run **no servers**, and have the backend scale automatically with demand. Each request does a small amount of compute and a read/write to a key-value store.\n\nWhich architecture BEST meets these requirements?",
+  "options": [
+    { "id": "a", "text": "Amazon API Gateway in front of AWS Lambda functions, with Amazon DynamoDB for storage" },
+    { "id": "b", "text": "An always-on fleet of EC2 instances behind an ALB, sized for the peak request rate" },
+    { "id": "c", "text": "A single large EC2 instance running the API and a self-hosted database, with a CloudWatch alarm to scale vertically" },
+    { "id": "d", "text": "Amazon ECS on EC2 running the API continuously with RDS for storage" }
+  ],
+  "correct_option": "a",
+  "explanation": "For spiky, unpredictable, pay-per-use traffic with no servers to manage, the serverless pattern **API Gateway + Lambda + DynamoDB** is ideal: API Gateway handles the HTTP endpoint, throttling, and auth; Lambda scales out automatically per concurrent request and costs nothing when idle (true scale-to-zero); DynamoDB (on-demand capacity) scales the data layer the same way. To mitigate cold starts on latency-sensitive paths you can add **provisioned concurrency** (keeps a pool warm) or **reserved concurrency** (caps/guarantees concurrency for a function). Option B over-provisions for peak and pays for idle capacity. Option C is a single point of failure with manual scaling and no scale-to-zero. Option D keeps containers and an RDS instance running 24/7 — it does not match \"no servers\" or \"pay only for what you use.\"",
+  "hints": [
+    { "title": "Match the economics", "body": "\"Pay only for what you use\" plus \"near zero for hours\" points to scale-to-zero compute, which rules out anything always-on." },
+    { "title": "Cold starts", "body": "The right answer has a known weakness (cold start latency). Knowing the mitigations — reserved vs provisioned concurrency — confirms it is still the correct choice." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

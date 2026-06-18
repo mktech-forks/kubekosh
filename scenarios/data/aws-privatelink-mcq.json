@@ -1,0 +1,23 @@
+{
+  "id": "aws-privatelink-mcq",
+  "title": "Exposing One Service Privately",
+  "category": "Networking",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Service, Not Network, Exposure\n\nA SaaS team operates a backend API behind a **Network Load Balancer** in their own VPC. They want **many consumer VPCs across different AWS accounts** to call this single API privately. Hard requirements:\n\n- Consumers must reach **only this one service**, not the rest of the provider's VPC or its CIDR range.\n- Traffic must **stay on the AWS private network** (never traverse the public internet).\n- It must scale to a large, possibly overlapping set of consumer accounts without coordinating IP ranges.\n\nWhat should the provider use?",
+  "options": [
+    { "id": "a", "text": "Publish the service with **AWS PrivateLink**: create a **VPC endpoint service** in front of the NLB; consumers create **interface VPC endpoints** to it in their own VPCs." },
+    { "id": "b", "text": "Set up **VPC peering** between the provider VPC and every consumer VPC so they can reach the API." },
+    { "id": "c", "text": "Attach all VPCs to a **Transit Gateway** and let consumers route to the provider's NLB." },
+    { "id": "d", "text": "Put the NLB on a **public** subnet with a public IP and restrict access with security groups per consumer." }
+  ],
+  "correct_option": "a",
+  "explanation": "**AWS PrivateLink** is designed precisely for exposing a *single service* privately to many consumers. The provider fronts the service with an NLB and creates a **VPC endpoint service**; each consumer provisions an **interface VPC endpoint** (an ENI in their own subnet) to connect. Consumers can reach **only that endpoint** — not the provider's broader VPC or CIDR — traffic stays on the AWS backbone, and because the connection is unidirectional service exposure, **overlapping CIDRs between accounts don't matter**. Option B (VPC peering) exposes whole **CIDR ranges** at the network level (violating least-exposure), is **non-transitive**, fails with overlapping CIDRs, and doesn't scale to many accounts. Option C (Transit Gateway) is network-level routing, not service-level exposure, and similarly exposes more than the one service and breaks on CIDR overlap. Option D puts the service on the **public internet**, directly violating the private-connectivity requirement.",
+  "hints": [
+    { "title": "Service-level vs. network-level", "body": "Peering and TGW connect networks (CIDRs). PrivateLink exposes one specific service via an endpoint, hiding everything else." },
+    { "title": "Overlapping CIDRs are a tell", "body": "If many accounts may have overlapping IP ranges and you only need to share one service, PrivateLink sidesteps the IP-coordination problem entirely." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

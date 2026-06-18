@@ -1,0 +1,44 @@
+{
+  "id": "docker-resource-limits-task",
+  "title": "Limit Container Memory",
+  "category": "Operations",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 4,
+  "description": "## Cap a Container's Resources\n\nWithout limits a container can consume all of the host's memory. Set an explicit cap.\n\n**Requirements:**\n1. Run an **`alpine`** container named **`limited`** in the background (keep it alive)\n2. Limit it to **64 MB** of memory (`--memory=64m`)\n\n> 💡 `docker run -d --name limited --memory=64m alpine sleep 3600`. Docker stores this as bytes; 64m = 67108864 bytes.",
+  "hints": [
+    {
+      "title": "Apply a memory limit",
+      "body": "The --memory flag accepts suffixes like m (megabytes) and g (gigabytes).",
+      "command": "docker run -d --name limited --memory=64m alpine sleep 3600"
+    },
+    {
+      "title": "Inspect the limit",
+      "body": "The effective limit is reported in bytes under HostConfig.Memory.",
+      "command": "docker inspect -f '{{.HostConfig.Memory}}' limited"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker rm -f limited 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that 'limited' is running with a 64 MB (67108864 byte) memory cap.",
+    "commands": [
+      {
+        "description": "Container 'limited' is running",
+        "command": "docker inspect -f '{{.State.Running}}' limited 2>/dev/null",
+        "expected_output": "true",
+        "match": "exact"
+      },
+      {
+        "description": "Memory limit is 64 MB (67108864 bytes)",
+        "command": "docker inspect -f '{{.HostConfig.Memory}}' limited 2>/dev/null",
+        "expected_output": "67108864",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rm -f limited 2>/dev/null || true" }
+  ]
+}

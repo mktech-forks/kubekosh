@@ -1,0 +1,12 @@
+{
+  "id": "docker-healthcheck-lesson",
+  "title": "Health Checks",
+  "category": "Operations",
+  "difficulty": "Medium",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## Knowing When a Container Is Actually Ready\n\nA running container is not the same as a *working* one — the process can be up while the app inside is still starting or wedged. A **health check** is a command Docker runs periodically inside the container to decide its health.\n\n### In a Dockerfile\n\n```dockerfile\nHEALTHCHECK --interval=30s --timeout=3s --retries=3 \\\n  CMD wget -qO- http://localhost/ || exit 1\n```\n\n### At run time\n\n```bash\ndocker run -d --name web \\\n  --health-cmd='wget -qO- http://localhost/ || exit 1' \\\n  --health-interval=30s nginx:alpine\n```\n\n### The states\n\n| Status | Meaning |\n|---|---|\n| `starting` | Within the grace period; not yet evaluated. |\n| `healthy` | The last check exited `0`. |\n| `unhealthy` | The check failed `--retries` times in a row. |\n\nInspect it with:\n\n```bash\ndocker inspect -f '{{.State.Health.Status}}' web\n```\n\nOrchestrators (Compose, Swarm, Kubernetes-style probes) use this signal to delay traffic, restart, or fail a deployment. Mark complete, then add a health check to a container in the Advanced bundle.",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

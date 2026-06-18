@@ -1,0 +1,25 @@
+{
+  "id": "devops-proxy-lb-mcq",
+  "title": "Proxy vs Load Balancer",
+  "category": "Web Servers",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Pick the Right Component\n\nYou run **three identical backend application servers** and need a component sitting in front of them whose job is to **spread incoming client requests evenly across all three** for scale and availability.\n\nWhich component is the best fit for this specific job?",
+  "options": [
+    { "id": "a", "text": "A **forward proxy** — clients route their outbound traffic through it to reach the internet." },
+    { "id": "b", "text": "A **load balancer** — it distributes incoming requests across the pool of identical backends." },
+    { "id": "c", "text": "A **reverse proxy** acting purely as a single static-file web server." },
+    { "id": "d", "text": "A **firewall** — it filters traffic by rules but does not distribute it." }
+  ],
+  "correct_option": "b",
+  "explanation": "Distributing incoming requests across a pool of identical backends is precisely the job of a **load balancer**. A **forward proxy** (a) faces the other way — it acts on behalf of *clients* sending their outbound traffic to the internet. A **reverse proxy** (c) does face the backends and can terminate TLS and route by path/host, and in practice many reverse proxies *also* load balance — but a reverse proxy whose role is just static serving doesn't distribute load. A **firewall** (d) filters traffic; it doesn't balance it. (Rule of thumb: *distribute traffic across identical servers* → load balancer; *terminate TLS and route by URL path in front of backends* → reverse proxy; *clients route outbound through it* → forward proxy.)",
+  "hints": [
+    {
+      "title": "Match the verb to the tool",
+      "body": "The keyword here is 'distribute across identical backends'. One component is named for exactly that job."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

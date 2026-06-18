@@ -1,0 +1,29 @@
+{
+  "id": "devops-mtls-zerotrust-mcq",
+  "title": "Zero Trust and Service-to-Service mTLS",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## The Core Principle of Zero Trust\n\nDuring an architecture review, two engineers disagree. One argues that because all microservices run inside the same VPC behind the corporate firewall, service-to-service calls can be trusted implicitly and don't need their own authentication. The other insists every call must be authenticated and authorized regardless of network location, and proposes a service mesh that issues each workload an identity and enforces mutual TLS.\n\nWhich statement correctly captures the zero-trust principle being applied?",
+  "options": [
+    { "id": "a", "text": "Zero trust means 'never trust, always verify': no request is trusted because of its network location, so every service-to-service call must prove identity and be authorized. mTLS gives each workload a cryptographic identity (often a mesh-issued cert) and mutually authenticates + encrypts both ends of every call." },
+    { "id": "b", "text": "Zero trust means hardening the network perimeter as strongly as possible so that anything inside the firewall/VPC is then trusted; once a service is on the trusted internal network, mTLS between services is redundant." },
+    { "id": "c", "text": "Zero trust means encrypting all traffic with TLS; as long as transport is encrypted, the identity of the caller is irrelevant because eavesdroppers are blocked, which is what mTLS provides." },
+    { "id": "d", "text": "Zero trust means granting every authenticated user broad access by default and only restricting access after an anomaly is detected, with mTLS used solely to detect those anomalies." }
+  ],
+  "correct_option": "a",
+  "explanation": "Zero trust is 'never trust, always verify': trust is never granted implicitly based on where a request originates (the corporate network, a VPC, behind a firewall). Every request must be authenticated and authorized on its own merits, continuously. For service-to-service communication, mutual TLS provides exactly this: each workload presents a verifiable identity (commonly a short-lived certificate issued by a service mesh / SPIFFE-style identity system), and both client and server authenticate each other while encrypting the channel — so identity, not network position, governs access. (b) describes the classic perimeter/'castle-and-moat' model that zero trust explicitly replaces; assuming internal traffic is trustworthy is the very assumption that lets an attacker move laterally once inside, and it makes mTLS redundant in exactly the wrong way. (c) confuses encryption with identity: plain TLS encrypts and authenticates the server, but zero trust requires verifying the caller's identity too — that's the 'mutual' in mTLS, and identity is central, not irrelevant. (d) inverts least privilege: zero trust grants minimal access and verifies every request, rather than granting broad access and reacting to anomalies.",
+  "hints": [
+    {
+      "title": "Location is not identity",
+      "body": "Zero trust refuses to trust a request just because it came from inside the network. Verify identity on every call."
+    },
+    {
+      "title": "What 'mutual' adds",
+      "body": "Plain TLS authenticates the server. mTLS authenticates both sides, giving each workload a verifiable identity for authorization."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

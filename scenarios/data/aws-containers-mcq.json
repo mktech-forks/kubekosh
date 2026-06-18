@@ -1,0 +1,23 @@
+{
+  "id": "aws-containers-mcq",
+  "title": "Containers Without Managing Servers",
+  "category": "Compute",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Minimal-Ops Container Platform\n\nA small platform team wants to run a set of containerized microservices in production. They have explicit goals: **do not manage any EC2 instances or a container control plane**, keep operational overhead as low as possible, and they have **no requirement for the Kubernetes API or its ecosystem** (no Helm charts, operators, or multi-cloud portability needs). They want per-task isolation and to pay only for the resources their tasks consume.\n\nWhich option BEST fits these constraints?",
+  "options": [
+    { "id": "a", "text": "Amazon EKS with a managed node group of EC2 instances" },
+    { "id": "b", "text": "Amazon ECS with the Fargate launch type" },
+    { "id": "c", "text": "Amazon ECS with the EC2 launch type using a Spot Auto Scaling group" },
+    { "id": "d", "text": "Self-managed Kubernetes installed on EC2 with kubeadm" }
+  ],
+  "correct_option": "b",
+  "explanation": "**ECS on Fargate** runs containers with no servers and no control plane for the team to operate — you define a task and AWS provisions the right-sized, isolated compute, and you pay per vCPU/GB-second consumed. Because the team explicitly does NOT need Kubernetes, ECS (the simpler AWS-native orchestrator) plus Fargate (serverless data plane) is the lowest-ops fit. **EKS** (A) introduces the Kubernetes control plane and ecosystem the team said they don't need, and managed node groups still mean managing EC2 capacity. **ECS on EC2** (C) removes the K8s overhead but puts the team back in charge of patching, scaling, and capacity of the instance fleet. **Self-managed Kubernetes on EC2** (D) is the highest operational burden of all — they own both the control plane and the nodes.",
+  "hints": [
+    { "title": "Read the disqualifiers", "body": "\"No Kubernetes requirement\" eliminates the EKS / self-managed K8s answers. \"No managing servers\" eliminates the EC2 launch type." },
+    { "title": "Launch type matters", "body": "ECS can run on either EC2 (you own the instances) or Fargate (AWS owns them). Only one is serverless." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

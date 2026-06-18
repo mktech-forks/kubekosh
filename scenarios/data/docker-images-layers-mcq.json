@@ -1,0 +1,26 @@
+{
+  "id": "docker-images-layers-mcq",
+  "title": "Images vs Containers",
+  "category": "Getting Started",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Many From One\n\nYou run the following two commands:\n\n```\ndocker run -d --name web1 nginx:alpine\ndocker run -d --name web2 nginx:alpine\n```\n\nWhich statement best describes what now exists?",
+  "options": [
+    { "id": "a", "text": "Two copies of the `nginx:alpine` image, each with one container" },
+    { "id": "b", "text": "One `nginx:alpine` image and two independent containers, each with its own writable layer on top of the shared read-only image layers" },
+    { "id": "c", "text": "One image and one container; the second command is ignored because the image is already running" },
+    { "id": "d", "text": "Two containers that share a single writable filesystem" }
+  ],
+  "correct_option": "b",
+  "explanation": "An image is **read-only** and is stored once. Each `docker run` creates a new container that adds a thin **writable layer** on top of the image's shared read-only layers (copy-on-write). So `web1` and `web2` are isolated — writing a file in one does not affect the other or the underlying image — yet they don't duplicate the image's storage.",
+  "hints": [
+    {
+      "title": "List images and containers",
+      "body": "Compare the number of images to the number of containers to see the one-to-many relationship.",
+      "command": "docker images && docker ps -a"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

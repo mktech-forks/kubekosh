@@ -1,0 +1,20 @@
+{
+  "id": "aws-migration",
+  "subject": "aws",
+  "name": "Migration & Modernization",
+  "icon": "☁️",
+  "tagline": "The 7 Rs, MGN/DMS, data transfer and refactoring",
+  "color": "#ff9900",
+  "colorDim": "rgba(255,153,0,0.13)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "aws-migration-lesson",
+    "aws-7rs-mcq",
+    "aws-mgn-dms-mcq",
+    "aws-datasync-snow-mcq",
+    "aws-modernization-mcq",
+    "aws-cfn-s3-task",
+    "aws-cloudformation-param-task",
+    "aws-jq-instances-task"
+  ]
+}

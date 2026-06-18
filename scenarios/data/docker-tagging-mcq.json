@@ -1,0 +1,26 @@
+{
+  "id": "docker-tagging-mcq",
+  "title": "Image Names and Tags",
+  "category": "Images & Registries",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Decoding an Image Reference\n\nConsider the image reference:\n\n```\nregistry.example.com:5000/team/api:2.3.1\n```\n\nWhich breakdown is correct?",
+  "options": [
+    { "id": "a", "text": "Registry host:port = `registry.example.com:5000`, repository = `team/api`, tag = `2.3.1`" },
+    { "id": "b", "text": "Registry = `registry.example.com`, repository = `5000/team/api`, tag = `2.3.1`" },
+    { "id": "c", "text": "Repository = `registry.example.com:5000/team`, image = `api`, tag = `2.3.1`" },
+    { "id": "d", "text": "It is invalid — image references cannot contain a port" }
+  ],
+  "correct_option": "a",
+  "explanation": "A fully-qualified reference is `[registry[:port]/]repository[:tag]`. Here the registry host and port are `registry.example.com:5000`, the repository is `team/api`, and the tag is `2.3.1`. If you omit the registry, Docker defaults to Docker Hub; if you omit the tag, it defaults to `latest`. Note that `latest` is just a conventional tag — it is **not** automatically the newest image.",
+  "hints": [
+    {
+      "title": "Add a tag to an existing image",
+      "body": "docker tag creates an additional reference (name/tag) pointing at the same image ID.",
+      "command": "docker tag api:2.3.1 registry.example.com:5000/team/api:2.3.1"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

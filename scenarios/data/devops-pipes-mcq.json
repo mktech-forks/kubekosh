@@ -1,0 +1,25 @@
+{
+  "id": "devops-pipes-mcq",
+  "title": "Pipes and Redirection",
+  "category": "Shell",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Reading a Tricky Command\n\nA deployment script runs a build step and you want to **watch all of its output live on screen** while **also saving everything — including error messages — to a log file**. A colleague suggests:\n\n```bash\n./build.sh 2>&1 | tee build.log\n```\n\nWhat does this command actually do?",
+  "options": [
+    { "id": "a", "text": "It merges stderr into stdout (2>&1), then pipes that combined stream to tee, which writes it to build.log and also prints it to the terminal." },
+    { "id": "b", "text": "It sends only stderr to build.log and discards stdout entirely." },
+    { "id": "c", "text": "It pipes stdout to tee but leaves stderr going only to the terminal, so error lines never reach build.log." },
+    { "id": "d", "text": "2>&1 redirects stdout into stderr, so build.log ends up empty." }
+  ],
+  "correct_option": "a",
+  "explanation": "Break it into pieces. `2>&1` means \"redirect **file descriptor 2 (stderr)** to wherever **file descriptor 1 (stdout)** currently points\" — so error output is **merged into the stdout stream**. The pipe `|` then sends that combined stream to **`tee`**, a tool that writes its input to a file (`build.log`) *and* passes it through to its own stdout (the terminal) — giving you a live view **and** a saved log of everything. Option b is wrong: nothing here sends *only* stderr to the file or discards stdout. Option c describes what would happen *without* the `2>&1` (errors would bypass the pipe), which is exactly why the merge is added. Option d misreads the direction: `2>&1` points stderr at stdout's destination, it does not redirect stdout into stderr. (Reminder: `>` overwrites stdout to a file, `>>` appends, and `2>` redirects stderr to a file.)",
+  "hints": [
+    {
+      "title": "Decode each token",
+      "body": "Read it as three parts: '2>&1' (merge stderr into stdout), '|' (pipe the combined stream onward), 'tee FILE' (write to FILE and echo to the screen)."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

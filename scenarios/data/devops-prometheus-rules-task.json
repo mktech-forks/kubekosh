@@ -1,0 +1,39 @@
+{
+  "id": "devops-prometheus-rules-task",
+  "title": "Write a Prometheus Alerting Rule",
+  "category": "Monitoring",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Alert on High Error Rate\n\nPrometheus rule files contain **`groups`**, each with a list of **`rules`**. An alerting rule has an **`alert`** name, an **`expr`**, and a **`for`** duration.\n\n**Your task:** write **`/root/rules.yml`** with a group containing an alerting rule named **`HighErrorRate`** that has an `expr` and a `for`.\n\n> 💡 Validate the YAML with `python3 -c \"import yaml; yaml.safe_load(open('/root/rules.yml'))\"`.",
+  "hints": [
+    {
+      "title": "Rule group skeleton",
+      "body": "A groups list; each group has a name and rules; an alerting rule sets alert/expr/for plus optional labels and annotations.",
+      "command": "printf 'groups:\\n  - name: app-alerts\\n    rules:\\n      - alert: HighErrorRate\\n        expr: rate(http_errors_total[5m]) > 0.05\\n        for: 10m\\n        labels:\\n          severity: page\\n        annotations:\\n          summary: \"High error rate\"\\n' > /root/rules.yml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/rules.yml" }
+  ],
+  "validation": {
+    "description": "Checks a valid groups/rules structure and the HighErrorRate alert with expr+for.",
+    "commands": [
+      {
+        "description": "Valid groups list with rules",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/rules.yml')); g=d.get('groups'); print('ok' if isinstance(g,list) and g and 'rules' in g[0] else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      },
+      {
+        "description": "Defines a HighErrorRate alert with an expr and a for",
+        "command": "grep -q 'alert:[[:space:]]*HighErrorRate' /root/rules.yml && grep -q 'expr:' /root/rules.yml && grep -q 'for:' /root/rules.yml && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/rules.yml" }
+  ]
+}

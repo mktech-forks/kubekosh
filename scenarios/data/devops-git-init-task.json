@@ -1,0 +1,43 @@
+{
+  "id": "devops-git-init-task",
+  "title": "Initialize a Repository and Commit",
+  "category": "Git",
+  "difficulty": "Easy",
+  "type": "task",
+  "weight": 4,
+  "description": "## Start Tracking a Project\n\n**Requirements:**\n1. Initialize a new Git repository at **`/root/myrepo`**\n2. Create a file **`README.md`** inside it\n3. Stage and **commit** it (at least one commit must exist)\n\n> 💡 `git init`, then `git add`, then `git commit -m \"...\"`. A Git identity (user.name/email) has already been configured for you.",
+  "hints": [
+    {
+      "title": "Init and commit",
+      "body": "Initialize the repo, add a file, stage it, and make the first commit.",
+      "command": "cd /root/myrepo && git init && echo '# My Repo' > README.md && git add README.md && git commit -m 'initial commit'"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -rf /root/myrepo" },
+    { "command": "git config --global user.email lab@kubekosh.local" },
+    { "command": "git config --global user.name 'KubeKosh Lab'" },
+    { "command": "git config --global init.defaultBranch main" },
+    { "command": "mkdir -p /root/myrepo" }
+  ],
+  "validation": {
+    "description": "Checks that /root/myrepo is a Git repository with at least one commit.",
+    "commands": [
+      {
+        "description": "/root/myrepo is a Git working tree",
+        "command": "git -C /root/myrepo rev-parse --is-inside-work-tree 2>/dev/null",
+        "expected_output": "true",
+        "match": "exact"
+      },
+      {
+        "description": "At least one commit exists",
+        "command": "git -C /root/myrepo rev-list --count HEAD 2>/dev/null",
+        "expected_output": "^[1-9][0-9]*$",
+        "match": "regex"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -rf /root/myrepo" }
+  ]
+}

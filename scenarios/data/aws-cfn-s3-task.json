@@ -1,0 +1,33 @@
+{
+  "id": "aws-cfn-s3-task",
+  "title": "Write a CloudFormation Template",
+  "category": "Migration",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Infrastructure as Code on AWS\n\nCloudFormation provisions AWS resources declaratively from a template.\n\n**Your task:** write a CloudFormation template at **`/root/template.yaml`** with a **`Resources`** section that defines an **`AWS::S3::Bucket`** resource.\n\n```yaml\nResources:\n  ReportsBucket:\n    Type: AWS::S3::Bucket\n    Properties:\n      BucketName: my-reports-bucket\n```\n\n> 💡 Keep it plain YAML (no `!Ref`/`!GetAtt` intrinsics needed here) so it parses cleanly.",
+  "hints": [
+    {
+      "title": "Minimal bucket template",
+      "body": "Under Resources, a logical name maps to a Type of AWS::S3::Bucket with optional Properties.",
+      "command": "printf 'Resources:\\n  ReportsBucket:\\n    Type: AWS::S3::Bucket\\n    Properties:\\n      BucketName: my-reports-bucket\\n' > /root/template.yaml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/template.yaml" }
+  ],
+  "validation": {
+    "description": "Checks for a Resources section containing an AWS::S3::Bucket.",
+    "commands": [
+      {
+        "description": "Defines an AWS::S3::Bucket resource",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/template.yaml')); r=d.get('Resources',{}); print('ok' if isinstance(r,dict) and any(isinstance(v,dict) and v.get('Type')=='AWS::S3::Bucket' for v in r.values()) else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/template.yaml" }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "aws-datasync-snow-mcq",
+  "title": "Moving Bulk Data Under Bandwidth Limits",
+  "category": "Migration",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## 500 TB Over a Slow Link, on a Deadline\n\nA media company must move **500 TB** of archived video from a remote production site into Amazon S3. The site has a **constrained internet link** (roughly 100 Mbps usable), and the data must be in AWS **within a few weeks**. Pushing 500 TB over the available link would take many months. Which approach BEST meets the volume, bandwidth, and deadline constraints?",
+  "options": [
+    { "id": "a", "text": "Order AWS Snowball Edge devices, copy the data locally, and ship them to AWS for offline import into S3" },
+    { "id": "b", "text": "Deploy AWS DataSync agents and transfer the 500 TB over the existing internet link" },
+    { "id": "c", "text": "Use the S3 CLI with multipart upload to push the data over the internet in parallel" },
+    { "id": "d", "text": "Provision AWS Direct Connect to the site and transfer the data over the dedicated link" }
+  ],
+  "correct_option": "a",
+  "explanation": "When **data volume vastly exceeds what the available bandwidth can move within the deadline**, the answer is **offline transfer with the Snow Family**. 500 TB over ~100 Mbps would take on the order of a year; Snowball Edge devices let you copy locally and ship the data, completing the move in weeks regardless of the link. (At multi-petabyte/exabyte scale you'd consider Snowmobile, but Snowball Edge fits 500 TB.)\n\n(b) **DataSync** is excellent for online and ongoing transfers, but it still rides the **same slow internet link** — it can't beat physics; the transfer would take months. (c) **S3 multipart/parallel upload** is also bounded by the 100 Mbps link; parallelism doesn't add bandwidth that isn't there. (d) **Direct Connect** delivers a dedicated, higher-bandwidth link, but **provisioning a cross-connect typically takes weeks to months** and incurs ongoing cost — it doesn't meet a few-weeks deadline for a one-time bulk move, and you'd still need to transfer 500 TB over it. The decision rule: compare transfer time over available bandwidth against the deadline; if shipping is faster, choose **Snow (offline)**.",
+  "hints": [
+    { "title": "Do the math", "body": "Estimate transfer time = data size / usable bandwidth. If that exceeds the deadline, online transfer is off the table." },
+    { "title": "Online vs. offline", "body": "DataSync = online over the network; Snow Family = offline physical shipping for petabyte-scale or bandwidth-constrained moves." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

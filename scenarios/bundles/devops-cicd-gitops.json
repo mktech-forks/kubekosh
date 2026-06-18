@@ -1,0 +1,20 @@
+{
+  "id": "devops-cicd-gitops",
+  "subject": "devops",
+  "name": "CI/CD, GitOps & Artifacts",
+  "icon": "♾️",
+  "tagline": "Pipelines, ArgoCD and artifact registries",
+  "color": "#8b5cf6",
+  "colorDim": "rgba(139,92,246,0.12)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "devops-cicd-lesson",
+    "devops-pipeline-stages-mcq",
+    "devops-cicd-tools-mcq",
+    "devops-gitops-mcq",
+    "devops-artifact-mcq",
+    "devops-gha-workflow-task",
+    "devops-gitlab-ci-task",
+    "devops-makefile-task"
+  ]
+}

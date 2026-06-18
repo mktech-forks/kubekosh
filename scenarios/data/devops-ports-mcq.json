@@ -1,0 +1,25 @@
+{
+  "id": "devops-ports-mcq",
+  "title": "Well-Known Ports",
+  "category": "Networking",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Default Ports\n\nMany protocols have **well-known (default) port numbers**: 22 for SSH, 80 for HTTP, 443 for HTTPS, 53 for DNS, and 25 for SMTP (mail).\n\nA web service is serving traffic over **HTTPS** with no custom port configured. Which port is it listening on by default?",
+  "options": [
+    { "id": "a", "text": "**80**" },
+    { "id": "b", "text": "**22**" },
+    { "id": "c", "text": "**443**" },
+    { "id": "d", "text": "**53**" }
+  ],
+  "correct_option": "c",
+  "explanation": "**HTTPS** (HTTP over TLS) uses port **443** by default. Port **80** (a) is plain **HTTP**, port **22** (b) is **SSH** for secure remote login/transfer, and port **53** (d) is **DNS** name resolution. For completeness, port **25** is **SMTP** for mail transfer. Knowing these defaults lets you read firewall rules and connection strings at a glance — `https://example.com` is implicitly `:443`, just as `http://example.com` is implicitly `:80`.",
+  "hints": [
+    {
+      "title": "HTTP vs HTTPS ports",
+      "body": "Plain HTTP and encrypted HTTPS sit on two adjacent-in-memory but different ports: one is 80, the other is 443."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

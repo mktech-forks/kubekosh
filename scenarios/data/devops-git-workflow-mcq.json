@@ -1,0 +1,25 @@
+{
+  "id": "devops-git-workflow-mcq",
+  "title": "Choosing a Branching Strategy",
+  "category": "Git",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Which Workflow Fits?\n\nA small team practices **continuous delivery**: they want to integrate work into `main` many times a day, keep `main` always releasable, and avoid long-lived branches that drift and cause painful merges. They rely on feature flags and a strong automated test suite.\n\nWhich branching strategy best fits these goals?",
+  "options": [
+    { "id": "a", "text": "**Gitflow** — long-lived `develop`, `release`, and `hotfix` branches alongside `main`" },
+    { "id": "b", "text": "**Trunk-based development** — everyone commits to (or merges very short-lived branches into) `main` frequently, guarded by CI and feature flags" },
+    { "id": "c", "text": "A single shared branch where each developer keeps their own personal long-running fork merged once per release" },
+    { "id": "d", "text": "One permanent feature branch per developer that is only merged at the end of the project" }
+  ],
+  "correct_option": "b",
+  "explanation": "**Trunk-based development** is designed exactly for fast, continuous delivery: developers integrate into `main` (the trunk) at least daily using short-lived branches or direct commits, keeping the integration cost low and `main` always releasable. Feature flags hide unfinished work and a strong CI suite catches regressions. **Gitflow** introduces several long-lived branches (`develop`, release, hotfix) and a heavier release ceremony — it suits scheduled, versioned releases, not many-times-a-day delivery. Long-running personal forks or per-developer permanent branches (c, d) maximize divergence and lead to large, risky merges — the opposite of continuous integration.",
+  "hints": [
+    {
+      "title": "What hurts continuous delivery?",
+      "body": "Long-lived branches drift from main and make merges large and risky. The strategy that minimizes branch lifetime aligns best with integrating many times a day."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

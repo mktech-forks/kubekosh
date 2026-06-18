@@ -1,0 +1,23 @@
+{
+  "id": "aws-pricing-models-mcq",
+  "title": "Optimizing a Mixed Workload's Cost",
+  "category": "Foundations",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Baseline Plus Bursts\n\nA company runs a web platform on EC2 with two distinct demand profiles:\n\n- A **steady 24/7 baseline** of roughly 20 instances that has been stable for over a year and is expected to continue.\n- A **spiky, batch image-processing tier** that runs irregularly, can be safely interrupted and restarted, and tolerates instances disappearing mid-run.\n\nThe finance team wants the lowest sustainable cost without harming the user-facing service. Which **purchasing strategy** best fits each tier?",
+  "options": [
+    { "id": "a", "text": "Cover the 24/7 baseline with a **Compute Savings Plan (or Reserved Instances)** for the deep discount on predictable usage, and run the interruptible batch tier on **Spot Instances**." },
+    { "id": "b", "text": "Run everything On-Demand to keep maximum flexibility, then ask AWS for a retroactive discount at the end of the year." },
+    { "id": "c", "text": "Put the steady baseline on **Spot Instances** to get the biggest discount, and run the interruptible batch jobs on **Reserved Instances** for guaranteed capacity." },
+    { "id": "d", "text": "Use **Dedicated Hosts** for both tiers so that all workloads run on single-tenant hardware, which is always the cheapest option." }
+  ],
+  "correct_option": "a",
+  "explanation": "Match each demand profile to the right pricing model. A **predictable, always-on baseline** is the textbook case for a **Savings Plan or Reserved Instances**: you commit to a steady level of usage for 1 or 3 years and receive a large discount over On-Demand. An **interruption-tolerant** batch workload is the textbook case for **Spot Instances**, which offer up to ~90% off On-Demand in exchange for AWS being able to reclaim capacity with two minutes' notice. Option B leaves the steady baseline at full On-Demand price (no retroactive discounts exist). Option C inverts the strategy: putting your always-on, user-facing baseline on Spot risks interruptions to production, and committing to RIs for irregular batch capacity wastes the commitment when it's idle. Option D is wrong because **Dedicated Hosts** are a *more* expensive, single-tenant option used for licensing/compliance, not a cost-minimization default.",
+  "hints": [
+    { "title": "Predictable vs. interruptible", "body": "Commitment-based pricing (Savings Plans/RIs) rewards predictable, steady usage. Spot rewards workloads that don't mind being interrupted." },
+    { "title": "Never put production on Spot if it can't be interrupted", "body": "Spot capacity can be reclaimed with ~2 minutes' notice. That's fine for retryable batch jobs, dangerous for a steady user-facing baseline." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

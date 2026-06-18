@@ -1,0 +1,25 @@
+{
+  "id": "devops-cloud-providers-mcq",
+  "title": "Identifying AWS Services",
+  "category": "Cloud",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Which Service Provides Compute?\n\nYou need to launch a **resizable virtual server** on AWS — a machine where you pick the CPU and memory, install your own OS and software, and can resize it later. Which AWS service is the core, general-purpose **compute** offering for this?",
+  "options": [
+    { "id": "a", "text": "**EC2** (Elastic Compute Cloud)" },
+    { "id": "b", "text": "**S3** (Simple Storage Service)" },
+    { "id": "c", "text": "**RDS** (Relational Database Service)" },
+    { "id": "d", "text": "**Lambda**" }
+  ],
+  "correct_option": "a",
+  "explanation": "**EC2 (Elastic Compute Cloud)** is AWS's core resizable virtual-machine service — you choose an instance type (CPU/memory), pick an OS image, and manage the server yourself. **S3** is object storage for files and blobs, not compute. **RDS** is a managed relational database service (MySQL, PostgreSQL, etc.). **Lambda** runs short-lived event-driven functions (serverless/FaaS), not long-lived resizable VMs. When you want a general-purpose virtual server on AWS, EC2 is the answer.",
+  "hints": [
+    {
+      "title": "Match the resource type",
+      "body": "Compute = virtual machines, storage = files/objects, database = managed DB engines, functions = serverless code. The question asks for a resizable virtual server."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

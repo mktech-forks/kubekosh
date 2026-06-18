@@ -1,0 +1,29 @@
+{
+  "id": "devops-terraform-modules-mcq",
+  "title": "Terraform count vs for_each and Resource Reindexing",
+  "category": "Infrastructure as Code",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## The Middle Element Problem\n\nA module provisions IAM users from a list:\n\n```hcl\nvariable \"users\" {\n  default = [\"alice\", \"bob\", \"carol\"]\n}\n\nresource \"aws_iam_user\" \"this\" {\n  count = length(var.users)\n  name  = var.users[count.index]\n}\n```\n\nYou remove `\"bob\"` from the list. You run `terraform plan` and are alarmed to see that the **carol** user is scheduled to be destroyed and recreated, even though only bob was removed.\n\nWhat is happening, and what is the correct fix?",
+  "options": [
+    { "id": "a", "text": "With `count`, resources are tracked by positional index (`[0]`,`[1]`,`[2]`). Removing the middle element shifts carol from index 2 to index 1, so Terraform sees `this[2]` destroyed and `this[1]` changed. Switch to `for_each` over a set/map so each resource is keyed by a stable identity (e.g. the username) rather than position." },
+    { "id": "b", "text": "This is expected and unavoidable; any change to a list-driven resource forces recreation of all elements after the changed index. Use `create_before_destroy` lifecycle to avoid downtime, but the recreation itself cannot be prevented." },
+    { "id": "c", "text": "The issue is that `count` does not support `length()`. Replace it with a hardcoded count and add a `dynamic` block so the list elements are iterated lazily without reindexing." },
+    { "id": "d", "text": "Run `terraform state mv` after every list edit to shift the indices manually; this is the documented and only supported way to handle ordered `count` collections." }
+  ],
+  "correct_option": "a",
+  "explanation": "`count` addresses instances by ordinal position in the resource address (`aws_iam_user.this[0]`, `[1]`, `[2]`). Terraform's state keys are those indices, so deleting a middle element shifts every later element down one slot; Terraform diffs by address and concludes that the shifted instances changed and the now-missing tail index must be destroyed. `for_each` over a set or map keys each instance by a stable value (`aws_iam_user.this[\"carol\"]`), so removing `\"bob\"` only destroys `this[\"bob\"]` and leaves carol untouched. (b) is wrong: the recreation is not inherent to list-driven resources, it is specific to positional indexing; `for_each` prevents it entirely. (c) is wrong: `count` works fine with `length()`, and `dynamic` blocks generate repeated nested blocks within a single resource (e.g. multiple `ingress` rules) — they are unrelated to instance identity. (d) is wrong: `state mv` can patch indices but it is an error-prone manual workaround, not the intended pattern; `for_each` is the structural fix.",
+  "hints": [
+    {
+      "title": "How is each instance addressed?",
+      "body": "Compare aws_iam_user.this[1] (count) with aws_iam_user.this[\"carol\"] (for_each). One key is positional, the other is identity."
+    },
+    {
+      "title": "What is a dynamic block for?",
+      "body": "dynamic blocks repeat nested configuration blocks inside one resource. They are not a way to choose how many resource instances exist."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

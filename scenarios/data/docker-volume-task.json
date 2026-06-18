@@ -1,0 +1,46 @@
+{
+  "id": "docker-volume-task",
+  "title": "Persist Data With a Volume",
+  "category": "Storage",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Mount a Named Volume\n\nNamed volumes let container data outlive the container.\n\n**Requirements:**\n1. Create a named volume called **`data-vol`**\n2. Run an **`alpine`** container named **`vbox`** in the background (e.g. `sleep 3600` to keep it alive)\n3. Mount the **`data-vol`** volume at **`/data`** inside the container\n\n> 💡 Create the volume with `docker volume create`, then mount it with `-v data-vol:/data` on `docker run`.",
+  "hints": [
+    {
+      "title": "Create the volume",
+      "body": "A named volume is created independently of any container.",
+      "command": "docker volume create data-vol"
+    },
+    {
+      "title": "Run a container with the volume mounted",
+      "body": "Keep a lightweight container alive with sleep and mount the volume at /data.",
+      "command": "docker run -d --name vbox -v data-vol:/data alpine sleep 3600"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker rm -f vbox 2>/dev/null || true" },
+    { "command": "docker volume rm data-vol 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that the 'data-vol' volume exists and is mounted into the 'vbox' container.",
+    "commands": [
+      {
+        "description": "Volume 'data-vol' exists",
+        "command": "docker volume inspect data-vol -f '{{.Name}}' 2>/dev/null",
+        "expected_output": "data-vol",
+        "match": "exact"
+      },
+      {
+        "description": "Container 'vbox' mounts the 'data-vol' volume",
+        "command": "docker inspect -f '{{range .Mounts}}{{.Name}} {{end}}' vbox 2>/dev/null",
+        "expected_output": "data-vol",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rm -f vbox 2>/dev/null || true" },
+    { "command": "docker volume rm data-vol 2>/dev/null || true" }
+  ]
+}

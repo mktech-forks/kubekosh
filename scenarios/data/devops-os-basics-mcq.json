@@ -1,0 +1,25 @@
+{
+  "id": "devops-os-basics-mcq",
+  "title": "Why Linux Runs the Cloud",
+  "category": "Operating Systems",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## The Default OS of Infrastructure\n\nA new engineer asks why nearly every cloud server, container base image, and CI runner they encounter is running **Linux** rather than another operating system.\n\nWhich answer best explains Linux's dominance in server and cloud infrastructure?",
+  "options": [
+    { "id": "a", "text": "Linux is open source and free to run at scale, extremely stable, deeply scriptable from the shell, has a rich package ecosystem, and containers are built on Linux kernel features — so it's the natural fit for servers and the cloud." },
+    { "id": "b", "text": "Linux requires a per-core paid license for every server, which large clouds prefer because it simplifies billing." },
+    { "id": "c", "text": "Linux is popular mainly because of its polished desktop GUI, which administrators use to click through server configuration." },
+    { "id": "d", "text": "Servers need Windows-only features such as the registry and Active Directory, and Linux emulates them better than Windows itself." }
+  ],
+  "correct_option": "a",
+  "explanation": "Linux dominates server and cloud infrastructure for several reinforcing reasons: it is **open source and free** to deploy across thousands of machines (no per-instance license cost), it is **stable and lightweight** for long-running headless workloads, it is **deeply scriptable** through the shell and tools so everything can be automated, it has a mature **package ecosystem** (apt, yum/dnf, etc.), and — crucially — **containers are a Linux-native technology** built on kernel features like namespaces and cgroups. Option b is false: mainstream Linux distributions don't require a per-core license (you may pay for *support*, but the OS itself is free). Option c is wrong because servers are typically managed *without* a GUI — administration is done over SSH and scripts, and many server installs have no desktop at all. Option d is backwards: those are Windows features, and you wouldn't run a Linux server to emulate them.",
+  "hints": [
+    {
+      "title": "Why do containers need Linux?",
+      "body": "Containers rely on Linux kernel primitives (namespaces and cgroups) for isolation. That alone ties the entire container/cloud ecosystem to Linux."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

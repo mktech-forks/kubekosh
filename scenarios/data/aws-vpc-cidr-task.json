@@ -1,0 +1,33 @@
+{
+  "id": "aws-vpc-cidr-task",
+  "title": "Plan VPC Subnet Capacity",
+  "category": "Networking",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## How Many /24 Subnets in a VPC?\n\nYou are designing a VPC with the CIDR **`10.0.0.0/16`** and want to carve it into **`/24`** subnets (one per AZ/tier).\n\n**Your task:** compute how many **`/24`** subnets fit in `10.0.0.0/16` and write just the number to **`/root/subnets.txt`**.\n\n> 💡 Each step up in prefix length (e.g. /16 → /24 is 8 bits) multiplies the subnet count by 2^8. Python's `ipaddress` module can enumerate `subnets(new_prefix=24)`.",
+  "hints": [
+    {
+      "title": "Enumerate the subnets",
+      "body": "ipaddress.ip_network(...).subnets(new_prefix=24) yields every /24; count them.",
+      "command": "python3 -c \"import ipaddress; print(len(list(ipaddress.ip_network('10.0.0.0/16').subnets(new_prefix=24))))\" > /root/subnets.txt"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/subnets.txt" }
+  ],
+  "validation": {
+    "description": "Checks that /root/subnets.txt contains the number of /24s in a /16 (256).",
+    "commands": [
+      {
+        "description": "subnets.txt contains 256",
+        "command": "cat /root/subnets.txt 2>/dev/null | tr -d ' '",
+        "expected_output": "256",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/subnets.txt" }
+  ]
+}

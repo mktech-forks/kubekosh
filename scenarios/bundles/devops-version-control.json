@@ -1,0 +1,20 @@
+{
+  "id": "devops-version-control",
+  "subject": "devops",
+  "name": "Version Control with Git",
+  "icon": "♾️",
+  "tagline": "Git, branching and hosting",
+  "color": "#8b5cf6",
+  "colorDim": "rgba(139,92,246,0.12)",
+  "exam_minutes": 45,
+  "scenario_ids": [
+    "devops-git-lesson",
+    "devops-git-workflow-mcq",
+    "devops-git-merge-rebase-mcq",
+    "devops-vcs-hosting-mcq",
+    "devops-git-init-task",
+    "devops-git-branch-task",
+    "devops-git-tag-task",
+    "devops-gitignore-task"
+  ]
+}

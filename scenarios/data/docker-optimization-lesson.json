@@ -1,0 +1,12 @@
+{
+  "id": "docker-optimization-lesson",
+  "title": "Building Smaller, Faster Images",
+  "category": "Optimization",
+  "difficulty": "Hard",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## Why Image Size Matters\n\nSmaller images pull faster, start faster, and expose less attack surface. A few techniques get you most of the way:\n\n### 1. Start from a small base\n`alpine` (~5 MB) or `-slim` variants instead of a full distro. Use `scratch` (empty) for static binaries.\n\n### 2. Multi-stage builds\nCompile/build in a heavy stage, then copy **only the artifact** into a tiny final stage:\n\n```dockerfile\nFROM golang:alpine AS build\nWORKDIR /src\nCOPY . .\nRUN go build -o /app\n\nFROM alpine:latest        # final stage — no compiler, no source\nCOPY --from=build /app /app\nENTRYPOINT [\"/app\"]\n```\n\nThe final image contains the binary but **none** of the build toolchain.\n\n### 3. Minimise layers and cache well\n- Combine related `RUN` steps with `&&` and clean up in the **same** layer (e.g. `apt-get install ... && rm -rf /var/lib/apt/lists/*`). Cleaning in a later layer doesn't shrink the earlier one.\n- Order instructions **least- to most-frequently-changing** so dependency layers stay cached when only source changes.\n\n### 4. Use a `.dockerignore`\nKeep `.git`, `node_modules`, build output and secrets out of the build context entirely.\n\n### Inspect what you built\n```bash\ndocker images          # see the final size\ndocker history <image> # see each layer's contribution\n```\n\nMark complete, then build a multi-stage image in the next task.",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

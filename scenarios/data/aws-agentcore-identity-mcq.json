@@ -1,0 +1,22 @@
+{
+  "id": "aws-agentcore-identity-mcq",
+  "title": "Access Control for Agentic AI",
+  "category": "Generative AI",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Least Privilege for AI Agents\n\nA team is building an **agentic** application: a Bedrock-powered agent that calls internal tools and APIs **on behalf of individual users**. Security requires that each agent invocation acts with a **scoped identity** tied to the requesting user — not a single shared, broadly-permissioned credential — and that access to downstream resources is governed and auditable.\n\nWhich approach best meets this requirement?",
+  "options": [
+    { "id": "a", "text": "Use Amazon Bedrock AgentCore Identity to give the agent a managed, scoped identity and govern its access to tools/resources per user" },
+    { "id": "b", "text": "Create one IAM user with a long-lived access key that the agent uses for every request" },
+    { "id": "c", "text": "Embed a static API key in the agent's prompt template so it can call the tools" },
+    { "id": "d", "text": "Give the agent the same administrator role the developers use, for simplicity" }
+  ],
+  "correct_option": "a",
+  "explanation": "Agentic workloads need identity and least-privilege access scoped to the acting user/session. Amazon Bedrock AgentCore Identity provides managed identity and access controls for agents, so each invocation is governed, scoped, and auditable. A single shared IAM user with a long-lived key (b), a static key in the prompt (c), or reusing an admin role (d) all violate least privilege, can't attribute actions to a user, and create a large blast radius if leaked.",
+  "hints": [
+    { "title": "Per-user scope, not shared creds", "body": "The phrase 'on behalf of individual users' with a scoped identity rules out any single shared or admin credential." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

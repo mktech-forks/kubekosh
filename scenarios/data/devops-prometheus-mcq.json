@@ -1,0 +1,25 @@
+{
+  "id": "devops-prometheus-mcq",
+  "title": "How Prometheus Collects Metrics",
+  "category": "Monitoring",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Pull or Push?\n\nYou're instrumenting a service to be monitored by **Prometheus**. Which statement correctly describes how Prometheus gathers metrics by default?",
+  "options": [
+    { "id": "a", "text": "Prometheus **scrapes (pulls)** metrics by making HTTP requests to each target's metrics endpoint on a configured interval, stores them as time series, and you query them with PromQL" },
+    { "id": "b", "text": "Each application **pushes** its metrics to Prometheus in real time over a streaming socket by default" },
+    { "id": "c", "text": "Prometheus reads metrics by tailing log files on every host" },
+    { "id": "d", "text": "Prometheus queries the application's database directly to compute metrics on demand" }
+  ],
+  "correct_option": "a",
+  "explanation": "Prometheus uses a **pull (scrape) model**: it is configured with a list of targets and periodically issues an HTTP GET to each one's metrics endpoint (commonly `/metrics`), reading metrics that apps expose via client-library **instrumentation** or **exporters**. It stores the samples as **time series** and you query them with **PromQL**. Applications do *not* push by default (b) — pushing is only for short-lived batch jobs via the optional Pushgateway. It does not tail logs (c) or read app databases (d).",
+  "hints": [
+    {
+      "title": "Who initiates the connection?",
+      "body": "In the pull model, the monitoring system reaches out to the targets on a schedule, not the other way around. Targets just expose a /metrics endpoint and wait to be scraped."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

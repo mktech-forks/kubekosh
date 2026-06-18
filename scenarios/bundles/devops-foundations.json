@@ -1,0 +1,18 @@
+{
+  "id": "devops-foundations",
+  "subject": "devops",
+  "name": "DevOps Foundations",
+  "icon": "♾️",
+  "tagline": "Culture, lifecycle and the landscape",
+  "color": "#8b5cf6",
+  "colorDim": "rgba(139,92,246,0.12)",
+  "exam_minutes": 30,
+  "scenario_ids": [
+    "devops-intro-lesson",
+    "devops-lifecycle-lesson",
+    "devops-culture-mcq",
+    "devops-language-choice-mcq",
+    "devops-os-basics-mcq",
+    "devops-sdlc-mcq"
+  ]
+}

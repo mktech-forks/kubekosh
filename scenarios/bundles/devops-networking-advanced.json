@@ -1,0 +1,18 @@
+{
+  "id": "devops-networking-advanced",
+  "subject": "devops",
+  "name": "Networking & Web (Advanced)",
+  "icon": "♾️",
+  "tagline": "TLS, load balancing and traffic control",
+  "color": "#6d28d9",
+  "colorDim": "rgba(109,40,217,0.14)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "devops-tls-handshake-mcq",
+    "devops-loadbalancing-mcq",
+    "devops-http2-mcq",
+    "devops-nginx-lb-task",
+    "devops-tls-cert-task",
+    "devops-nginx-ratelimit-task"
+  ]
+}

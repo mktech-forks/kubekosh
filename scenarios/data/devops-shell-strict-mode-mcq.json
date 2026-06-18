@@ -1,0 +1,23 @@
+{
+  "id": "devops-shell-strict-mode-mcq",
+  "title": "Bash Strict Mode: set -euo pipefail",
+  "category": "Shell",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Why didn't the script abort?\n\nA colleague hardens a deployment script with the classic \"strict mode\" header and is surprised by its behaviour:\n\n```bash\n#!/usr/bin/env bash\nset -euo pipefail\n\nif grep -q 'ERROR' /var/log/app.log; then\n  echo 'errors found'\nfi\n\ncurl -sf https://example.com/health | tee /tmp/health\necho 'continuing...'\n```\n\nThe log contains no `ERROR` line (so `grep` exits non-zero), yet the script does **not** abort there. Which statement most accurately describes the behaviour of `set -euo pipefail`?",
+  "options": [
+    { "id": "a", "text": "`-e` aborts on every command that returns a non-zero status, so the failing `grep` should have terminated the script; the observed behaviour is a bug in this Bash version." },
+    { "id": "b", "text": "`-e` does not trigger when a command's status is being tested as part of an `if`, `while`, `&&`, `||`, or `!` construct; `-u` errors on referencing unset variables; and `-o pipefail` makes a pipeline return the status of the last (rightmost) command that exited non-zero, so the `curl | tee` line fails the whole pipe if `curl` fails even though `tee` succeeds." },
+    { "id": "c", "text": "`-o pipefail` makes a pipeline succeed only if every stage exits zero, and it reports the status of the *first* command in the pipeline; `-u` treats empty strings as unset; `-e` ignores conditionals." },
+    { "id": "d", "text": "`-u` aborts on unset variables only inside functions, `-e` aborts on the last command of a pipeline regardless of pipefail, and `pipefail` has no effect unless `-e` is also set." }
+  ],
+  "correct_option": "b",
+  "explanation": "The `grep` did not abort the script because it is the condition of an `if`: `-e` (errexit) is explicitly suppressed when a command's exit status is consumed by `if`/`while`/`until`, by `&&`/`||`, or after `!`. That is the documented exception, not a bug, which rules out (a). `-u` (nounset) errors when an *unset* variable is referenced (empty-but-set variables are fine, and there is no \"only in functions\" rule), which kills (c) and (d). `pipefail` changes a pipeline's exit status to that of the **last (rightmost) command that exited non-zero** (zero only if all succeed); so `curl -sf ... | tee` fails if `curl` fails even though `tee` returns 0 — that is the real value of pipefail. Option (c) inverts this by claiming it reports the *first* command's status, and (d) wrongly claims pipefail needs `-e`. pipefail affects the pipeline's status independently; `-e` then decides whether that non-zero status aborts the script.",
+  "hints": [
+    { "title": "The errexit exception", "body": "errexit (-e) is intentionally disabled for any command whose exit status is being tested, e.g. the condition of an if/while, an operand of && or ||, or a command preceded by !." },
+    { "title": "What pipefail actually returns", "body": "Without pipefail a pipeline's status is just the last stage's status. With pipefail it becomes the status of the last command to fail, so a failing producer feeding a succeeding consumer no longer hides the failure." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

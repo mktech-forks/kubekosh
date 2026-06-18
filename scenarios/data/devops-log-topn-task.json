@@ -1,0 +1,34 @@
+{
+  "id": "devops-log-topn-task",
+  "title": "Find the Top Talker in a Log",
+  "category": "Shell",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Who Hit Us the Most?\n\nA file **`/root/ips.log`** contains one client IP per line (with repeats).\n\n**Your task:** determine the **single most frequent IP** and write it (just the address) to **`/root/top.txt`**.\n\n> 💡 The classic pipeline is `sort | uniq -c | sort -nr` to rank by count, then take the first line and strip the count. `uniq -c` needs its input sorted first.",
+  "hints": [
+    {
+      "title": "Count, rank, pick",
+      "body": "Sort so identical lines are adjacent, count with uniq -c, sort numerically descending, take the top line, then print just the IP field.",
+      "command": "sort /root/ips.log | uniq -c | sort -nr | head -n1 | awk '{print $2}' > /root/top.txt"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/top.txt" },
+    { "command": "printf '1.1.1.1\\n2.2.2.2\\n1.1.1.1\\n3.3.3.3\\n1.1.1.1\\n2.2.2.2\\n' > /root/ips.log" }
+  ],
+  "validation": {
+    "description": "Checks that /root/top.txt holds the most frequent IP (1.1.1.1).",
+    "commands": [
+      {
+        "description": "top.txt contains 1.1.1.1",
+        "command": "cat /root/top.txt 2>/dev/null | tr -d ' '",
+        "expected_output": "1.1.1.1",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/top.txt /root/ips.log" }
+  ]
+}

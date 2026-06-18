@@ -1,0 +1,25 @@
+{
+  "id": "devops-culture-mcq",
+  "title": "The Heart of DevOps Culture",
+  "category": "Getting Started",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## What Is DevOps, Really?\n\nA company decides to \"do DevOps.\" One manager buys a popular CI/CD tool and declares the transformation complete. A year later, dev and ops still blame each other for every outage and deployments are still slow.\n\nWhat is the **central idea** of DevOps *culture* that this company missed?",
+  "options": [
+    { "id": "a", "text": "DevOps is a specific tool or platform you install; once it's running, you have DevOps." },
+    { "id": "b", "text": "DevOps breaks down the silos between development and operations, creating shared ownership and responsibility for the entire software lifecycle." },
+    { "id": "c", "text": "DevOps is solely the operations team's job — developers just hand off code and move on." },
+    { "id": "d", "text": "DevOps mainly means writing more documentation so handoffs between teams go smoothly." }
+  ],
+  "correct_option": "b",
+  "explanation": "DevOps is fundamentally a **cultural shift**: dev and ops (and often QA and security) stop working as isolated silos and instead **share ownership and responsibility** for code from commit all the way through to running it in production. That shared accountability — \"you build it, you run it\" — is what actually reduces friction and speeds delivery. Tools (option a) *support* DevOps but cannot create the culture by themselves. Making it only ops's job (c) recreates the very wall DevOps removes. More documentation (d) can help communication but is a tactic, not the core idea — it doesn't change who is accountable for the whole lifecycle.",
+  "hints": [
+    {
+      "title": "Think about ownership, not software",
+      "body": "Ask yourself: after adopting DevOps, who is responsible when the app breaks in production at 2am? The answer reveals what changed culturally."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

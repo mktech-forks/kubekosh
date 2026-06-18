@@ -1,0 +1,38 @@
+{
+  "id": "devops-git-squash-task",
+  "title": "Squash Commits Before Merge",
+  "category": "Git",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Tidy the History\n\nThe repository at **`/root/squashrepo`** (branch `main`) has **4 commits**: an initial commit plus 3 noisy work-in-progress commits on top.\n\n**Your task:** collapse the **last 3 commits into a single commit**, leaving the initial commit intact — so the branch ends up with exactly **2 commits**.\n\n> 💡 No interactive editor is available here. Use the non-interactive trick: `git reset --soft HEAD~3` (moves the branch back but keeps all changes staged), then make one new `git commit`.",
+  "hints": [
+    {
+      "title": "Soft reset, then recommit",
+      "body": "reset --soft rewinds the branch pointer but leaves the combined changes staged in the index, so a single commit squashes them.",
+      "command": "cd /root/squashrepo && git reset --soft HEAD~3 && git commit -m 'squashed feature work'"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -rf /root/squashrepo" },
+    { "command": "git config --global user.email lab@kubekosh.local" },
+    { "command": "git config --global user.name 'KubeKosh Lab'" },
+    { "command": "git init -b main /root/squashrepo" },
+    { "command": "cd /root/squashrepo && echo init > a.txt && git add a.txt && git commit -m initial" },
+    { "command": "cd /root/squashrepo && echo 1 >> a.txt && git commit -am wip1 && echo 2 >> a.txt && git commit -am wip2 && echo 3 >> a.txt && git commit -am wip3" }
+  ],
+  "validation": {
+    "description": "Checks that main has exactly 2 commits after squashing.",
+    "commands": [
+      {
+        "description": "Branch has exactly 2 commits",
+        "command": "git -C /root/squashrepo rev-list --count HEAD 2>/dev/null",
+        "expected_output": "2",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -rf /root/squashrepo" }
+  ]
+}

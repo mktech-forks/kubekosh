@@ -1,0 +1,39 @@
+{
+  "id": "docker-cleanup-task",
+  "title": "Stop and Remove a Container",
+  "category": "Running Containers",
+  "difficulty": "Easy",
+  "type": "task",
+  "weight": 3,
+  "description": "## Clean Up After Yourself\n\nA leftover container named **`stale`** is running and needs to go.\n\n**Your task:** **stop** and **remove** the `stale` container so it no longer appears in `docker ps -a`.\n\n> 💡 Stop it with `docker stop stale`, then remove it with `docker rm stale`. (Or do both at once with `docker rm -f stale`.)",
+  "hints": [
+    {
+      "title": "Stop then remove",
+      "body": "Stopping ends the process; removing deletes the container record.",
+      "command": "docker stop stale && docker rm stale"
+    },
+    {
+      "title": "Force-remove in one step",
+      "body": "docker rm -f stops and removes a running container in a single command.",
+      "command": "docker rm -f stale"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker rm -f stale 2>/dev/null || true" },
+    { "command": "docker run -d --name stale alpine sleep 3600" }
+  ],
+  "validation": {
+    "description": "Checks that no container named 'stale' remains (running or stopped).",
+    "commands": [
+      {
+        "description": "No container named 'stale' exists",
+        "command": "docker ps -a --filter name=stale --format '{{.Names}}'",
+        "expected_output": "stale",
+        "match": "not_contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rm -f stale 2>/dev/null || true" }
+  ]
+}

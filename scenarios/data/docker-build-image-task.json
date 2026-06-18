@@ -1,0 +1,47 @@
+{
+  "id": "docker-build-image-task",
+  "title": "Build an Image From a Dockerfile",
+  "category": "Building Images",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Build a Tagged Image\n\nA build context has been prepared for you at **`/root/dockerlab`** containing a `Dockerfile`:\n\n```dockerfile\nFROM alpine:latest\nRUN echo \"built in kubekosh\" > /msg.txt\nCMD [\"cat\", \"/msg.txt\"]\n```\n\n**Requirements:**\n1. Build an image from that Dockerfile\n2. Tag it as **`myapp:1.0`**\n\n> 💡 `docker build -t <name>:<tag> <context>`. The context is the directory containing the Dockerfile — run the build from inside `/root/dockerlab` and use `.` as the context.",
+  "hints": [
+    {
+      "title": "Build with a tag",
+      "body": "cd into the build context, then build with -t to set the repository and tag.",
+      "command": "cd /root/dockerlab && docker build -t myapp:1.0 ."
+    },
+    {
+      "title": "Verify the image and its output",
+      "body": "List the image, then run it once to confirm the CMD works (it should print the message).",
+      "command": "docker images myapp && docker run --rm myapp:1.0"
+    }
+  ],
+  "setup_commands": [
+    { "command": "mkdir -p /root/dockerlab" },
+    { "command": "printf 'FROM alpine:latest\\nRUN echo \"built in kubekosh\" > /msg.txt\\nCMD [\"cat\", \"/msg.txt\"]\\n' > /root/dockerlab/Dockerfile" },
+    { "command": "docker rmi -f myapp:1.0 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that an image tagged myapp:1.0 was built and runs the expected command.",
+    "commands": [
+      {
+        "description": "Image 'myapp:1.0' exists",
+        "command": "docker image inspect myapp:1.0 -f '{{.RepoTags}}' 2>/dev/null",
+        "expected_output": "myapp:1.0",
+        "match": "contains"
+      },
+      {
+        "description": "Running the image prints the build message",
+        "command": "docker run --rm myapp:1.0 2>/dev/null",
+        "expected_output": "built in kubekosh",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rmi -f myapp:1.0 2>/dev/null || true" },
+    { "command": "rm -rf /root/dockerlab" }
+  ]
+}

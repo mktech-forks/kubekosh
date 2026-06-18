@@ -1,0 +1,22 @@
+{
+  "id": "docker-intermediate",
+  "subject": "docker",
+  "name": "Docker Intermediate",
+  "icon": "🐳",
+  "tagline": "Networking, config, tags and limits",
+  "color": "#1d76c4",
+  "colorDim": "rgba(29,118,196,0.12)",
+  "exam_minutes": 75,
+  "scenario_ids": [
+    "docker-networking-lesson",
+    "docker-network-task",
+    "docker-env-vars-task",
+    "docker-logs-mcq",
+    "docker-restart-policy-task",
+    "docker-tagging-mcq",
+    "docker-tag-task",
+    "docker-resource-limits-task",
+    "docker-healthcheck-lesson",
+    "docker-prune-mcq"
+  ]
+}

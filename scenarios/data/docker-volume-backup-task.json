@@ -1,0 +1,48 @@
+{
+  "id": "docker-volume-backup-task",
+  "title": "Back Up a Volume",
+  "category": "Storage",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## The Classic Volume Backup Pattern\n\nNamed volumes are managed by Docker, so you back them up by mounting the volume **and** a host directory into a throwaway container that tars one into the other.\n\nA volume named **`bkp-vol`** has been prepared with some data in it.\n\n**Your task:** produce a backup archive at **`/root/backup.tar`** containing the contents of `bkp-vol`.\n\n> 💡 Run a helper container that mounts the volume and your home directory, then tars the volume's contents:\n> `docker run --rm -v bkp-vol:/data -v /root:/backup alpine tar cf /backup/backup.tar -C /data .`",
+  "hints": [
+    {
+      "title": "Mount both the volume and a target dir",
+      "body": "A throwaway container can see the named volume and a host path at the same time, letting tar copy between them.",
+      "command": "docker run --rm -v bkp-vol:/data -v /root:/backup alpine tar cf /backup/backup.tar -C /data ."
+    },
+    {
+      "title": "Inspect the archive",
+      "body": "List the archive contents to confirm the volume's files were captured.",
+      "command": "tar tf /root/backup.tar"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/backup.tar" },
+    { "command": "docker volume rm bkp-vol 2>/dev/null || true" },
+    { "command": "docker volume create bkp-vol" },
+    { "command": "docker run --rm -v bkp-vol:/data alpine sh -c 'echo backup-me > /data/file.txt'" }
+  ],
+  "validation": {
+    "description": "Checks that /root/backup.tar exists and contains the volume's file.",
+    "commands": [
+      {
+        "description": "Backup archive /root/backup.tar exists",
+        "command": "test -f /root/backup.tar && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "Archive contains the volume's data file",
+        "command": "tar tf /root/backup.tar 2>/dev/null",
+        "expected_output": "file.txt",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/backup.tar" },
+    { "command": "docker volume rm bkp-vol 2>/dev/null || true" }
+  ]
+}

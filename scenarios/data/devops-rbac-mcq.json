@@ -1,0 +1,29 @@
+{
+  "id": "devops-rbac-mcq",
+  "title": "RBAC vs ABAC for Context-Dependent Access",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## When Roles Aren't Enough\n\nCompliance hands you a new access requirement:\n\n> \"An engineer may modify a resource only if (a) the request occurs during their team's business hours, (b) the resource's `environment` tag matches the engineer's assigned environment, and (c) the engineer's clearance level is at least the resource's classification.\"\n\nYour current authorization model uses static roles like `deploy-engineer` and `db-admin`. The team debates whether to keep extending roles or move to a different model.\n\nWhich model fits this requirement, and why?",
+  "options": [
+    { "id": "a", "text": "Attribute-Based Access Control (ABAC): decisions are computed from attributes of the subject, resource, action, and environment/context (time-of-day, tags, clearance), which naturally expresses fine-grained, context-dependent rules that role membership alone cannot capture." },
+    { "id": "b", "text": "Role-Based Access Control (RBAC): create one role per combination of environment, business-hours window, and clearance level (e.g. `prod-restricted-9to5-secret`) and assign engineers to the matching role; this captures the context within the role set." },
+    { "id": "c", "text": "RBAC with role hierarchy: define a base `engineer` role and inherit time/tag/clearance permissions through parent roles, since role inheritance expresses contextual conditions like time-of-day." },
+    { "id": "d", "text": "Discretionary Access Control (DAC): let each resource owner grant access at their discretion, since owners know the environment tags and clearance levels and can apply the rules per request." }
+  ],
+  "correct_option": "a",
+  "explanation": "The rule depends on dynamic, multi-dimensional attributes — request time, the resource's environment tag, the resource's classification versus the subject's clearance. ABAC evaluates a policy over attributes of the subject, resource, action, and environment/context at request time, which is exactly how you express 'time-of-day AND matching tag AND clearance >= classification'. It scales to fine-grained, contextual rules without a role explosion. (b) is the classic RBAC failure mode here: encoding every combination of environment x time-window x clearance into discrete roles produces a combinatorial explosion of roles, and it still can't express a genuinely dynamic condition like 'current time is within business hours' — role membership is static, not evaluated per request against live context. (c) is wrong: role hierarchies let permissions be inherited, but inheritance does not introduce contextual/conditional evaluation; a parent role can't represent 'only during business hours'. (d) is wrong: DAC delegates decisions to resource owners' discretion, which gives inconsistent, manual enforcement and does not systematically evaluate the required attributes — it's the opposite of a centralized, rule-driven policy. RBAC remains fine for coarse role grants; ABAC is the right tool when access must depend on request context and attributes.",
+  "hints": [
+    {
+      "title": "What is the decision based on?",
+      "body": "If access depends on dynamic context (time, tags, clearance) and not just who you are, role membership alone can't express it."
+    },
+    {
+      "title": "Role explosion",
+      "body": "Trying to encode every context combination as a separate role is the tell-tale sign you've outgrown RBAC and want attribute-based rules."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

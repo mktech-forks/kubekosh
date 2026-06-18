@@ -1,0 +1,48 @@
+{
+  "id": "devops-gitignore-task",
+  "title": "Ignore Files With .gitignore",
+  "category": "Git",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 4,
+  "description": "## Keep Junk and Secrets Out of Git\n\nA repository is ready at **`/root/ignorerepo`** containing `app.py`, `secret.env`, and `debug.log`.\n\n**Your task:** create a **`.gitignore`** in that repo so that:\n1. **all `*.log`** files are ignored\n2. the file **`secret.env`** is ignored\n\n> 💡 Each line of `.gitignore` is a pattern (e.g. `*.log`, `secret.env`). Verify with `git check-ignore <file>` — it echoes the path when a file is ignored.",
+  "hints": [
+    {
+      "title": "Write the ignore patterns",
+      "body": "Add one pattern per line. *.log matches any log file; a bare filename matches that file.",
+      "command": "printf '*.log\\nsecret.env\\n' > /root/ignorerepo/.gitignore"
+    },
+    {
+      "title": "Verify",
+      "body": "git check-ignore prints the path of any file that a .gitignore rule matches.",
+      "command": "cd /root/ignorerepo && git check-ignore secret.env debug.log"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -rf /root/ignorerepo" },
+    { "command": "git config --global user.email lab@kubekosh.local" },
+    { "command": "git config --global user.name 'KubeKosh Lab'" },
+    { "command": "git init -b main /root/ignorerepo" },
+    { "command": "cd /root/ignorerepo && touch app.py secret.env debug.log" }
+  ],
+  "validation": {
+    "description": "Checks that secret.env and *.log files are ignored in /root/ignorerepo.",
+    "commands": [
+      {
+        "description": "secret.env is ignored",
+        "command": "git -C /root/ignorerepo check-ignore secret.env 2>/dev/null",
+        "expected_output": "secret.env",
+        "match": "exact"
+      },
+      {
+        "description": "debug.log is ignored (matched by *.log)",
+        "command": "git -C /root/ignorerepo check-ignore debug.log 2>/dev/null",
+        "expected_output": "debug.log",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -rf /root/ignorerepo" }
+  ]
+}

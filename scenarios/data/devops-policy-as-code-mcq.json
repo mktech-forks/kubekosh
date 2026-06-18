@@ -1,0 +1,29 @@
+{
+  "id": "devops-policy-as-code-mcq",
+  "title": "Policy as Code: Enforcing Guardrails Automatically",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Block Non-Compliant Infrastructure Automatically\n\nGovernance has a growing list of hard rules: no public S3 buckets, no privileged pods, all container images must be signed, and all resources must carry a `cost-center` tag. Today these are enforced by humans reading Terraform plans and Kubernetes manifests during review, which is slow and error-prone.\n\nYou want to enforce these rules **automatically and consistently** — failing a Terraform plan in CI and rejecting a non-compliant Kubernetes manifest at the cluster — without relying on a reviewer to catch violations.\n\nWhich approach is the right fit?",
+  "options": [
+    { "id": "a", "text": "Adopt policy as code: express the rules as machine-evaluated policies (e.g. OPA/Rego) and enforce them at the gates — evaluate the Terraform plan in CI (e.g. `conftest`/OPA) and run an admission controller (e.g. OPA Gatekeeper or Kyverno) that rejects non-compliant Kubernetes resources at admission." },
+    { "id": "b", "text": "Write a detailed governance wiki page and a PR checklist template; require reviewers to tick each rule before approving, which standardizes enforcement without new tooling." },
+    { "id": "c", "text": "Add a nightly cron job that scans the live cloud account and cluster, files a ticket for each violation found, and emails the owning team to remediate within the SLA." },
+    { "id": "d", "text": "Enable cloud provider config rules only (e.g. AWS Config) so violations are recorded for audit; since auditing creates accountability, teams will stop creating non-compliant resources." }
+  ],
+  "correct_option": "a",
+  "explanation": "Policy as code expresses governance rules as version-controlled, machine-evaluated code and enforces them programmatically at the points where infrastructure is defined or admitted. OPA with the Rego language is the canonical engine: in CI you evaluate the Terraform plan JSON (e.g. via conftest/OPA) and fail the pipeline on a violation, and in the cluster an admission controller such as OPA Gatekeeper or Kyverno intercepts API requests and denies non-compliant resources (privileged pods, unsigned images, missing tags) before they're persisted. This is automatic, consistent, and shifts enforcement left while still backstopping at admission. (b) still depends entirely on a human remembering and correctly applying the checklist — exactly the slow, error-prone process you're replacing. (c) and (d) are detective controls: they find violations after the fact (the bad bucket already exists, possibly exposed for hours) and rely on follow-up remediation; they do not prevent the non-compliant resource from being created. Preventive policy-as-code gates block the violation at the gate, before it takes effect.",
+  "hints": [
+    {
+      "title": "Preventive vs detective",
+      "body": "Scanning after the fact files tickets; a policy gate refuses the bad change before it's applied. The requirement is to block, not to report."
+    },
+    {
+      "title": "Two enforcement points",
+      "body": "Evaluate the Terraform plan in CI (OPA/conftest) and reject manifests at the Kubernetes admission stage (Gatekeeper/Kyverno) — same policies, both gates."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

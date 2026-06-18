@@ -1,0 +1,23 @@
+{
+  "id": "aws-threat-detection-mcq",
+  "title": "Agentless Threat Detection",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Catching Malicious Activity Across Accounts\n\nA security team running dozens of AWS accounts needs to **continuously detect anomalous and malicious activity** — for example EC2 instances suddenly performing crypto-mining, IAM credentials being used from unusual locations (credential exfiltration), and reconnaissance against the environment. The solution must work **without deploying or maintaining agents** on instances, ingest signals from **VPC Flow Logs, DNS query logs, and CloudTrail**, and surface prioritized findings. Which AWS service BEST satisfies this?",
+  "options": [
+    { "id": "a", "text": "AWS Config with managed and custom compliance rules" },
+    { "id": "b", "text": "Amazon Inspector continuous scanning" },
+    { "id": "c", "text": "Amazon GuardDuty" },
+    { "id": "d", "text": "CloudTrail with Athena queries over the log bucket" }
+  ],
+  "correct_option": "c",
+  "explanation": "**Amazon GuardDuty** is the purpose-built, **agentless threat-detection** service. It continuously analyzes **CloudTrail management/data events, VPC Flow Logs, and DNS query logs** (plus optional EKS, S3, and malware sources) using machine learning, anomaly detection, and curated threat intelligence to produce prioritized **findings** such as CryptoCurrency mining, UnauthorizedAccess/credential exfiltration, and Recon. It deploys with no agents and supports multi-account aggregation via a delegated administrator.\n\n(a) **AWS Config** evaluates resource **configuration compliance** and drift (e.g., 'is this bucket public?') — it does not analyze behavior or detect active threats. (b) **Amazon Inspector** performs **vulnerability assessment** (CVEs in EC2/ECR/Lambda and network reachability) — it tells you what *could* be exploited, not what *is* happening maliciously, and is not driven by flow/DNS/CloudTrail behavior signals. (d) **CloudTrail** is the raw **audit log**; querying it with Athena gives you data but no built-in ML detections, threat intel, or prioritized findings — you would be rebuilding GuardDuty by hand.",
+  "hints": [
+    { "title": "Behavior vs. configuration vs. vulnerability", "body": "Detecting active malicious behavior is different from checking configuration compliance (Config) or scanning for CVEs (Inspector)." },
+    { "title": "Data sources", "body": "The service that natively consumes VPC Flow Logs + DNS + CloudTrail for threat detection — agentless — is the answer." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

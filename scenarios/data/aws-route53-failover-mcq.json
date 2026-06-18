@@ -1,0 +1,23 @@
+{
+  "id": "aws-route53-failover-mcq",
+  "title": "Automatic DNS Failover to a DR Region",
+  "category": "Resilience",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Reacting Automatically to a Primary-Region Outage\n\nA company hosts its application in a primary Region behind an Application Load Balancer, with a warm-standby copy and ALB in a DR Region. They need DNS to **automatically redirect user traffic to the DR Region's endpoint when the primary becomes unhealthy**, and to fail back automatically when the primary recovers — with **no human intervention** and minimal delay. They control the public domain in Amazon Route 53.\n\nWhich Route 53 configuration BEST meets these requirements?",
+  "options": [
+    { "id": "a", "text": "Failover routing policy with a health check on the primary endpoint (primary + secondary records) and a low record TTL" },
+    { "id": "b", "text": "Weighted routing splitting traffic 90/10 between the primary and DR endpoints" },
+    { "id": "c", "text": "Simple routing to the primary, and have an on-call engineer change the record to the DR endpoint during an outage" },
+    { "id": "d", "text": "Latency-based routing between the two Regions so users always hit the lower-latency endpoint" }
+  ],
+  "correct_option": "a",
+  "explanation": "Route 53 **failover routing** with a **health check** is designed for active-passive DR: you create a PRIMARY record (associated with a health check on the primary endpoint) and a SECONDARY record for the DR endpoint. While the health check passes, Route 53 returns the primary; when it fails, Route 53 automatically returns the secondary — and reverts when the primary becomes healthy again. A **low TTL** ensures resolvers pick up the change quickly. **Weighted routing** (B) splits traffic by static weights and does not react to health, so it would keep sending ~90% of users to a dead primary. **Manual DNS change** (C) violates the \"no human intervention\" requirement and is slow/error-prone. **Latency-based routing** (D) optimizes for latency, not availability; it does react to health checks somewhat but is the wrong policy for deliberate active-passive failover and would send traffic to both Regions in normal operation rather than keeping DR passive.",
+  "hints": [
+    { "title": "Which policy is health-aware by design?", "body": "Active-passive DR with automatic redirect on failure maps to one specific Route 53 routing policy paired with health checks." },
+    { "title": "Why low TTL?", "body": "Even with automatic failover, clients cache DNS for the TTL. A low TTL shortens how long users stay pointed at the failed endpoint." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

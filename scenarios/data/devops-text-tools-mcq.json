@@ -1,0 +1,25 @@
+{
+  "id": "devops-text-tools-mcq",
+  "title": "grep vs sed vs awk",
+  "category": "Shell",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## The Right Tool for the Text Job\n\nYou have an access log where each line looks like:\n\n```\n10.0.0.5 - alice [17/Jun/2026:10:32:01] GET /api/health 200\n```\n\nYour task: **print the 3rd whitespace-separated column of every line** (the username, e.g. `alice`) — nothing else, for all lines.\n\nWhich tool is the best fit, and why?",
+  "options": [
+    { "id": "a", "text": "awk '{print $3}' access.log — awk splits each line into fields by whitespace and lets you print a specific column directly." },
+    { "id": "b", "text": "grep '$3' access.log — grep can extract the third column when given the column number as its pattern." },
+    { "id": "c", "text": "sed '3' access.log — sed prints the requested column number as its default behavior." },
+    { "id": "d", "text": "grep alice access.log — searching for the value is equivalent to extracting the column." }
+  ],
+  "correct_option": "a",
+  "explanation": "This is a **field-extraction** task, which is exactly what **awk** is built for. By default awk splits each line into fields on whitespace and exposes them as `$1`, `$2`, `$3`, …, so `awk '{print $3}'` prints the third column of every line. **grep** (b, d) only *searches and filters* lines by a pattern — it has no concept of columns, and it cannot print field 3; `grep '$3'` would just look for the literal text `$3`, and `grep alice` returns whole lines that contain 'alice', not the column. **sed** (c) is a *stream editor* for substitutions and line edits (e.g. `s/foo/bar/`); `sed '3'` is not how you select a column (and `3p` would select the third *line*, not column). Rule of thumb: **grep** = find/filter lines, **sed** = substitute/transform text, **awk** = work with columns/fields.",
+  "hints": [
+    {
+      "title": "Columns vs. lines vs. substitution",
+      "body": "Match the verb to the tool: filtering lines → grep; substituting text → sed; pulling out a numbered column → awk."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

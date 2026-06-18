@@ -1,0 +1,23 @@
+{
+  "id": "devops-loadbalancing-mcq",
+  "title": "L4 vs L7 Load Balancing and Distribution Algorithms",
+  "category": "Web Servers",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Route by URL path\n\nA platform must send requests for `/api/*` to one backend pool and `/static/*` to another, terminate TLS at the balancer, and add an `X-Request-Id` header. Operators also debate whether to distribute connections by round-robin or least-connections, and whether to enable sticky sessions. Which statement is correct?",
+  "options": [
+    { "id": "a", "text": "Path-based routing, TLS termination, and header insertion require a Layer 7 (application) load balancer because they need to parse the HTTP request; a Layer 4 balancer forwards by IP/port and cannot inspect the URL or headers. Least-connections favours the backend with the fewest in-flight requests (better with uneven request durations), round-robin cycles evenly, and sticky sessions pin a client to one backend (useful for in-memory session state but it can unbalance load)." },
+    { "id": "b", "text": "A Layer 4 load balancer can route by URL path as long as it terminates TLS first; Layer 7 is only needed for WebSockets. Round-robin always outperforms least-connections, and sticky sessions are required for any HTTPS traffic." },
+    { "id": "c", "text": "TLS termination is a Layer 4 function (transport layer), so an L4 balancer can both decrypt and route on path; the role of L7 is purely to compress responses. Least-connections sends every request to the same server until it is full." },
+    { "id": "d", "text": "Header insertion can be done at Layer 4 by rewriting TCP options; sticky sessions work by hashing the destination port; and round-robin and least-connections are identical when all backends are healthy." }
+  ],
+  "correct_option": "a",
+  "explanation": "Routing on the URL path, inserting an HTTP header, and terminating TLS all require understanding the **application-layer HTTP message**, which is the job of a **Layer 7** load balancer. A **Layer 4** balancer operates on transport-layer information (source/destination IP and port) and forwards segments without parsing payload, so it cannot see a URL path or HTTP headers — this directly refutes (b) and (c)'s claims that L4 can route by path. TLS termination is decidedly not an L4 function (c). **Round-robin** distributes requests evenly in rotation; **least-connections** sends each new request to the backend currently handling the fewest connections, which copes better when request durations vary widely — so (b)'s \"round-robin always wins\" and (c)'s description of least-connections are both wrong. **Sticky sessions** (session affinity) pin a given client to one backend (commonly via a cookie or source-IP hash) so server-side in-memory session state stays reachable; the trade-off is uneven load, and it is certainly not \"required for any HTTPS traffic\" (b) nor implemented by hashing the destination port (d).",
+  "hints": [
+    { "title": "What each layer can see", "body": "L4 sees IP/port only; L7 parses HTTP, so anything that depends on path, host, headers, cookies, or TLS termination needs L7." },
+    { "title": "Algorithm trade-offs", "body": "Round-robin is simple and even; least-connections adapts to backends that are busy with long requests; sticky sessions trade balance for affinity to server-side state." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

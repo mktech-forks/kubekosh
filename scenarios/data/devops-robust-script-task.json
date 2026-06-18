@@ -1,0 +1,45 @@
+{
+  "id": "devops-robust-script-task",
+  "title": "Write a Production-Grade Script",
+  "category": "Shell",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Fail Fast, Fail Loud\n\nProduction scripts must not silently continue after an error or on an unset variable.\n\n**Requirements:** create an executable script at **`/root/deploy.sh`** that:\n1. enables strict mode — **`set -euo pipefail`**\n2. requires **one argument** (an environment name); if it is missing, print a **usage message to stderr** and exit **non-zero**\n3. when given an argument `X`, prints exactly **`Deploying to X`**\n\n> 💡 Guard the argument with `[ $# -lt 1 ]` *before* using `$1` (otherwise `set -u` will error). Don't forget `chmod +x`.",
+  "hints": [
+    {
+      "title": "Strict-mode skeleton",
+      "body": "Enable errexit/nounset/pipefail, validate arg count, write usage to stderr (>&2) and exit 1, then do the work.",
+      "command": "printf '#!/bin/bash\\nset -euo pipefail\\nif [ $# -lt 1 ]; then\\n  echo \"usage: deploy.sh <env>\" >&2\\n  exit 1\\nfi\\necho \"Deploying to $1\"\\n' > /root/deploy.sh && chmod +x /root/deploy.sh"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/deploy.sh" }
+  ],
+  "validation": {
+    "description": "Checks the script is executable, uses strict mode, errors on missing arg, and works with one.",
+    "commands": [
+      {
+        "description": "Script is executable and enables strict mode",
+        "command": "test -x /root/deploy.sh && grep -qE 'set -euo pipefail|set -o errexit' /root/deploy.sh && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "Missing argument prints a usage message to stderr",
+        "command": "/root/deploy.sh 2>&1 1>/dev/null",
+        "expected_output": "usage",
+        "match": "contains"
+      },
+      {
+        "description": "With an argument it prints the deploy line",
+        "command": "/root/deploy.sh staging",
+        "expected_output": "Deploying to staging",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/deploy.sh" }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "aws-security",
+  "subject": "aws",
+  "name": "Security, Identity & Governance",
+  "icon": "☁️",
+  "tagline": "KMS, IAM depth, detection, secrets and Cognito",
+  "color": "#ff9900",
+  "colorDim": "rgba(255,153,0,0.13)",
+  "exam_minutes": 55,
+  "scenario_ids": [
+    "aws-security-lesson",
+    "aws-kms-encryption-mcq",
+    "aws-iam-advanced-mcq",
+    "aws-threat-detection-mcq",
+    "aws-secrets-mcq",
+    "aws-cognito-mfa-mcq",
+    "aws-iam-policy-task",
+    "aws-s3-tls-policy-task",
+    "aws-iam-mfa-condition-task"
+  ]
+}

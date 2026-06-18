@@ -1,0 +1,33 @@
+{
+  "id": "devops-cidr-task",
+  "title": "Subnet Sizing With CIDR",
+  "category": "Cloud",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## How Many Hosts Fit?\n\nYou are designing a VPC and allocate the subnet **`10.0.0.0/24`**.\n\n**Your task:** compute the number of **usable host addresses** in this subnet and write just the number to **`/root/hosts.txt`**.\n\nUse the classic formula: **usable = total addresses − 2** (one network address, one broadcast address).\n\n> 💡 A `/24` has 2^(32−24) total addresses. You can compute it with Python's `ipaddress` module, or by hand. (Note: some cloud providers reserve a few extra addresses per subnet, but here use the standard network+broadcast rule.)",
+  "hints": [
+    {
+      "title": "Let Python do the math",
+      "body": "The ipaddress module knows how many addresses a network holds; subtract 2 for network and broadcast.",
+      "command": "python3 -c \"import ipaddress; print(ipaddress.ip_network('10.0.0.0/24').num_addresses - 2)\" > /root/hosts.txt"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/hosts.txt" }
+  ],
+  "validation": {
+    "description": "Checks that /root/hosts.txt contains the usable host count for a /24 (254).",
+    "commands": [
+      {
+        "description": "hosts.txt contains 254",
+        "command": "cat /root/hosts.txt 2>/dev/null | tr -d ' '",
+        "expected_output": "254",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/hosts.txt" }
+  ]
+}

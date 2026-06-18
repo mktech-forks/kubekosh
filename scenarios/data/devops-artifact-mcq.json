@@ -1,0 +1,25 @@
+{
+  "id": "devops-artifact-mcq",
+  "title": "What an Artifact Repository Is For",
+  "category": "Artifacts",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Where Do Build Outputs Live?\n\nYour pipeline compiles code into `.jar` files and builds container images. What is the primary purpose of an **artifact repository** such as JFrog Artifactory, Sonatype Nexus, or a container registry?",
+  "options": [
+    { "id": "a", "text": "A central, **versioned store of build outputs** (jars, packages, images) so deployments can pull a specific, immutable, reproducible version" },
+    { "id": "b", "text": "A place to store your **source code** and its commit history, replacing Git" },
+    { "id": "c", "text": "A system that **collects runtime metrics and logs** from production for dashboards" },
+    { "id": "d", "text": "A tool that **provisions cloud servers** from declarative templates" }
+  ],
+  "correct_option": "a",
+  "explanation": "An **artifact repository** stores the *outputs* of your build — compiled binaries, language packages, and container images — each tagged with a **version** so a deployment can fetch the exact, immutable artifact that was tested. This makes releases reproducible and rollbacks easy. It is distinct from **source control** (Git stores code, not built binaries — answer b), from **monitoring** stores that hold metrics/logs (c), and from **infrastructure provisioning** (d). The rule of thumb: source repos hold inputs, artifact repos hold versioned outputs.",
+  "hints": [
+    {
+      "title": "Inputs vs outputs",
+      "body": "Git versions the code you write; an artifact repository versions the binaries and images your pipeline produces from that code."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,26 @@
+{
+  "id": "docker-prune-mcq",
+  "title": "Reclaiming Disk Space",
+  "category": "Operations",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## What Does `docker system prune` Remove?\n\nYou run the **plain** command (no extra flags):\n\n```bash\ndocker system prune\n```\n\nWhich resources does it remove by default?",
+  "options": [
+    { "id": "a", "text": "All containers, all images, and all volumes — a complete wipe" },
+    { "id": "b", "text": "Stopped containers, networks not used by any container, dangling images, and build cache — but **not** named volumes" },
+    { "id": "c", "text": "Only stopped containers" },
+    { "id": "d", "text": "Nothing — prune requires you to name each resource explicitly" }
+  ],
+  "correct_option": "b",
+  "explanation": "`docker system prune` reclaims space by removing **stopped** containers, **unused** networks, **dangling** images (untagged layers), and build cache. It deliberately leaves **named volumes** alone to avoid destroying data — you must add `--volumes` to include them. Add `-a` to also remove *all* unused images (not just dangling ones). Running containers and their images are never touched.",
+  "hints": [
+    {
+      "title": "Be explicit about volumes",
+      "body": "Volumes hold data, so prune skips them unless you opt in with --volumes. Use with care.",
+      "command": "docker system prune --volumes"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

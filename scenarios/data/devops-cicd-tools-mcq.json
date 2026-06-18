@@ -1,0 +1,25 @@
+{
+  "id": "devops-cicd-tools-mcq",
+  "title": "Identify the CI/CD Tool",
+  "category": "CI/CD",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Pick the Right Category\n\nThe DevOps toolbox is crowded and tools are easy to mix up. Which of the following is a **CI/CD platform** — a tool whose primary job is to build, test and deploy your code via pipelines?",
+  "options": [
+    { "id": "a", "text": "**Terraform** — declaratively provisions cloud infrastructure" },
+    { "id": "b", "text": "**Prometheus** — collects and stores time-series metrics" },
+    { "id": "c", "text": "**GitHub Actions** — runs pipelines to build, test and deploy code" },
+    { "id": "d", "text": "**Ansible** — applies configuration to servers" }
+  ],
+  "correct_option": "c",
+  "explanation": "**GitHub Actions** is a CI/CD platform: you define workflows that automatically build, test and deploy on events like pushes and pull requests (alongside Jenkins, GitLab CI and CircleCI). The others belong to different categories: **Terraform** is Infrastructure as Code (provisioning), **Ansible** is configuration management, and **Prometheus** is a monitoring/metrics system. They are often used *together with* CI/CD but are not pipeline runners themselves.",
+  "hints": [
+    {
+      "title": "Match tool to job",
+      "body": "Ask 'what is this tool's main verb?' Build/test/deploy on commit = CI/CD. Provision infra = IaC. Configure servers = config management. Collect metrics = monitoring."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

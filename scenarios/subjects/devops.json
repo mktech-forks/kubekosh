@@ -1,0 +1,27 @@
+{
+  "id": "devops",
+  "name": "DevOps",
+  "icon": "♾️",
+  "tagline": "The DevOps Engineer Roadmap",
+  "color": "#8b5cf6",
+  "colorDim": "rgba(139,92,246,0.12)",
+  "environment": "bash",
+  "bundle_order": [
+    "devops-foundations",
+    "devops-shell-scripting",
+    "devops-version-control",
+    "devops-networking",
+    "devops-cloud-serverless",
+    "devops-iac-config",
+    "devops-cicd-gitops",
+    "devops-observability",
+    "devops-shell-advanced",
+    "devops-git-advanced",
+    "devops-networking-advanced",
+    "devops-cloud-advanced",
+    "devops-iac-advanced",
+    "devops-cicd-advanced",
+    "devops-observability-advanced",
+    "devops-security-advanced"
+  ]
+}

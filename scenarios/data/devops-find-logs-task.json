@@ -1,0 +1,35 @@
+{
+  "id": "devops-find-logs-task",
+  "title": "Locate Files With find",
+  "category": "Shell",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 4,
+  "description": "## How Many Log Files?\n\nA directory tree has been created at **`/root/logs`** containing a mix of files in subfolders.\n\n**Your task:** count **all `*.log` files** anywhere under `/root/logs` (including subdirectories) and write the number to **`/root/count.txt`**.\n\n> 💡 `find <dir> -name '*.log' -type f` lists matching files recursively; pipe to `wc -l` to count, then redirect to the file.",
+  "hints": [
+    {
+      "title": "Find then count",
+      "body": "find searches recursively by default. Restrict to regular files with -type f and the name pattern, then count lines.",
+      "command": "find /root/logs -type f -name '*.log' | wc -l > /root/count.txt"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -rf /root/logs /root/count.txt" },
+    { "command": "mkdir -p /root/logs/sub" },
+    { "command": "touch /root/logs/app.log /root/logs/access.log /root/logs/notes.txt /root/logs/sub/debug.log" }
+  ],
+  "validation": {
+    "description": "Checks that /root/count.txt contains the number of .log files (3).",
+    "commands": [
+      {
+        "description": "count.txt contains 3",
+        "command": "cat /root/count.txt 2>/dev/null | tr -d ' '",
+        "expected_output": "3",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -rf /root/logs /root/count.txt" }
+  ]
+}

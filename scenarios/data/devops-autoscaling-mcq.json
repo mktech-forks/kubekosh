@@ -1,0 +1,23 @@
+{
+  "id": "devops-autoscaling-mcq",
+  "title": "Auto-Scaling Policies and Flapping",
+  "category": "Cloud",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Hold average CPU near 60%\n\nYou want an auto-scaling group to keep **average CPU utilization across the fleet at about 60%** — adding capacity as load rises and removing it as load falls, without constantly oscillating. A teammate's earlier attempt scaled on a slowly-updating, lagging metric with no instance warm-up and the group kept rapidly adding and removing instances. Which policy and reasoning are correct?",
+  "options": [
+    { "id": "a", "text": "Use a target-tracking scaling policy with average CPU utilization as the target metric set to 60%; the service computes the capacity needed to hold the metric at the target, adjusting up and down automatically. Pair it with an instance warm-up so newly launched instances don't count toward the metric until they have ramped, and a scale-in cooldown so the group doesn't tear down capacity it just added — both of which prevent the flapping seen with the lagging metric." },
+    { "id": "b", "text": "Use a simple scaling policy that adds 5 instances whenever CPU > 60% and removes 5 whenever CPU < 60%; fixed step sizes guarantee the average lands exactly on 60% and warm-up is unnecessary." },
+    { "id": "c", "text": "Schedule fixed capacity changes by time of day; CPU-based policies cannot maintain a target value and always flap, so the only stable approach is a static schedule." },
+    { "id": "d", "text": "Scale on a lagging metric (like a 15-minute rolling average) without warm-up to smooth decisions; the longer the metric's lag, the more stable the group, so flapping indicates the metric was not lagging enough." }
+  ],
+  "correct_option": "a",
+  "explanation": "Maintaining a metric *at a value* is exactly what a **target-tracking** policy does: you name a metric (average CPU) and a target (60%), and the scaling service continuously computes and adjusts the desired capacity to keep the metric near that target — analogous to a thermostat. That is (a). A **simple scaling** policy that adds/removes a fixed number of instances at a single threshold (b) cannot home in on a target value; identical add/remove step sizes around one threshold are a recipe for oscillation, and the claim that it lands \"exactly on 60%\" is false. **Scheduled scaling** (c) is useful for predictable time-based patterns but it is not driven by load and the assertion that CPU policies \"always flap\" is wrong. (d) inverts the real cause of flapping: the earlier attempt flapped because it reacted on a slow/lagging signal **and** had no warm-up, so freshly-launched instances (still booting, showing high CPU or not yet contributing) skewed the metric and triggered more scaling. The fixes are an **instance warm-up** (exclude new instances from the metric until they stabilize) and a **scale-in cooldown** (avoid removing capacity immediately after adding it) — not making the metric lag even more.",
+  "hints": [
+    { "title": "Maintaining a value = target tracking", "body": "Target-tracking policies keep a chosen metric at a setpoint by computing capacity automatically, like a thermostat. Step/simple policies just react to threshold breaches." },
+    { "title": "Why fleets flap", "body": "Reacting on lagging signals and counting not-yet-warmed instances causes overshoot. Warm-up and scale-in cooldown damp the loop and stop oscillation." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

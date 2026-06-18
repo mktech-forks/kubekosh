@@ -1,0 +1,29 @@
+{
+  "id": "devops-promql-mcq",
+  "title": "PromQL: Counters, rate(), and Percentile Latency",
+  "category": "Monitoring",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Graph Requests Per Second from a Counter\n\nYou have a Prometheus counter `http_requests_total` (monotonically increasing per scrape, reset to 0 on process restart). A dashboard panel should show the **per-second request rate** averaged over the last 5 minutes, and a second panel should show **p95 request latency** from a native histogram exposed as `http_request_duration_seconds_bucket` (with a `le` label).\n\nWhich pair of PromQL expressions is correct?",
+  "options": [
+    { "id": "a", "text": "RPS: `rate(http_requests_total[5m])` — and p95: `histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))`" },
+    { "id": "b", "text": "RPS: `http_requests_total` — and p95: `quantile(0.95, http_request_duration_seconds_bucket)`" },
+    { "id": "c", "text": "RPS: `increase(http_requests_total[1s])` — and p95: `histogram_quantile(0.95, http_request_duration_seconds_bucket)`" },
+    { "id": "d", "text": "RPS: `rate(http_requests_total)` (instant, no range) — and p95: `topk(0.95, rate(http_request_duration_seconds_bucket[5m]))`" }
+  ],
+  "correct_option": "a",
+  "explanation": "A counter is cumulative, so plotting it raw shows an ever-climbing line, not a rate. `rate(http_requests_total[5m])` computes the per-second average increase over the 5-minute range window AND automatically accounts for counter resets (process restarts), making it the canonical way to get RPS from a counter. For percentiles, `histogram_quantile()` operates over bucket series labeled by `le`; you must first take the per-second `rate()` of each bucket over a window and aggregate with `sum(...) by (le)` so the quantile is computed across the merged bucket distribution. (b) is wrong on both counts: the raw counter is not a rate, and there is no PromQL `quantile()` aggregator that turns histogram buckets into a percentile — that's exactly what `histogram_quantile` is for. (c) is wrong: `increase(...[1s])` over a 1-second window is unreliable (often shorter than the scrape interval, yielding gaps/NaN), and `histogram_quantile` needs the rate of buckets over a window, not raw bucket counts. (d) is wrong: `rate()` requires a range vector (`[5m]`) — `rate(metric)` is a syntax error — and `topk` selects the top-k series, it does not compute a quantile of a distribution.",
+  "hints": [
+    {
+      "title": "Never graph a raw counter",
+      "body": "Counters only go up (and reset). rate(counter[window]) gives a per-second rate and handles resets for you."
+    },
+    {
+      "title": "Percentiles from histograms",
+      "body": "histogram_quantile(0.95, sum(rate(..._bucket[5m])) by (le)) is the standard pattern: rate each bucket, sum by le, then take the quantile."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

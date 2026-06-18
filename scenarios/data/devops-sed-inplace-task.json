@@ -1,0 +1,39 @@
+{
+  "id": "devops-sed-inplace-task",
+  "title": "Edit Config In Place With sed",
+  "category": "Shell",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Flip a Setting Without an Editor\n\nA config file **`/root/app.conf`** contains:\n\n```\nhost=localhost\nport=8080\ndebug=true\n```\n\n**Your task:** using **`sed -i`** (in-place), change the line **`debug=true`** to **`debug=false`** — without touching the other lines.\n\n> 💡 Anchor the substitution to the start of the line (`^debug=`) so you only match the intended key.",
+  "hints": [
+    {
+      "title": "In-place substitution",
+      "body": "sed -i edits the file in place; the s/// command substitutes. Anchor with ^ to avoid matching elsewhere.",
+      "command": "sed -i 's/^debug=true/debug=false/' /root/app.conf"
+    }
+  ],
+  "setup_commands": [
+    { "command": "printf 'host=localhost\\nport=8080\\ndebug=true\\n' > /root/app.conf" }
+  ],
+  "validation": {
+    "description": "Checks that debug is now false and the port line is untouched.",
+    "commands": [
+      {
+        "description": "debug is set to false",
+        "command": "grep '^debug=' /root/app.conf 2>/dev/null",
+        "expected_output": "debug=false",
+        "match": "exact"
+      },
+      {
+        "description": "The port line is unchanged",
+        "command": "grep '^port=' /root/app.conf 2>/dev/null",
+        "expected_output": "port=8080",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/app.conf" }
+  ]
+}

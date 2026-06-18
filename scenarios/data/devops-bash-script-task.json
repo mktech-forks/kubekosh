@@ -1,0 +1,44 @@
+{
+  "id": "devops-bash-script-task",
+  "title": "Write an Executable Shell Script",
+  "category": "Shell",
+  "difficulty": "Easy",
+  "type": "task",
+  "weight": 4,
+  "description": "## Your First Automation Script\n\nDevOps work is full of small scripts that glue tools together.\n\n**Requirements:**\n1. Create a script at **`/root/greet.sh`**\n2. Make it **executable**\n3. When run, it must print exactly: **`Hello, DevOps`**\n\n> 💡 Start the file with a shebang (`#!/bin/bash`), `echo` the line, then `chmod +x` it. Run it with `/root/greet.sh` to test.",
+  "hints": [
+    {
+      "title": "Create the script",
+      "body": "Write a shebang and an echo. You can use a here-document to create the file in one go.",
+      "command": "printf '#!/bin/bash\\necho \"Hello, DevOps\"\\n' > /root/greet.sh"
+    },
+    {
+      "title": "Make it executable",
+      "body": "chmod +x adds the execute permission so you can run the file directly.",
+      "command": "chmod +x /root/greet.sh && /root/greet.sh"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/greet.sh" }
+  ],
+  "validation": {
+    "description": "Checks that /root/greet.sh is executable and prints the expected line.",
+    "commands": [
+      {
+        "description": "/root/greet.sh is executable",
+        "command": "test -x /root/greet.sh && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "Running it prints 'Hello, DevOps'",
+        "command": "/root/greet.sh",
+        "expected_output": "Hello, DevOps",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/greet.sh" }
+  ]
+}

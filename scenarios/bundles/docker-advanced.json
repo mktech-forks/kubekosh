@@ -1,0 +1,22 @@
+{
+  "id": "docker-advanced",
+  "subject": "docker",
+  "name": "Docker Advanced",
+  "icon": "🐳",
+  "tagline": "Multi-stage builds, security and optimization",
+  "color": "#0b5394",
+  "colorDim": "rgba(11,83,148,0.12)",
+  "exam_minutes": 90,
+  "scenario_ids": [
+    "docker-optimization-lesson",
+    "docker-multistage-task",
+    "docker-multistage-mcq",
+    "docker-nonroot-task",
+    "docker-build-args-task",
+    "docker-readonly-task",
+    "docker-healthcheck-task",
+    "docker-volume-backup-task",
+    "docker-image-history-mcq",
+    "docker-security-mcq"
+  ]
+}

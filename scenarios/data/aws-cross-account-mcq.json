@@ -1,0 +1,23 @@
+{
+  "id": "aws-cross-account-mcq",
+  "title": "CI Account Deploying into Prod",
+  "category": "Organizations",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Cross-Account Deployment Without Shared Keys\n\nA CI/CD pipeline runs in a dedicated **tooling account**. It must deploy infrastructure and application updates into a separate **production account**. Security policy forbids storing **long-lived credentials** of the production account anywhere in the tooling account, and every deployment action must be **auditable** and use **short-lived** credentials.\n\nWhat is the correct cross-account access pattern?",
+  "options": [
+    { "id": "a", "text": "In the **production** account, create an IAM **role** with the needed deploy permissions and a **trust policy** allowing the tooling account's pipeline principal to **`sts:AssumeRole`**; the pipeline assumes it to get temporary credentials per deployment." },
+    { "id": "b", "text": "Create an IAM **user** in the production account, generate its access keys, and store them as secrets in the tooling account's pipeline." },
+    { "id": "c", "text": "Make the production account's resources **public** and restrict by source IP so the tooling account can deploy over the internet." },
+    { "id": "d", "text": "Set up **VPC peering** between the two accounts; network connectivity automatically grants the pipeline permission to deploy resources." }
+  ],
+  "correct_option": "a",
+  "explanation": "The standard, secure cross-account pattern is **IAM role assumption**. The **resource-owning account (production)** creates a role whose **trust policy** names the **tooling account** (or a specific role/principal in it) as allowed to call **`sts:AssumeRole`**, and attaches the deploy permissions to that role. The pipeline assumes the role and receives **temporary STS credentials** scoped to the role — no long-lived production keys ever leave production, and every assume-role and API call is recorded in **CloudTrail** for audit. Option B reintroduces exactly the prohibited **long-lived credentials**. Option C is a gross security violation — deployment is an IAM/control-plane concern, not something solved by making resources public. Option D confuses **network connectivity with authorization**: VPC peering only routes packets between VPCs and grants **no IAM permissions** to deploy anything.",
+  "hints": [
+    { "title": "The owner defines the trust", "body": "Cross-account access is set up from the resource side: prod creates the role and trusts the other account; the other account assumes it." },
+    { "title": "Network != permission", "body": "Connectivity (peering/TGW) never grants IAM permissions. Authorization is always identity/role-based." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

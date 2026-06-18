@@ -1,0 +1,42 @@
+{
+  "id": "devops-git-hook-task",
+  "title": "Write a Git pre-commit Hook",
+  "category": "Git",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Automate a Local Gate\n\nGit hooks let you run checks automatically around git operations. They live in **`.git/hooks/`** and must be **executable**.\n\nA repository is ready at **`/root/hookrepo`**.\n\n**Your task:** create an **executable** `pre-commit` hook at **`/root/hookrepo/.git/hooks/pre-commit`** that prints exactly **`pre-commit ran`** when executed.\n\n> 💡 The file needs a shebang (`#!/bin/bash`) and the execute bit (`chmod +x`). Git ignores hooks that aren't executable.",
+  "hints": [
+    {
+      "title": "Create and arm the hook",
+      "body": "Write the shebang and echo, then make the file executable so Git (and the validator) can run it.",
+      "command": "printf '#!/bin/bash\\necho \"pre-commit ran\"\\n' > /root/hookrepo/.git/hooks/pre-commit && chmod +x /root/hookrepo/.git/hooks/pre-commit"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -rf /root/hookrepo" },
+    { "command": "git config --global user.email lab@kubekosh.local" },
+    { "command": "git config --global user.name 'KubeKosh Lab'" },
+    { "command": "git init -b main /root/hookrepo" }
+  ],
+  "validation": {
+    "description": "Checks that the pre-commit hook exists, is executable, and prints the expected line.",
+    "commands": [
+      {
+        "description": "Hook is executable",
+        "command": "test -x /root/hookrepo/.git/hooks/pre-commit && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "Running the hook prints 'pre-commit ran'",
+        "command": "/root/hookrepo/.git/hooks/pre-commit 2>/dev/null",
+        "expected_output": "pre-commit ran",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -rf /root/hookrepo" }
+  ]
+}

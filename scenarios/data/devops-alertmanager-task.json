@@ -1,0 +1,33 @@
+{
+  "id": "devops-alertmanager-task",
+  "title": "Route Alerts in Alertmanager",
+  "category": "Monitoring",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Send Alerts Somewhere\n\nAlertmanager config has a top-level **`route`** that selects a **`receiver`**, and a **`receivers`** list defining those receivers.\n\n**Your task:** write **`/root/alertmanager.yml`** with:\n1. a **`route`** whose **`receiver`** is **`team-pager`**\n2. a **`receivers`** list containing an entry whose **`name`** is **`team-pager`**\n\n> 💡 The route's receiver name must match a defined receiver. Validate the YAML with `python3 -c \"import yaml; yaml.safe_load(open('/root/alertmanager.yml'))\"`.",
+  "hints": [
+    {
+      "title": "Route + matching receiver",
+      "body": "Set route.receiver, then declare a receiver with the same name in the receivers list.",
+      "command": "printf 'route:\\n  receiver: team-pager\\n  group_by: [\"alertname\"]\\nreceivers:\\n  - name: team-pager\\n' > /root/alertmanager.yml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/alertmanager.yml" }
+  ],
+  "validation": {
+    "description": "Checks the route receiver matches a defined receiver name.",
+    "commands": [
+      {
+        "description": "route.receiver matches a receiver named team-pager",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/alertmanager.yml')); r=d.get('route',{}).get('receiver'); recv=[x.get('name') for x in (d.get('receivers') or [])]; print('ok' if r=='team-pager' and r in recv else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/alertmanager.yml" }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "docker-networking-lesson",
+  "title": "Container Networking",
+  "category": "Networking",
+  "difficulty": "Medium",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## How Containers Talk\n\nBy default Docker attaches every container to the built-in **`bridge`** network. Containers on it can reach the outside world, but they can only reach *each other* by IP address — **not by name**.\n\n### User-defined bridge networks\n\nCreate your own network and Docker adds an **embedded DNS server**: containers on the same user-defined network can resolve each other by **container name**.\n\n```bash\ndocker network create appnet\ndocker run -d --name db    --network appnet postgres:alpine\ndocker run -d --name web   --network appnet nginx:alpine\n# 'web' can now reach the database at the hostname 'db'\n```\n\n### Network types you'll meet\n\n| Driver | Use |\n|---|---|\n| `bridge` | Default; isolated network on a single host (user-defined bridges add name resolution). |\n| `host` | Container shares the host's network stack directly (no isolation, no port mapping). |\n| `none` | No networking at all. |\n\n### Publishing vs connecting\n\n- **Publishing** (`-p 8080:80`) exposes a container port to the **host**.\n- **Connecting to a network** (`--network appnet`) lets containers talk to **each other**.\n\nThese are independent: you publish to reach a service from outside, and you share a network to wire services together internally.\n\nMark complete, then build a two-container network in the next task.",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

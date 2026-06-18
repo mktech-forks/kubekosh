@@ -1,0 +1,12 @@
+{
+  "id": "docker-intro-lesson",
+  "title": "What Is Docker?",
+  "category": "Getting Started",
+  "difficulty": "Easy",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## Containers, Images and the Docker Engine\n\n**Docker** packages an application together with its dependencies into a portable unit called a **container**. Containers share the host kernel (unlike virtual machines, which each run a full OS), so they start in milliseconds and are lightweight.\n\n### The three core concepts\n\n| Term | What it is |\n|---|---|\n| **Image** | A read-only template — a snapshot of a filesystem plus metadata (the command to run, environment, ports). Built from a `Dockerfile`. |\n| **Container** | A **running (or stopped) instance** of an image. You can start many containers from one image. |\n| **Registry** | A store of images (e.g. Docker Hub). `docker pull` downloads; `docker push` uploads. |\n\n### The commands you'll use constantly\n\n| Command | Purpose |\n|---|---|\n| `docker run <image>` | Create **and** start a container from an image |\n| `docker ps` | List running containers (`-a` includes stopped ones) |\n| `docker images` | List local images |\n| `docker pull <image>` | Download an image from a registry |\n| `docker exec -it <c> sh` | Run a command (e.g. a shell) **inside** a running container |\n| `docker stop` / `docker rm` | Stop a container / remove it |\n| `docker build -t name:tag .` | Build an image from a `Dockerfile` |\n\n### Mental model\n\n> **Image is to container what a class is to an object.** One image (the template) → many containers (the instances).\n\nThe terminal below talks to a Docker daemon running inside this lab. When you're comfortable with the vocabulary, mark this lesson complete and try the exercises.",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

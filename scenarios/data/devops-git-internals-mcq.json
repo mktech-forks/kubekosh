@@ -1,0 +1,23 @@
+{
+  "id": "devops-git-internals-mcq",
+  "title": "Git Objects, Refs, and Recovering a Lost reset --hard",
+  "category": "Git",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## I just nuked three commits\n\nYou were on `feature`, ran `git reset --hard HEAD~3` by mistake, and the three commits on top are gone from the branch. You have not run garbage collection and the working tree had no uncommitted changes. Which statement about Git's data model and recovery is correct?",
+  "options": [
+    { "id": "a", "text": "The commits are unrecoverable: `reset --hard` deletes the commit objects from the object database, and only a remote copy or a backup can restore them." },
+    { "id": "b", "text": "`reset --hard` only moved the branch ref; each commit is an object pointing to a tree (snapshot) and its parent(s), and those objects are still in the database, merely unreferenced. `git reflog` lists the prior positions of HEAD, so you can find the lost tip SHA and run `git reset --hard <sha>` (or `git branch recover <sha>`) to restore them — they survive until garbage collection prunes unreachable objects." },
+    { "id": "c", "text": "You must use `git fsck --lost-found` because the reflog only records branch *creation*, not movements of HEAD; recovery is impossible if the branch already existed before the bad reset." },
+    { "id": "d", "text": "Checking out the lost SHA puts you in a detached HEAD where commits are read-only and cannot be turned back into a branch; the safe path is `git revert HEAD~3`, which un-does the reset." }
+  ],
+  "correct_option": "b",
+  "explanation": "A branch is just a movable ref (a file/packed-ref holding a SHA); a commit object stores a pointer to a tree (the snapshot of the directory) plus one or more parent commits, author/committer metadata, and a message. `git reset --hard` only **rewrites the branch ref** (and, with --hard, resets the index and working tree) — it does not delete commit objects. The three commits become unreachable but remain in `.git/objects` until `git gc` prunes them (and even then there's a grace period via reflog expiry). The reflog records every movement of HEAD/branch tips, so `git reflog` shows the SHA the branch pointed to before the reset; `git reset --hard <sha>` or pointing a new branch at it restores everything. That makes (a) (\"objects deleted\") false. (c) is wrong because the reflog records HEAD/ref *movements*, not just creation, so you rarely need fsck here. (d) is wrong twice: a detached HEAD is perfectly capable of becoming a branch (`git branch name`), and `git revert` creates new commits to invert *committed* changes — it cannot recover commits that a reset already removed from the branch.",
+  "hints": [
+    { "title": "What reset actually changes", "body": "reset --hard moves the branch ref and updates the index/working tree. It does not erase commit objects; they just become unreachable." },
+    { "title": "The reflog is your undo log", "body": "git reflog records where HEAD and branch tips have pointed. Find the pre-reset SHA there and reset/branch back to it before gc prunes it." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

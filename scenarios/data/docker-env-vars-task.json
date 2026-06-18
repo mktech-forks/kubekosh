@@ -1,0 +1,38 @@
+{
+  "id": "docker-env-vars-task",
+  "title": "Configure a Container With Environment Variables",
+  "category": "Configuration",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 4,
+  "description": "## Pass Configuration at Run Time\n\nContainers are configured from the outside, most often via environment variables.\n\n**Requirements:**\n1. Run an **`alpine`** container named **`envtest`** in the background (keep it alive)\n2. Set the environment variable **`APP_ENV`** to **`production`** inside it\n\n> 💡 Use `-e KEY=value` on `docker run`. Verify with `docker exec envtest printenv APP_ENV`.",
+  "hints": [
+    {
+      "title": "Set an env var at run time",
+      "body": "The -e flag injects an environment variable into the container.",
+      "command": "docker run -d --name envtest -e APP_ENV=production alpine sleep 3600"
+    },
+    {
+      "title": "Read it back",
+      "body": "printenv inside the container shows the value Docker injected.",
+      "command": "docker exec envtest printenv APP_ENV"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker rm -f envtest 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that APP_ENV=production is set inside the running 'envtest' container.",
+    "commands": [
+      {
+        "description": "APP_ENV equals 'production' inside 'envtest'",
+        "command": "docker exec envtest printenv APP_ENV 2>/dev/null",
+        "expected_output": "production",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rm -f envtest 2>/dev/null || true" }
+  ]
+}

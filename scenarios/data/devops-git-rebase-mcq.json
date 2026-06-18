@@ -1,0 +1,23 @@
+{
+  "id": "devops-git-rebase-mcq",
+  "title": "Interactive Rebase, Autosquash, and Safe Force-Push",
+  "category": "Git",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Cleaning up a shared feature branch\n\nYou pushed a feature branch and got review feedback. You make a follow-up commit that fixes commit `abc123`, then want to fold it into `abc123` and republish a tidy history. You run:\n\n```bash\ngit commit --fixup=abc123\ngit rebase -i --autosquash origin/main\n# ... then publish the rewritten branch\n```\n\nTeammates may have fetched your branch in the meantime. Which statement is correct?",
+  "options": [
+    { "id": "a", "text": "`--fixup=abc123` plus `git rebase -i --autosquash` auto-reorders the fixup commit directly beneath `abc123` and marks it `fixup` so it is squashed without keeping its message; because rebasing rewrites commit SHAs the branch has diverged from the remote, so you must force-push, and `git push --force-with-lease` is preferred because it aborts if the remote ref advanced since your last fetch, avoiding clobbering a teammate's pushed work." },
+    { "id": "b", "text": "`--autosquash` only works with `--fixup` if you also pass `--no-ff`; and `git push --force` is safer than `--force-with-lease` because the latter can be tricked by a stale local tracking ref into overwriting new commits." },
+    { "id": "c", "text": "A fixup commit keeps its own commit message after squashing (unlike `--squash`), and force-pushing is unnecessary because rebasing onto `origin/main` preserves the original commit SHAs as long as no conflicts occur." },
+    { "id": "d", "text": "`--force-with-lease` and `--force` are functionally identical on a branch you own; the only difference is that `--force-with-lease` also runs `git gc` before pushing to shrink the pack." }
+  ],
+  "correct_option": "a",
+  "explanation": "A commit made with `git commit --fixup=<sha>` gets a subject line like `fixup! <original subject>`; `git rebase -i --autosquash` then automatically relocates it immediately after its target commit and pre-marks it `fixup`, which squashes the change in and **discards** the fixup commit's message (whereas `--squash` would keep/combine the message — this is why (c) is wrong). Rebasing recomputes commit objects, so every rewritten commit gets a new SHA and the branch diverges from its remote counterpart, requiring a force-push. `--force-with-lease` is the safe form: it only overwrites the remote ref if that ref still matches what you last observed (your remote-tracking ref), so if a teammate pushed in the meantime the push is rejected instead of silently discarding their commits — exactly the opposite of (b)'s claim. (b) also invents a `--no-ff` requirement that doesn't exist. (d) is wrong: the two are not identical and `--force-with-lease` does not run gc. The real subtlety with lease: blindly fetching/refreshing tracking refs before the push can defeat the protection, which is why you shouldn't `git fetch` immediately before a force-with-lease.",
+  "hints": [
+    { "title": "fixup vs squash", "body": "Both combine commits during autosquash; squash lets you keep/edit the combined message, fixup silently drops the fixup commit's message." },
+    { "title": "Why lease beats force", "body": "force-with-lease only pushes if the remote ref is still where you last saw it, so it refuses to overwrite commits a teammate pushed after your last fetch. Plain --force overwrites unconditionally." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

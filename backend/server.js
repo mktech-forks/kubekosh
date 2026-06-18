@@ -14,7 +14,12 @@ app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 const SCENARIOS_DIR = path.join(__dirname, '../scenarios/data');
 const BUNDLES_DIR   = path.join(__dirname, '../scenarios/bundles');
+const SUBJECTS_DIR  = path.join(__dirname, '../scenarios/subjects');
 const DB_FILE = process.env.PROGRESS_DB || '/data/progress.db';
+
+// Subject every bundle/scenario falls back to when none is declared. Keeps the
+// pre-multi-subject Kubernetes content working with zero edits.
+const DEFAULT_SUBJECT_ID = 'kubernetes';
 
 // ── SQLite progress store ─────────────────────────────────────────────────────
 
@@ -142,12 +147,40 @@ function loadJsonDir(dir) {
 
 let scenariosCache = [];
 let bundlesCache = [];
+let subjectsCache = [];
 
 function reloadCache() {
   try {
     scenariosCache = loadJsonDir(SCENARIOS_DIR);
     bundlesCache = loadJsonDir(BUNDLES_DIR);
-    console.log(`Loaded ${scenariosCache.length} scenarios and ${bundlesCache.length} bundles into cache.`);
+
+    // Subjects directory is optional — synthesize a default Kubernetes subject
+    // when it is missing or empty so the app still boots on legacy layouts.
+    let subjects = [];
+    try {
+      if (fs.existsSync(SUBJECTS_DIR)) subjects = loadJsonDir(SUBJECTS_DIR);
+    } catch (_) { subjects = []; }
+    if (!subjects.some(s => s.id === DEFAULT_SUBJECT_ID)) {
+      subjects.unshift({
+        id: DEFAULT_SUBJECT_ID,
+        name: 'Kubernetes',
+        icon: '⎈',
+        tagline: 'Interactive Kubernetes Playground',
+        color: '#326ce5',
+        colorDim: 'rgba(50,108,229,0.12)',
+        environment: 'k8s',
+        bundle_order: [],
+      });
+    }
+    subjectsCache = subjects;
+
+    // Every bundle gets a subject — default to Kubernetes so existing content
+    // needs no edits.
+    for (const b of bundlesCache) {
+      if (!b.subject) b.subject = DEFAULT_SUBJECT_ID;
+    }
+
+    console.log(`Loaded ${scenariosCache.length} scenarios, ${bundlesCache.length} bundles and ${subjectsCache.length} subjects into cache.`);
   } catch (e) {
     console.error('Failed to reload cache:', e.message);
   }
@@ -164,12 +197,16 @@ function loadBundles() {
   return bundlesCache;
 }
 
-async function runCommand(cmd, timeoutMs = 15000) {
+function loadSubjects() {
+  return subjectsCache;
+}
+
+async function runCommand(cmd, timeoutMs = 15000, envOverrides = { KUBECONFIG: process.env.KUBECONFIG || '/root/.kube/config' }) {
   try {
     const { stdout } = await execAsync(cmd, {
       timeout: timeoutMs,
       encoding: 'utf8',
-      env: { ...process.env, KUBECONFIG: process.env.KUBECONFIG || '/root/.kube/config' }
+      env: { ...process.env, ...envOverrides }
     });
     return { success: true, output: stdout.trim() };
   } catch (e) {
@@ -185,6 +222,87 @@ function checkMatch(actual, expected, matchType) {
   if (matchType === 'not_contains') return !a.includes(e);
   if (matchType === 'regex') return new RegExp(e).test(a);
   return a === e;
+}
+
+// ── Per-subject execution environments ─────────────────────────────────────────
+// Each subject declares an `environment` id. The environment decides how the
+// terminal context, setup/teardown/validate commands, validation error handling,
+// and health probe behave. Adding Docker/cloud later = one new entry here + one
+// subject JSON; no endpoint changes.
+
+const diffColor = (d) => d === 'Easy' ? '\x1b[32m' : d === 'Hard' ? '\x1b[31m' : '\x1b[33m';
+const bannerLine = '─'.repeat(54);
+
+// Kubernetes banner — includes the active namespace line.
+function k8sBanner(scenario, ns) {
+  return [
+    `\x1b[2m# ${bannerLine}\x1b[0m\r\n`,
+    `\x1b[1m\x1b[36m⎈  Scenario : \x1b[0m\x1b[1m\x1b[97m${scenario.title}\x1b[0m\r\n`,
+    `\x1b[2m   Namespace: \x1b[0m\x1b[33m${ns}\x1b[0m`,
+    `  \x1b[2mDifficulty: \x1b[0m${diffColor(scenario.difficulty)}${scenario.difficulty}\x1b[0m\r\n`,
+    `\x1b[2m# ${bannerLine}\x1b[0m\r\n`,
+  ].join('');
+}
+
+// Generic shell banner — no namespace concept.
+function genericBanner(scenario) {
+  return [
+    `\x1b[2m# ${bannerLine}\x1b[0m\r\n`,
+    `\x1b[1m\x1b[36m❯  Exercise : \x1b[0m\x1b[1m\x1b[97m${scenario.title}\x1b[0m\r\n`,
+    `\x1b[2m   Difficulty: \x1b[0m${diffColor(scenario.difficulty)}${scenario.difficulty}\x1b[0m\r\n`,
+    `\x1b[2m# ${bannerLine}\x1b[0m\r\n`,
+  ].join('');
+}
+
+const ENVIRONMENTS = {
+  k8s: {
+    env: { KUBECONFIG: '/root/.kube/config' },
+    // Silently switch the kubectl namespace for the scenario.
+    contextCmd: (sc) => `kubectl config set-context --current --namespace=${sc.default_namespace || 'default'}`,
+    banner: (sc) => k8sBanner(sc, sc.default_namespace || 'default'),
+    // kubectl prints "Error from server (NotFound)" etc. to stderr — treat these
+    // as "no output" so checks fail cleanly instead of matching the error text.
+    isApiError: (stderr) => !!stderr && /^Error from server|^error:|^Error:/i.test(stderr.trim()),
+    healthCmd: 'kubectl cluster-info --request-timeout=3s 2>&1 | head -1',
+  },
+  bash: {
+    env: {},
+    contextCmd: () => null,
+    banner: (sc) => genericBanner(sc),
+    // For a plain shell, stderr is legitimate program output — never suppress it.
+    isApiError: () => false,
+    healthCmd: null,
+  },
+  docker: {
+    // Commands talk to the in-container Docker daemon via the default socket.
+    env: {},
+    contextCmd: () => null,
+    banner: (sc) => genericBanner(sc),
+    // docker CLI errors go to stderr; validations assert on stdout, so don't
+    // fold stderr into the matched value.
+    isApiError: () => false,
+    // Probe the daemon — fails (non-zero) until dockerd is up.
+    healthCmd: 'docker info --format "{{.ServerVersion}}" 2>/dev/null',
+  },
+};
+
+const DEFAULT_ENV = 'bash';
+
+// Resolve the subject for a given bundle id (subject defaulted at cache load).
+function subjectForBundle(bundleId) {
+  const bundle = loadBundles().find(b => b.id === bundleId);
+  if (!bundle) return null;
+  return loadSubjects().find(s => s.id === bundle.subject) || null;
+}
+
+// Resolve the execution environment for a scenario via its owning bundle's
+// subject. Legacy scenarios with no resolvable subject fall back to k8s so the
+// original Kubernetes behavior is preserved.
+function envForScenario(scenarioId) {
+  const bundle = loadBundles().find(b => Array.isArray(b.scenario_ids) && b.scenario_ids.includes(scenarioId));
+  const subject = bundle ? loadSubjects().find(s => s.id === bundle.subject) : null;
+  const envId = subject?.environment || 'k8s';
+  return ENVIRONMENTS[envId] || ENVIRONMENTS.k8s;
 }
 
 // Active WebSocket terminal clients — write output directly (NOT as shell input)
@@ -276,7 +394,7 @@ app.get('/api/sessions/active', (req, res) => {
   const completed = db.prepare(
     `SELECT COUNT(*) as cnt FROM exam_progress WHERE session_id=? AND status='completed'`
   ).get(session.id)?.cnt || 0;
-  res.json({ ...session, scenarioCount: scenarioIds.length, completedCount: completed });
+  res.json({ ...session, subject: bundle?.subject || DEFAULT_SUBJECT_ID, scenarioCount: scenarioIds.length, completedCount: completed });
 });
 
 // GET /api/sessions/:id/exam-progress — return per-scenario progress for an exam session
@@ -395,10 +513,11 @@ app.post('/api/scenarios/:id/teardown', async (req, res) => {
   const scenarios = loadScenarios();
   const scenario = scenarios.find(s => s.id === req.params.id);
   if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
+  const env = envForScenario(scenario.id);
   const results = [];
   for (const item of (scenario.teardown_commands || [])) {
     const cmd = item.command;
-    const result = await runCommand(cmd, 30000);
+    const result = await runCommand(cmd, 30000, env.env);
     results.push({ command: cmd, ...result });
   }
   res.json({ ok: true, results });
@@ -411,36 +530,52 @@ app.post('/api/scenarios/:id/context', async (req, res) => {
   const scenarios = loadScenarios();
   const scenario = scenarios.find(s => s.id === req.params.id);
   if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
-  const ns = scenario.default_namespace || 'default';
+  const env = envForScenario(scenario.id);
 
   // VT sequences: clear visible screen + scrollback, then move cursor to top-left
   const clearScreen = '\x1b[2J\x1b[3J\x1b[H';
-  const line = '\u2500'.repeat(54);
-  const banner = [
-    `\x1b[2m# ${line}\x1b[0m\r\n`,
-    `\x1b[1m\x1b[36m\u2388  Scenario : \x1b[0m\x1b[1m\x1b[97m${scenario.title}\x1b[0m\r\n`,
-    `\x1b[2m   Namespace: \x1b[0m\x1b[33m${ns}\x1b[0m`,
-    `  \x1b[2mDifficulty: \x1b[0m${scenario.difficulty === 'Easy' ? '\x1b[32m' : scenario.difficulty === 'Hard' ? '\x1b[31m' : '\x1b[33m'}${scenario.difficulty}\x1b[0m\r\n`,
-    `\x1b[2m# ${line}\x1b[0m\r\n`,
-  ].join('');
 
-  // Set kubectl context namespace silently
-  await runCommand(`kubectl config set-context --current --namespace=${ns}`, 5000);
+  // Run the environment-specific context command (e.g. kubectl set namespace).
+  // No-op for plain-shell environments.
+  const ctxCmd = env.contextCmd(scenario);
+  if (ctxCmd) await runCommand(ctxCmd, 5000, env.env);
 
   // 1) Clear screen and write banner as terminal output (never touches shell stdin)
-  injectToTerminal(clearScreen + banner);
+  injectToTerminal(clearScreen + env.banner(scenario));
 
   // 2) After banner renders, write \r to each PTY so bash repaints its PS1 prompt
   refreshPrompt(80);
 
-  res.json({ ok: true, namespace: ns });
+  res.json({ ok: true, namespace: scenario.default_namespace || 'default' });
 });
 
-// GET /api/bundles — list bundles with per-bundle progress stats
+// GET /api/subjects — list subjects with rolled-up progress stats (kubernetes first)
+app.get('/api/subjects', (req, res) => {
+  const subjects = loadSubjects();
+  const bundles  = loadBundles();
+  const progress = loadProgress();
+
+  const result = subjects.map(s => {
+    const subjectBundles = bundles.filter(b => b.subject === s.id);
+    // Unique scenario ids across the subject's bundles (a scenario could appear
+    // in more than one bundle).
+    const ids = [...new Set(subjectBundles.flatMap(b => b.scenario_ids || []))];
+    const total     = ids.length;
+    const completed = ids.filter(id => progress[id]?.status === 'completed').length;
+    return { ...s, bundleCount: subjectBundles.length, stats: { total, completed } };
+  });
+
+  // Surface Kubernetes first, then keep file order for the rest.
+  result.sort((a, b) => (a.id === DEFAULT_SUBJECT_ID ? -1 : b.id === DEFAULT_SUBJECT_ID ? 1 : 0));
+  res.json(result);
+});
+
+// GET /api/bundles — list bundles with per-bundle progress stats; optional ?subject filter
 app.get('/api/bundles', (req, res) => {
-  const bundles   = loadBundles();
-  const scenarios = loadScenarios();
+  let bundles     = loadBundles();
   const progress  = loadProgress();
+  const { subject } = req.query;
+  if (subject) bundles = bundles.filter(b => b.subject === subject);
   const result = bundles.map(b => {
     const total     = b.scenario_ids.length;
     const completed = b.scenario_ids.filter(id => progress[id]?.status === 'completed').length;
@@ -491,11 +626,12 @@ app.post('/api/scenarios/:id/setup', async (req, res) => {
   const scenarios = loadScenarios();
   const scenario = scenarios.find(s => s.id === req.params.id);
   if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
+  const env = envForScenario(scenario.id);
 
   const results = [];
   for (const item of (scenario.setup_commands || [])) {
     const cmd = item.command;
-    const result = await runCommand(cmd, 30000);
+    const result = await runCommand(cmd, 30000, env.env);
     results.push({ command: cmd, ...result });
     if (!result.success) {
       // Non-fatal: setup commands like "kubectl create namespace" fail if already exists
@@ -524,19 +660,18 @@ app.post('/api/scenarios/:id/validate', async (req, res) => {
   const scenario = scenarios.find(s => s.id === req.params.id);
   if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
   if (scenario.type !== 'task') return res.status(400).json({ error: 'Not a task scenario' });
+  const env = envForScenario(scenario.id);
 
   const checks = [];
   let allPassed = true;
 
   for (const check of (scenario.validation?.commands || [])) {
-    const result = await runCommand(check.command, 5000);
+    const result = await runCommand(check.command, 5000, env.env);
     // Prefer stdout. Only fall back to stderr for non-API errors:
-    // - kubectl auth can-i prints "yes"/"no" to stdout → already in result.output.
-    // - kubectl get <missing-resource> prints "Error from server (NotFound):" to stderr
-    //   and nothing to stdout → suppress, return '' so the check fails cleanly.
-    const isKubectlApiError = result.error &&
-      /^Error from server|^error:|^Error:/i.test(result.error.trim());
-    const actual = result.output || (isKubectlApiError ? '' : result.error) || '';
+    // - For k8s, kubectl get <missing-resource> prints "Error from server (NotFound):"
+    //   to stderr and nothing to stdout → suppress, return '' so the check fails cleanly.
+    // - For plain shell, stderr is legitimate output and is never suppressed.
+    const actual = result.output || (env.isApiError(result.error) ? '' : result.error) || '';
     const passed = checkMatch(actual, check.expected_output, check.match);
 
     checks.push({
@@ -639,6 +774,45 @@ app.post('/api/scenarios/:id/answer', (req, res) => {
   });
 });
 
+// POST /api/scenarios/:id/complete — mark a lesson (reading) scenario complete
+app.post('/api/scenarios/:id/complete', (req, res) => {
+  const scenarios = loadScenarios();
+  const scenario = scenarios.find(s => s.id === req.params.id);
+  if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
+  if (scenario.type !== 'lesson') return res.status(400).json({ error: 'Not a lesson scenario' });
+
+  // Update global practice progress
+  const progress = loadProgress();
+  const prev = progress[scenario.id] || { attempts: 0 };
+  progress[scenario.id] = {
+    ...prev,
+    status: 'completed',
+    attempts: (prev.attempts || 0) + 1,
+    last_validated: new Date().toISOString(),
+    completed_at: prev.completed_at || new Date().toISOString()
+  };
+  saveProgress(progress);
+
+  // Also update exam_progress if there's an active session
+  const db = getDb();
+  const activeSession = db.prepare(`SELECT id FROM sessions WHERE status='active' LIMIT 1`).get();
+  if (activeSession) {
+    const ep = db.prepare(`SELECT * FROM exam_progress WHERE session_id=? AND scenario_id=?`)
+      .get(activeSession.id, scenario.id);
+    const epAttempts = (ep?.attempts || 0) + 1;
+    db.prepare(`
+      INSERT INTO exam_progress (session_id, scenario_id, status, attempts, completed_at)
+      VALUES (?, ?, ?, ?, ?)
+      ON CONFLICT(session_id, scenario_id) DO UPDATE SET
+        status = excluded.status,
+        attempts = excluded.attempts,
+        completed_at = COALESCE(excluded.completed_at, exam_progress.completed_at)
+    `).run(activeSession.id, scenario.id, 'completed', epAttempts, new Date().toISOString());
+  }
+
+  res.json({ ok: true, status: 'completed', attempts: progress[scenario.id].attempts });
+});
+
 // POST /api/scenarios/:id/time — update time spent on a scenario
 app.post('/api/scenarios/:id/time', (req, res) => {
   const { time_spent_seconds } = req.body;
@@ -708,14 +882,28 @@ app.post('/api/cache/reload', (req, res) => {
     ok: true,
     message: 'Cache reloaded successfully',
     scenarios_count: loadScenarios().length,
-    bundles_count: loadBundles().length
+    bundles_count: loadBundles().length,
+    subjects_count: loadSubjects().length
   });
 });
 
-// GET /api/health
+// GET /api/health — optional ?subject=<id> makes the cluster probe environment-aware.
+// No subject (or an unknown one) preserves the original Kubernetes probe behavior.
 app.get('/api/health', async (req, res) => {
-  const kube = await runCommand('kubectl cluster-info --request-timeout=3s 2>&1 | head -1');
-  res.json({ api: 'ok', cluster: kube.success ? 'ready' : 'not_ready', cluster_info: kube.output });
+  const { subject } = req.query;
+  let env = ENVIRONMENTS.k8s;
+  if (subject) {
+    const subj = loadSubjects().find(s => s.id === subject);
+    env = ENVIRONMENTS[subj?.environment] || ENVIRONMENTS.k8s;
+  }
+
+  // Environments without a cluster (e.g. plain shell) report 'n/a'.
+  if (!env.healthCmd) {
+    return res.json({ api: 'ok', cluster: 'n/a', cluster_info: '' });
+  }
+
+  const probe = await runCommand(env.healthCmd, 15000, env.env);
+  res.json({ api: 'ok', cluster: probe.success ? 'ready' : 'not_ready', cluster_info: probe.output });
 });
 
 // Fallback to frontend SPA

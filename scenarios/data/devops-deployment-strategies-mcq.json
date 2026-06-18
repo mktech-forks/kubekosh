@@ -1,0 +1,29 @@
+{
+  "id": "devops-deployment-strategies-mcq",
+  "title": "Choosing a Deployment Strategy",
+  "category": "CI/CD",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Match the Strategy to the Requirement\n\nA team is releasing a high-traffic API and wants to de-risk a new version. The lead describes the desired rollout precisely:\n\n> \"Route about 5% of live traffic to the new version, watch error rate and p95 latency for ~15 minutes, and only ramp to 25%, then 50%, then 100% if the signals stay healthy — automatically rolling back the small slice if they don't.\"\n\nWhich deployment strategy is being described, and how does it differ from the alternatives?",
+  "options": [
+    { "id": "a", "text": "Canary: a small percentage of real traffic is shifted to the new version and progressively ramped based on observed metrics, limiting blast radius and enabling metric-driven rollback before full exposure." },
+    { "id": "b", "text": "Blue-green: two identical environments run side by side and traffic is cut over instantly from blue to green, with instant rollback by switching back — ideal for the gradual 5%/25%/50% ramp described." },
+    { "id": "c", "text": "Rolling update: pods/instances are replaced in batches behind the load balancer, which inherently sends a controlled 5% and then 25% of traffic to the new version while observing metrics." },
+    { "id": "d", "text": "Recreate: the old version is fully torn down and the new one started, with a brief outage window used to sample the 5% of early traffic for metrics." }
+  ],
+  "correct_option": "a",
+  "explanation": "The defining feature here — shift a small percentage of live traffic, observe metrics, and progressively ramp (with automatic rollback of the small slice) — is a canary release. (b) blue-green stands up a full second environment and performs an instant cutover; its strengths are instant switch and instant rollback (flip back to blue), but it does not do a gradual percentage ramp, and it roughly doubles resource usage during the cutover. The 5%/25%/50% framing is precisely what blue-green does NOT do. (c) rolling updates replace instances incrementally to avoid downtime, but the traffic split is a side effect of how many new instances exist, not a deliberately controlled, metric-gated percentage; you cannot cleanly hold at 5% and observe before ramping. (d) recreate causes downtime by design and offers no traffic-based comparison. So: gradual %-based, metric-driven shift = canary; instant cutover with instant rollback = blue-green; incremental instance replacement = rolling.",
+  "hints": [
+    {
+      "title": "Gradual vs instant",
+      "body": "Canary ramps a percentage and watches metrics. Blue-green flips all traffic at once and can flip back instantly. The question describes a ramp."
+    },
+    {
+      "title": "Traffic control vs instance count",
+      "body": "Rolling updates change traffic only as a byproduct of replacing instances; a canary deliberately controls the traffic percentage independent of instance counts."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

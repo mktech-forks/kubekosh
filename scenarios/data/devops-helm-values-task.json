@@ -1,0 +1,33 @@
+{
+  "id": "devops-helm-values-task",
+  "title": "Author a Helm values.yaml",
+  "category": "Infrastructure as Code",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Configure a Chart\n\nHelm charts are parameterized by a **`values.yaml`** with nested structures.\n\n**Your task:** write **`/root/values.yaml`** that sets:\n1. **`replicaCount`** to **`3`**\n2. a nested **`image`** map with **`repository: nginx`** and **`tag: \"1.25\"`**\n\n> 💡 Indentation defines nesting in YAML. Validate with `python3 -c \"import yaml; yaml.safe_load(open('/root/values.yaml'))\"`.",
+  "hints": [
+    {
+      "title": "Nested values",
+      "body": "Top-level keys for replicaCount, and an image mapping with repository and tag indented under it.",
+      "command": "printf 'replicaCount: 3\\nimage:\\n  repository: nginx\\n  tag: \"1.25\"\\n' > /root/values.yaml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/values.yaml" }
+  ],
+  "validation": {
+    "description": "Checks replicaCount=3 and the nested image.repository/tag values.",
+    "commands": [
+      {
+        "description": "replicaCount is 3 and image.repository/tag are set correctly",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/values.yaml')); img=d.get('image',{}); print('ok' if d.get('replicaCount')==3 and img.get('repository')=='nginx' and str(img.get('tag'))=='1.25' else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/values.yaml" }
+  ]
+}

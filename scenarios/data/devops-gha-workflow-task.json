@@ -1,0 +1,39 @@
+{
+  "id": "devops-gha-workflow-task",
+  "title": "Write a GitHub Actions Workflow",
+  "category": "CI/CD",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Define a CI Pipeline\n\nGitHub Actions workflows are YAML files describing **jobs** made of **steps**.\n\n**Your task:** write a workflow at **`/root/ci.yml`** that:\n1. triggers on **`push`**\n2. defines a job named **`build`** that runs on **`ubuntu-latest`**\n3. the `build` job has a step that runs **`echo building`**\n\n> 💡 The structure is `on:` → `jobs:` → `<job>:` → `runs-on:` + `steps:`. Validate the YAML with `python3 -c \"import yaml; yaml.safe_load(open('/root/ci.yml'))\"`.",
+  "hints": [
+    {
+      "title": "Workflow skeleton",
+      "body": "Declare the trigger, then a jobs map; each job sets runs-on and a list of steps.",
+      "command": "printf 'on: push\\njobs:\\n  build:\\n    runs-on: ubuntu-latest\\n    steps:\\n      - run: echo building\\n' > /root/ci.yml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/ci.yml" }
+  ],
+  "validation": {
+    "description": "Checks that /root/ci.yml defines a 'build' job on ubuntu-latest.",
+    "commands": [
+      {
+        "description": "Valid YAML with a 'build' job",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/ci.yml')); print('ok' if isinstance(d,dict) and 'jobs' in d and 'build' in d['jobs'] else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      },
+      {
+        "description": "The 'build' job runs on ubuntu-latest",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/ci.yml')); print(d['jobs']['build'].get('runs-on'))\"",
+        "expected_output": "ubuntu-latest",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/ci.yml" }
+  ]
+}

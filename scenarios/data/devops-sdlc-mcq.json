@@ -1,0 +1,25 @@
+{
+  "id": "devops-sdlc-mcq",
+  "title": "CI vs CD vs Continuous Deployment",
+  "category": "Getting Started",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Three Terms That Get Confused\n\nThree teams describe their pipelines:\n\n- **Team 1**: \"Every merge to main automatically builds the app and runs the full test suite.\"\n- **Team 2**: \"Every change that passes our pipeline is always kept ready to ship, but a human clicks the button to push it to production.\"\n- **Team 3**: \"Every change that passes our pipeline goes straight to production automatically — no one approves it.\"\n\nWhich statement correctly distinguishes **Continuous Integration**, **Continuous Delivery**, and **Continuous Deployment**?",
+  "options": [
+    { "id": "a", "text": "Team 1 is Continuous Integration (automated build + test on merge), Team 2 is Continuous Delivery (always releasable, final push is a manual decision), and Team 3 is Continuous Deployment (every passing change auto-releases to production)." },
+    { "id": "b", "text": "Team 1 is Continuous Deployment, Team 2 is Continuous Integration, and Team 3 is Continuous Delivery." },
+    { "id": "c", "text": "All three describe Continuous Integration; the terms Delivery and Deployment are just marketing synonyms for it." },
+    { "id": "d", "text": "Team 2 is Continuous Deployment because it deploys, and Team 3 is Continuous Delivery because a human is never involved." }
+  ],
+  "correct_option": "a",
+  "explanation": "These three terms describe successive stages of automation. **Continuous Integration (CI)** is the foundation: every change merged is automatically **built and tested** so integration problems surface early (Team 1). **Continuous Delivery** builds on CI by keeping every passing change **always in a releasable state**, but the actual promotion to production is a deliberate **manual (one-click) decision** (Team 2). **Continuous Deployment** removes that final human gate — **every change that passes the pipeline is automatically released to production** with no manual approval (Team 3). The key discriminator between the two CDs is the production gate: Delivery = automatic up to a manual go/no-go; Deployment = fully automatic all the way to prod. Option b scrambles the mapping. Option c is wrong — they are distinct concepts, not synonyms. Option d inverts Delivery and Deployment.",
+  "hints": [
+    {
+      "title": "Focus on the production gate",
+      "body": "All three automate building and testing. The thing that separates Continuous Delivery from Continuous Deployment is one question: does a human have to approve the release to production?"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,37 @@
+{
+  "id": "devops-git-branch-task",
+  "title": "Create and Switch Branches",
+  "category": "Git",
+  "difficulty": "Easy",
+  "type": "task",
+  "weight": 4,
+  "description": "## Work on a Feature Branch\n\nA repository with one commit on `main` is ready at **`/root/branchrepo`**.\n\n**Your task:** create a new branch named **`feature/login`** and switch to it, so it becomes the current branch.\n\n> 💡 `git switch -c <name>` (or `git checkout -b <name>`) creates and checks out a branch in one step. Confirm with `git branch --show-current`.",
+  "hints": [
+    {
+      "title": "Create and switch",
+      "body": "The -c flag of git switch creates the branch and moves you onto it.",
+      "command": "cd /root/branchrepo && git switch -c feature/login"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -rf /root/branchrepo" },
+    { "command": "git config --global user.email lab@kubekosh.local" },
+    { "command": "git config --global user.name 'KubeKosh Lab'" },
+    { "command": "git init -b main /root/branchrepo" },
+    { "command": "cd /root/branchrepo && echo hello > file.txt && git add file.txt && git commit -m init" }
+  ],
+  "validation": {
+    "description": "Checks that the current branch of /root/branchrepo is feature/login.",
+    "commands": [
+      {
+        "description": "Current branch is 'feature/login'",
+        "command": "git -C /root/branchrepo branch --show-current 2>/dev/null",
+        "expected_output": "feature/login",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -rf /root/branchrepo" }
+  ]
+}

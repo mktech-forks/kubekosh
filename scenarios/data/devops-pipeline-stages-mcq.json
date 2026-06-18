@@ -1,0 +1,25 @@
+{
+  "id": "devops-pipeline-stages-mcq",
+  "title": "Pipeline Stage Order",
+  "category": "CI/CD",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## What Runs When?\n\nA team is designing a CI/CD pipeline for a containerized web app. Which ordering of stages reflects the **typical, sensible** flow from a fresh commit to a running deployment?",
+  "options": [
+    { "id": "a", "text": "Build the code → run the tests → package the artifact/image → deploy" },
+    { "id": "b", "text": "Deploy to production → run the tests → build the code → package the artifact" },
+    { "id": "c", "text": "Package the artifact → deploy → build the code → run the tests" },
+    { "id": "d", "text": "Run the tests → deploy → build the code → package the artifact" }
+  ],
+  "correct_option": "a",
+  "explanation": "A pipeline moves from source to a deployed app in a logical order: **build** (check out and compile the code), **test** (unit/integration tests and static analysis — you must have built before you can test), **package** (produce a versioned artifact or container image from code that already passed), and finally **deploy** that validated artifact. Every other option deploys before testing or builds after packaging, which would ship untested or non-existent code — exactly what a pipeline exists to prevent.",
+  "hints": [
+    {
+      "title": "Think about dependencies",
+      "body": "You cannot test code you haven't built, and you should never deploy code you haven't tested. Each stage produces what the next one needs."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

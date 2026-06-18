@@ -1,0 +1,25 @@
+{
+  "id": "docker-multistage-mcq",
+  "title": "Why Multi-Stage Builds",
+  "category": "Building Images",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## The Point of a Second Stage\n\nA team switches a compiled application from a single-stage Dockerfile (based on `golang:alpine`) to a multi-stage build whose final stage is `FROM alpine`. What is the primary benefit?",
+  "options": [
+    { "id": "a", "text": "The build runs faster because compilation is skipped" },
+    { "id": "b", "text": "The final image excludes the compiler and source code, so it is much smaller and has less attack surface" },
+    { "id": "c", "text": "Multi-stage builds automatically run the container as a non-root user" },
+    { "id": "d", "text": "It lets the image run on both amd64 and arm64 without any other change" }
+  ],
+  "correct_option": "b",
+  "explanation": "A multi-stage build compiles in a heavy stage (with the toolchain and source) and then copies **only the resulting artifact** into a clean, minimal final stage. The compiler, build dependencies and source never end up in the shipped image, so it is dramatically smaller and exposes far less attack surface. It does not skip compilation (a), does not change the user (c), and is unrelated to multi-architecture builds (d, which is `buildx`/platform work).",
+  "hints": [
+    {
+      "title": "Spot the stages",
+      "body": "Each FROM begins a new stage. COPY --from=<stage> pulls artifacts out of an earlier stage into the current one."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

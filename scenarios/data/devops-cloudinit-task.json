@@ -1,0 +1,39 @@
+{
+  "id": "devops-cloudinit-task",
+  "title": "Write a cloud-init Config",
+  "category": "Configuration Management",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 4,
+  "description": "## Bootstrap a New VM\n\n**cloud-init** configures cloud VMs on first boot from a YAML `#cloud-config` document.\n\n**Your task:** write a file at **`/root/cloud-config.yml`** that:\n1. begins with the **`#cloud-config`** header line\n2. is valid YAML\n3. has a **`packages`** list that includes **`nginx`**\n\n> 💡 The `#cloud-config` first line is a required marker (it is a YAML comment, so it doesn't affect parsing).",
+  "hints": [
+    {
+      "title": "cloud-config skeleton",
+      "body": "Start with the header comment, then a packages list of things to install on boot.",
+      "command": "printf '#cloud-config\\npackages:\\n  - nginx\\n  - curl\\n' > /root/cloud-config.yml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/cloud-config.yml" }
+  ],
+  "validation": {
+    "description": "Checks the #cloud-config header and a packages list containing nginx.",
+    "commands": [
+      {
+        "description": "First line is '#cloud-config'",
+        "command": "head -n1 /root/cloud-config.yml 2>/dev/null",
+        "expected_output": "#cloud-config",
+        "match": "exact"
+      },
+      {
+        "description": "Valid YAML with nginx in the packages list",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/cloud-config.yml')); print('ok' if isinstance(d,dict) and 'nginx' in (d.get('packages') or []) else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/cloud-config.yml" }
+  ]
+}

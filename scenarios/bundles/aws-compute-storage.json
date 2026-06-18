@@ -1,0 +1,20 @@
+{
+  "id": "aws-compute-storage",
+  "subject": "aws",
+  "name": "Compute, Storage & Databases",
+  "icon": "☁️",
+  "tagline": "EC2, containers, Lambda, S3 and database selection",
+  "color": "#ff9900",
+  "colorDim": "rgba(255,153,0,0.13)",
+  "exam_minutes": 55,
+  "scenario_ids": [
+    "aws-compute-options-lesson",
+    "aws-ec2-asg-mcq",
+    "aws-containers-mcq",
+    "aws-serverless-mcq",
+    "aws-s3-storage-classes-mcq",
+    "aws-database-selection-mcq",
+    "aws-dynamodb-mcq",
+    "aws-s3-lifecycle-task"
+  ]
+}

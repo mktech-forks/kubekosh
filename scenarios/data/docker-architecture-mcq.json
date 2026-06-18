@@ -1,0 +1,26 @@
+{
+  "id": "docker-architecture-mcq",
+  "title": "Docker Architecture",
+  "category": "Getting Started",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Who Does the Work?\n\nWhen you type `docker run nginx` in your terminal, which component is actually responsible for pulling the image, creating the container, and managing its lifecycle?",
+  "options": [
+    { "id": "a", "text": "The `docker` CLI — it does everything locally and only contacts a registry to download images" },
+    { "id": "b", "text": "The Docker **daemon** (`dockerd`) — the CLI sends the request to it over a socket, and the daemon builds, runs and manages containers" },
+    { "id": "c", "text": "The container itself bootstraps and pulls its own image" },
+    { "id": "d", "text": "Docker Hub runs the container remotely and streams it back" }
+  ],
+  "correct_option": "b",
+  "explanation": "Docker uses a **client–server** model. The `docker` CLI is a thin client that sends commands (over `/var/run/docker.sock` or a TCP socket) to the **Docker daemon** `dockerd`. The daemon does the real work: pulling images from a registry, creating/starting/stopping containers, and managing images, volumes and networks. A registry like Docker Hub only stores and serves images — it never runs your containers.",
+  "hints": [
+    {
+      "title": "Check what the daemon reports",
+      "body": "`docker info` queries the daemon and prints server-side details — proof that a separate server process is handling the request.",
+      "command": "docker info"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,23 @@
+{
+  "id": "aws-database-selection-mcq",
+  "title": "Picking a Purpose-Built Database",
+  "category": "Databases",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Massive-Scale, Low-Latency Key-Value Workload\n\nA gaming backend needs a database for player session and profile data. The workload is **millions of simple key-value reads and writes per second**, requires **consistent single-digit-millisecond latency at any scale**, and must grow seamlessly with the player base with **minimal operational management** (no capacity planning headaches, no read-replica juggling). Queries are simple lookups by a key — there are no complex joins or ad-hoc analytical queries.\n\nWhich AWS database service BEST fits this workload?",
+  "options": [
+    { "id": "a", "text": "Amazon RDS for PostgreSQL with a large instance and several read replicas" },
+    { "id": "b", "text": "Amazon DynamoDB" },
+    { "id": "c", "text": "Amazon Redshift" },
+    { "id": "d", "text": "Amazon ElastiCache for Redis as the system of record" }
+  ],
+  "correct_option": "b",
+  "explanation": "**DynamoDB** is the purpose-built choice for high-throughput key-value access: it delivers single-digit-millisecond latency at virtually any scale, is fully managed and serverless (on-demand capacity removes capacity planning), and scales horizontally without sharding or replica management. **RDS/PostgreSQL** (A) is relational and scales primarily vertically; replicas help reads but it cannot match DynamoDB's horizontal write scale or operational simplicity for millions of ops/sec. **Redshift** (C) is an OLAP data warehouse built for analytical scans over large datasets — wrong tool for high-concurrency point lookups. **ElastiCache** (D) is an in-memory cache; it is extremely fast but is not a durable system of record — using it as the primary store risks data loss on node failure/eviction.",
+  "hints": [
+    { "title": "Match shape to engine", "body": "Key-value lookups at massive scale = NoSQL key-value store. Joins/relations = relational. Analytics over big data = warehouse." },
+    { "title": "Durability of a cache", "body": "An in-memory cache is fast but volatile. Ask whether the candidate is meant to be the durable source of truth." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

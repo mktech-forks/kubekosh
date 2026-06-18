@@ -1,0 +1,39 @@
+{
+  "id": "docker-readonly-task",
+  "title": "Run With a Read-Only Root Filesystem",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Make the Container Filesystem Immutable\n\nA read-only root filesystem stops a compromised process from modifying the container — a strong hardening step for stateless services.\n\n**Requirements:**\n1. Run an **`alpine`** container named **`hardened`** in the background (keep it alive)\n2. Give it a **read-only root filesystem** (`--read-only`)\n\n> 💡 `docker run -d --name hardened --read-only alpine sleep 3600`. Verify with `docker inspect -f '{{.HostConfig.ReadonlyRootfs}}' hardened`.",
+  "hints": [
+    {
+      "title": "Enable a read-only rootfs",
+      "body": "The --read-only flag mounts the container's root filesystem read-only. Add --tmpfs /tmp if the app needs scratch space.",
+      "command": "docker run -d --name hardened --read-only alpine sleep 3600"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker rm -f hardened 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that 'hardened' is running with a read-only root filesystem.",
+    "commands": [
+      {
+        "description": "Container 'hardened' is running",
+        "command": "docker inspect -f '{{.State.Running}}' hardened 2>/dev/null",
+        "expected_output": "true",
+        "match": "exact"
+      },
+      {
+        "description": "Root filesystem is read-only",
+        "command": "docker inspect -f '{{.HostConfig.ReadonlyRootfs}}' hardened 2>/dev/null",
+        "expected_output": "true",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rm -f hardened 2>/dev/null || true" }
+  ]
+}

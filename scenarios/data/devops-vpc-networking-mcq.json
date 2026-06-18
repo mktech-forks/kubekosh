@@ -1,0 +1,24 @@
+{
+  "id": "devops-vpc-networking-mcq",
+  "title": "VPC Subnets, NAT, and Peering",
+  "category": "Cloud",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Private instances need outbound updates only\n\nApplication instances live in a **private subnet** (no public IPs) and must download OS package updates and call a public API over the internet. They must **not** be reachable from the internet inbound. The VPC also peers with a second VPC, and a team asks whether peering to VPC-B automatically gives them reachability to VPC-C that VPC-B peers with. Which configuration is correct?",
+  "options": [
+    { "id": "a", "text": "Place a NAT gateway in a public subnet and point the private subnet's route table default route (0.0.0.0/0) at the NAT gateway; the NAT gateway uses the public subnet's Internet Gateway route to reach the internet, enabling outbound-initiated connections while denying unsolicited inbound. VPC peering is non-transitive, so peering A↔B does not grant A reachability to C even if B↔C are peered." },
+    { "id": "b", "text": "Attach an Internet Gateway directly to the private subnet's route table; an Internet Gateway permits outbound traffic while blocking all inbound by default, so no NAT is needed. VPC peering is transitive, so A automatically reaches C through B." },
+    { "id": "c", "text": "Give each private instance a public IP and rely on security groups to block inbound; the NAT gateway is only for IPv6. Peering routes propagate transitively across all connected VPCs." },
+    { "id": "d", "text": "Put the NAT gateway in the private subnet itself and route 0.0.0.0/0 to it; the Internet Gateway is unnecessary because the NAT gateway performs both inbound and outbound translation. Peering is transitive but only for traffic under 1500 MTU." }
+  ],
+  "correct_option": "a",
+  "explanation": "A **NAT gateway lives in a public subnet** (one whose route table sends 0.0.0.0/0 to an Internet Gateway and which has been allocated a public/Elastic IP). The **private subnet's** route table sends its default route to the NAT gateway; the NAT gateway then forwards out via the Internet Gateway. This allows **outbound-initiated** flows (package updates, API calls) and their return traffic, while unsolicited **inbound** connections cannot reach the private instances because they have no public address and nothing routes inbound to them — exactly (a). An Internet Gateway alone does not give a no-public-IP instance internet access and does not by itself \"allow outbound, block inbound\" for private instances (b is wrong); routing a private subnet straight at an IGW makes it a public subnet, which still needs public IPs to work. Giving private instances public IPs (c) defeats the \"not reachable inbound\" requirement, and NAT is not \"only for IPv6.\" A NAT gateway cannot sit in its own private subnet routing to itself, and it does not replace the IGW (d). Crucially, **VPC peering is non-transitive**: a route to a peered VPC is not propagated to that VPC's other peers, so A↔B and B↔C never imply A↔C — refuting (b), (c), and (d)'s transitivity claims.",
+  "hints": [
+    { "title": "Public vs private subnet definition", "body": "A subnet is 'public' if its route table has a route to an Internet Gateway. The NAT gateway must sit in such a subnet; the private subnet routes its default through the NAT gateway." },
+    { "title": "NAT gateway direction", "body": "NAT gateways allow connections initiated from inside out (and their replies) but not connections initiated from the internet inward — ideal for patch/update downloads with no inbound exposure." },
+    { "title": "Peering is not transitive", "body": "If A peers with B and B peers with C, A still cannot reach C. You must create explicit peering (and routes) for every pair, or use a transit gateway." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

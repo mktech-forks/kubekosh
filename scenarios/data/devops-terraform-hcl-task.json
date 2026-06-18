@@ -1,0 +1,39 @@
+{
+  "id": "devops-terraform-hcl-task",
+  "title": "Declare a Terraform Resource",
+  "category": "Infrastructure as Code",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Write Infrastructure as Code\n\nTerraform describes infrastructure in HCL `resource` blocks of the form `resource \"<type>\" \"<name>\" { ... }`.\n\n**Your task:** write a file at **`/root/main.tf`** declaring a resource of type **`local_file`** named **`greeting`** that has a **`content`** argument and a **`filename`** argument.\n\n```hcl\nresource \"local_file\" \"greeting\" {\n  content  = \"Hello from Terraform\"\n  filename = \"/tmp/greeting.txt\"\n}\n```\n\n> 💡 No `terraform` binary is needed — this checks that your HCL declares the resource block correctly.",
+  "hints": [
+    {
+      "title": "Write the resource block",
+      "body": "A resource block names a type and a local name, then sets its arguments inside braces.",
+      "command": "printf 'resource \"local_file\" \"greeting\" {\\n  content  = \"Hello from Terraform\"\\n  filename = \"/tmp/greeting.txt\"\\n}\\n' > /root/main.tf"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/main.tf" }
+  ],
+  "validation": {
+    "description": "Checks that /root/main.tf declares the local_file.greeting resource with a content argument.",
+    "commands": [
+      {
+        "description": "Declares resource local_file \"greeting\"",
+        "command": "grep -qE 'resource[[:space:]]+\"local_file\"[[:space:]]+\"greeting\"' /root/main.tf && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "Sets a content argument",
+        "command": "grep -qE '^[[:space:]]*content[[:space:]]*=' /root/main.tf && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/main.tf" }
+  ]
+}

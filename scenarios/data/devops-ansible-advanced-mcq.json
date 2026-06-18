@@ -1,0 +1,29 @@
+{
+  "id": "devops-ansible-advanced-mcq",
+  "title": "Ansible Idempotency and the command Module",
+  "category": "Configuration Management",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Why Does This Task Always Report \"changed\"?\n\nA playbook installs a tool by downloading and extracting a release:\n\n```yaml\n- name: Extract the release tarball\n  command: tar -xzf /tmp/app.tgz -C /opt/app\n\n- name: Reload service\n  command: systemctl reload myapp\n  notify: restart myapp\n```\n\nEvery single run reports `changed=2`, even when nothing has actually changed on the host. Your CI gate fails any playbook that is not idempotent (reports `changed` on a no-op re-run).\n\nWhat is the root cause and the correct remediation?",
+  "options": [
+    { "id": "a", "text": "The `command`/`shell` modules are not idempotent — they always report `changed` because Ansible cannot know whether the command altered anything. Make them idempotent by using a purpose-built module (e.g. `unarchive`) or guard `command` with `creates:`/`removes:`, `when:`, or `changed_when:` so it reflects real state changes." },
+    { "id": "b", "text": "The tasks run as separate forks, so Ansible double-counts them; setting `serial: 1` or `strategy: linear` collapses the count and reports `changed=0` on re-runs." },
+    { "id": "c", "text": "`command` is idempotent by default, but the `notify` on the second task forces a `changed` result so the handler can fire; removing the `notify` makes both tasks idempotent." },
+    { "id": "d", "text": "The fact cache is stale. Running with `--flush-cache` resets gathered facts so the modules can correctly detect that the files already exist and report `ok` instead of `changed`." }
+  ],
+  "correct_option": "a",
+  "explanation": "`command` and `shell` are raw command runners: Ansible has no model of what the command does, so by design it reports `changed` on every execution. To get idempotency you either (1) use a module that knows the desired-state semantics (`unarchive` for tarballs, `package`, `copy`, `service`, etc. all compare to current state and report `ok` when already correct), or (2) constrain the raw command — `creates:`/`removes:` skip it when a path already exists, `when:` gates it on a condition, and `changed_when:`/`failed_when:` let you derive the changed/failed status from the command's output or return code. (b) is wrong: fork/serial settings affect parallelism and ordering, not whether a module reports changed. (c) is wrong: `command` is not idempotent, and `notify` does not cause a changed result — it is the other way around: a task only notifies its handler when the task itself reports changed. Handlers then run once, at the end of the play, only if notified. (d) is wrong: fact caching has nothing to do with the command module's changed reporting; `--flush-cache` would not affect it.",
+  "hints": [
+    {
+      "title": "Does Ansible understand your command?",
+      "body": "Modules like unarchive/copy/package compare desired vs current state. command just runs a string and has no idea whether it changed anything."
+    },
+    {
+      "title": "Guarding a raw command",
+      "body": "creates:, removes:, when:, and changed_when: are the levers for making command/shell behave idempotently when no native module fits."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

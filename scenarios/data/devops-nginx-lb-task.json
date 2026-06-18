@@ -1,0 +1,50 @@
+{
+  "id": "devops-nginx-lb-task",
+  "title": "Configure Nginx Load Balancing",
+  "category": "Web Servers",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Balance Across a Backend Pool\n\n**Your task:** write a complete Nginx config at **`/root/lb.conf`** that:\n1. defines an **`upstream backend`** pool with **three** servers — `10.0.0.1:80`, `10.0.0.2:80`, `10.0.0.3:80`\n2. uses the **`least_conn`** balancing algorithm\n3. has a `server` on port **80** that `proxy_pass`es to that upstream\n4. passes **`nginx -t`**\n\n> 💡 The `upstream { }` block goes inside `http { }`. Test with `nginx -t -c /root/lb.conf`.",
+  "hints": [
+    {
+      "title": "Upstream + least_conn",
+      "body": "Declare an upstream block listing the backends with the least_conn directive, then proxy_pass to it by name.",
+      "command": "printf 'events {}\\nhttp {\\n  upstream backend {\\n    least_conn;\\n    server 10.0.0.1:80;\\n    server 10.0.0.2:80;\\n    server 10.0.0.3:80;\\n  }\\n  server {\\n    listen 80;\\n    location / { proxy_pass http://backend; }\\n  }\\n}\\n' > /root/lb.conf"
+    },
+    {
+      "title": "Validate",
+      "body": "nginx -t parses the config and reports success or the exact error and line.",
+      "command": "nginx -t -c /root/lb.conf"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/lb.conf" }
+  ],
+  "validation": {
+    "description": "Checks valid config, least_conn, and three upstream backends.",
+    "commands": [
+      {
+        "description": "Configuration passes nginx -t",
+        "command": "nginx -t -c /root/lb.conf 2>&1",
+        "expected_output": "successful",
+        "match": "contains"
+      },
+      {
+        "description": "Uses the least_conn algorithm",
+        "command": "grep -q 'least_conn' /root/lb.conf && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "Defines three backend servers",
+        "command": "grep -cE '^[[:space:]]*server[[:space:]]+10\\.0\\.0\\.[123]:80' /root/lb.conf",
+        "expected_output": "3",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/lb.conf" }
+  ]
+}

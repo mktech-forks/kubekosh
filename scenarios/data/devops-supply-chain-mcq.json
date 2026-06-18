@@ -1,0 +1,29 @@
+{
+  "id": "devops-supply-chain-mcq",
+  "title": "Proving an Image Was Built by Your Pipeline",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Tamper-Evident Provenance\n\nAfter a high-profile supply-chain incident, leadership asks for a control that lets the platform **cryptographically prove a container image was built by your official CI pipeline and has not been tampered with since**, and to **refuse to run any image that fails that proof** at deploy time.\n\nWhich combination of mechanisms directly satisfies that requirement?",
+  "options": [
+    { "id": "a", "text": "Have the pipeline generate signed build provenance / attestations (e.g. SLSA provenance) and sign the image with cosign, then enforce signature/attestation verification at the Kubernetes admission stage (e.g. a verifying admission controller / policy) so unsigned or unverifiable images are rejected." },
+    { "id": "b", "text": "Generate an SBOM for every image with Syft and scan it with Grype; if no critical CVEs are found, the image is proven authentic and safe to run, so block only images with critical vulnerabilities at admission." },
+    { "id": "c", "text": "Push images only to a private registry over TLS and require pull credentials; since only the pipeline can push and the transport is encrypted, the image's origin and integrity are guaranteed without any signing." },
+    { "id": "d", "text": "Pin every image by its `:latest`-replaced semantic version tag and record the tag in Git; because the tag is immutable once recorded, matching the deployed tag to Git proves the image is the one your pipeline built." }
+  ],
+  "correct_option": "a",
+  "explanation": "Proving origin and integrity is a cryptographic problem. The pipeline signs the image (cosign) and produces signed provenance/attestations — ideally SLSA provenance describing how, where, and from what the artifact was built. At deploy time an admission controller (e.g. a Sigstore policy controller / Kyverno / Connaisseur-style verifier) checks the signature and attestation against the trusted public key/identity and rejects anything it can't verify. That is what makes 'built by our pipeline, untampered' enforceable. (b) conflates two different concerns: an SBOM plus vulnerability scanning tells you what is inside and whether it has known CVEs, but it says nothing about who built the image or whether it was swapped/tampered — a clean scan does not prove authenticity. (c) is wrong: TLS protects the image in transit and registry auth limits who can push, but neither produces tamper-evidence after the fact, and a compromised pipeline/registry credential or a registry breach defeats it; there's no signature to verify origin. (d) is wrong: tags are mutable by default and even an 'immutable' tag is just a pointer — recording a tag in Git doesn't cryptographically bind the bytes; only a digest plus a signature does. (Pinning by digest is good practice, but it still isn't a proof of who built it.)",
+  "hints": [
+    {
+      "title": "Origin/integrity is cryptographic",
+      "body": "Proving 'we built it and nobody changed it' needs signatures and attestations, not scanning or transport security."
+    },
+    {
+      "title": "SBOM answers a different question",
+      "body": "An SBOM lists components for vulnerability tracking. SLSA provenance + cosign signing answers 'who built this and is it untampered', and admission verification enforces it."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

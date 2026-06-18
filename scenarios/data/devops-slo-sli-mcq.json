@@ -1,0 +1,29 @@
+{
+  "id": "devops-slo-sli-mcq",
+  "title": "SLI, SLO, Error Budgets, and Burn Rate",
+  "category": "Monitoring",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Define the Error Budget\n\nYour reliability docs state:\n\n- **SLI:** the proportion of HTTP requests served successfully in under 300 ms.\n- **SLO:** 99.9% of such requests over a rolling 28-day window.\n\nDuring sprint planning, a new engineer asks what the team's *error budget* is and how it relates to the burn-rate alert that paged the on-call yesterday.\n\nWhich statement is correct?",
+  "options": [
+    { "id": "a", "text": "The error budget is `1 − SLO` over the window — here 0.1% (about 40 minutes of unreliability over 28 days). Burn rate is how fast the budget is being consumed relative to that allowance; a high (fast) burn rate over a short window means the budget will be exhausted quickly, which is why it pages." },
+    { "id": "b", "text": "The error budget is the SLO itself (99.9%): the budget of good requests you are allowed to serve. Burn rate measures how quickly you are using up those successful requests." },
+    { "id": "c", "text": "The error budget equals the SLI minus the SLO, so it only exists when current performance is below target; if the SLI is above 99.9% there is no error budget and burn-rate alerts cannot fire." },
+    { "id": "d", "text": "The error budget is a fixed count of allowed incidents per quarter agreed with management; burn rate is the number of incidents opened divided by the quarter length." }
+  ],
+  "correct_option": "a",
+  "explanation": "The error budget is the allowable amount of unreliability over the SLO window: `error budget = 1 − SLO`. With a 99.9% SLO, that's 0.1% of requests (or, expressed as time, roughly 40 minutes over 28 days) that may fail the SLI before the SLO is breached. Burn rate normalizes consumption: a burn rate of 1 means you'd exactly exhaust the budget over the full window; a burn rate of, say, 14.4 means you'd burn the entire 28-day budget in ~2 days. Fast-burn alerts (high burn rate measured over a short window) page because they indicate the budget is being destroyed rapidly; slow-burn alerts use longer windows and lower urgency. (b) confuses the budget with the SLO — the budget is the failure allowance (1 − SLO), not the success target. (c) is wrong: the budget is a fixed allowance defined by the SLO over the window regardless of current performance; you consume it as failures occur, and it does not vanish when you're healthy (in fact a healthy SLI means you're consuming little of it). (d) is wrong: the error budget is derived quantitatively from the SLO and SLI, not an arbitrary negotiated incident count.",
+  "hints": [
+    {
+      "title": "Budget = allowed failure",
+      "body": "If the SLO is the target success rate, the budget is what's left for failure: 1 minus the SLO over the window."
+    },
+    {
+      "title": "Why fast burn pages",
+      "body": "Burn rate is consumption speed relative to the budget. Burning it fast over a short window means imminent SLO breach, hence a page."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

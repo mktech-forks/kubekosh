@@ -1,0 +1,23 @@
+{
+  "id": "aws-dr-strategies-mcq",
+  "title": "Selecting a DR Strategy from RTO/RPO",
+  "category": "Resilience",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Meeting a Strict RTO/RPO Within Budget\n\nA financial-services company must define cross-Region disaster recovery for its core trading-support application. The business sets an **RTO of about 5 minutes** and an **RPO of seconds (near-zero data loss)**. They are **willing to pay** for standing DR infrastructure but want to **avoid the cost and operational complexity of running full production capacity in both Regions** if they don't have to. Database changes are continuously replicated to the DR Region.\n\nWhich DR strategy BEST meets these requirements?",
+  "options": [
+    { "id": "a", "text": "Backup & Restore — copy nightly snapshots to the DR Region and rebuild on disaster" },
+    { "id": "b", "text": "Pilot Light — keep only the database running in the DR Region and provision the rest on disaster" },
+    { "id": "c", "text": "Warm Standby — run a scaled-down but fully functional copy of the stack in the DR Region and scale it up on failover" },
+    { "id": "d", "text": "Multi-Site Active/Active — run full production capacity serving live traffic in both Regions" }
+  ],
+  "correct_option": "c",
+  "explanation": "An RTO of minutes with near-zero RPO, where the team wants to avoid paying for full duplicate capacity, is the textbook definition of **Warm Standby**: a smaller-but-complete copy of the workload is always running in the DR Region (so recovery is just scaling up and shifting traffic — minutes), and continuous data replication keeps RPO to seconds. **Backup & Restore** (A) yields RTO/RPO of hours — far too slow. **Pilot Light** (B) keeps only the data hot and must spin up the application tier on disaster, typically giving RTO in the tens of minutes, which misses the ~5-minute target and is riskier under pressure. **Active/Active** (D) would also satisfy the RTO/RPO but contradicts the explicit requirement to avoid running full production capacity in both Regions — it is more cost and complexity than needed.",
+  "hints": [
+    { "title": "Anchor on the constraints", "body": "RTO ~minutes + RPO ~seconds rules out Backup & Restore (hours). The phrase \"avoid full capacity in both Regions\" rules out Active/Active." },
+    { "title": "Pilot Light vs Warm Standby", "body": "Pilot Light keeps only the core (data) hot and builds the rest on demand; Warm Standby keeps the whole stack running, just smaller. Which gives a faster, lower-risk recovery in ~5 minutes?" }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

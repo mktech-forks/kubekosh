@@ -1,0 +1,23 @@
+{
+  "id": "aws-transit-gateway-mcq",
+  "title": "Connecting 30 VPCs at Scale",
+  "category": "Networking",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## From Mesh Sprawl to a Hub\n\nAn enterprise has **30 VPCs** spread across **multiple AWS accounts** and is adding more each quarter. They need **any-to-any (transitive) routing** between most VPCs, plus a single place to manage routing and to attach their on-premises Site-to-Site VPN. Their current full-mesh **VPC peering** setup has become unmanageable.\n\nWhich approach best meets the requirement for transitive routing and centralized management at this scale?",
+  "options": [
+    { "id": "a", "text": "Replace the mesh with a **Transit Gateway**: attach each VPC (and the VPN) to it as a hub-and-spoke, using a shared TGW with route tables for segmentation." },
+    { "id": "b", "text": "Keep building **VPC peering** connections between every pair of VPCs; peering supports transitive routing once you add enough connections." },
+    { "id": "c", "text": "Create a single 'transit VPC' running self-managed router EC2 instances and route all traffic through them." },
+    { "id": "d", "text": "Connect all 30 VPCs with **AWS PrivateLink** interface endpoints so they can route to each other transitively." }
+  ],
+  "correct_option": "a",
+  "explanation": "**AWS Transit Gateway (TGW)** is the canonical solution for connecting many VPCs (and on-prem links) in a **hub-and-spoke** topology with **transitive** routing and a central control point. Each VPC attaches once to the TGW instead of peering with every other VPC, and TGW route tables let you segment which attachments can reach which — and it can be shared across accounts via Resource Access Manager. Option B is fundamentally wrong: **VPC peering is non-transitive** (traffic cannot hop from VPC A to VPC C through VPC B), and a full mesh of N VPCs needs N(N-1)/2 connections — ~435 for 30 VPCs — which is exactly the unmanageable sprawl they're escaping. Option C (self-managed router EC2 'transit VPC') was an older pattern that TGW made obsolete; it adds operational burden, scaling limits, and a single point of failure. Option D misuses **PrivateLink**, which exposes individual *services* (not full network-level routing between VPCs) and is not a transitive routing fabric.",
+  "hints": [
+    { "title": "Peering's hard limit", "body": "VPC peering is non-transitive and scales as N-squared. That alone rules it out for 30-plus VPCs needing any-to-any connectivity." },
+    { "title": "Hub-and-spoke at network level", "body": "When you need transitive routing across many VPCs and on-prem with one place to manage it, think Transit Gateway." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

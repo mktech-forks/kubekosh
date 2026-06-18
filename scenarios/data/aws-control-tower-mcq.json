@@ -1,0 +1,23 @@
+{
+  "id": "aws-control-tower-mcq",
+  "title": "Standing Up a Governed Landing Zone Fast",
+  "category": "Organizations",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## A Multi-Account Foundation, Quickly\n\nA company with no existing multi-account structure wants to establish a **governed multi-account environment** in a matter of days, with:\n\n- a pre-built OU structure plus dedicated **log archive** and **audit/security** accounts,\n- **baseline guardrails** (preventive and detective) applied automatically,\n- a repeatable, self-service way for teams to **provision new accounts** that are compliant from day one,\n- minimal custom engineering and an ongoing dashboard of compliance status.\n\nWhich approach best meets these goals?",
+  "options": [
+    { "id": "a", "text": "Use **AWS Control Tower** to deploy a landing zone with its baseline guardrails, log archive and audit accounts, and **Account Factory** for governed account provisioning." },
+    { "id": "b", "text": "Build everything by hand with **AWS Organizations**, hand-written SCPs, and **CloudFormation StackSets**, wiring up logging accounts and guardrails yourself." },
+    { "id": "c", "text": "Deploy **AWS Config** with conformance packs as the complete solution for the multi-account foundation." },
+    { "id": "d", "text": "Create the accounts manually and rely on **IAM Identity Center** to provide governance and guardrails." }
+  ],
+  "correct_option": "a",
+  "explanation": "**AWS Control Tower** is purpose-built to stand up a **well-architected, governed multi-account landing zone automatically**: it creates the OU structure, the dedicated **log archive** and **audit** accounts, applies a set of preventive (SCP-based) and detective (Config-based) **guardrails**, and provides **Account Factory** for self-service, compliant account provisioning — all with a dashboard, minimal custom work, and in a short time. Option B (Organizations + SCPs + StackSets) *can* produce a similar result but requires you to design and build every piece yourself — far slower and more error-prone, which is exactly what Control Tower automates on top of these same primitives. Option C (**AWS Config**) only provides resource configuration tracking and compliance detection; it is a *component* of governance, not a landing-zone builder, and offers no account factory or OU/SCP setup. Option D (**IAM Identity Center**) handles workforce sign-on, not guardrails or account provisioning.",
+  "hints": [
+    { "title": "Automated vs. do-it-yourself", "body": "Organizations + StackSets can reach the same end state, but Control Tower automates the landing zone so you don't hand-build it." },
+    { "title": "Listen for 'Account Factory' cues", "body": "Self-service provisioning of compliant accounts, baseline guardrails, and log/audit accounts out of the box = Control Tower." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

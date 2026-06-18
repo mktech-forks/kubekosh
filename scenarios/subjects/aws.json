@@ -1,0 +1,20 @@
+{
+  "id": "aws",
+  "name": "AWS Solutions Architect",
+  "icon": "☁️",
+  "tagline": "Solutions Architect Professional (SAP-C02)",
+  "color": "#ff9900",
+  "colorDim": "rgba(255,153,0,0.13)",
+  "environment": "bash",
+  "bundle_order": [
+    "aws-fundamentals",
+    "aws-networking",
+    "aws-org-complexity",
+    "aws-compute-storage",
+    "aws-resilience",
+    "aws-security",
+    "aws-costopt",
+    "aws-migration",
+    "aws-emerging"
+  ]
+}

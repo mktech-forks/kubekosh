@@ -1,0 +1,39 @@
+{
+  "id": "devops-git-cherry-pick-task",
+  "title": "Cherry-Pick a Hotfix",
+  "category": "Git",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Backport a Single Commit\n\nA repository at **`/root/cprepo`** has a `main` branch and a `hotfix` branch. The `hotfix` branch contains one commit that adds **`fix.txt`** (with the content `hotfix-applied`); `main` does **not** have it. You are currently on `main`.\n\n**Your task:** bring **only that commit** onto `main` using **cherry-pick** (do not merge the whole branch).\n\n> 💡 `git cherry-pick <ref>` replays a single commit onto your current branch. The tip of `hotfix` is the commit you want.",
+  "hints": [
+    {
+      "title": "Cherry-pick the branch tip",
+      "body": "Cherry-pick applies the named commit onto the current branch. You can reference the hotfix branch tip by name.",
+      "command": "cd /root/cprepo && git cherry-pick hotfix"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -rf /root/cprepo" },
+    { "command": "git config --global user.email lab@kubekosh.local" },
+    { "command": "git config --global user.name 'KubeKosh Lab'" },
+    { "command": "git init -b main /root/cprepo" },
+    { "command": "cd /root/cprepo && echo base > base.txt && git add base.txt && git commit -m base" },
+    { "command": "cd /root/cprepo && git switch -c hotfix && echo hotfix-applied > fix.txt && git add fix.txt && git commit -m 'add hotfix'" },
+    { "command": "cd /root/cprepo && git switch main" }
+  ],
+  "validation": {
+    "description": "Checks that fix.txt (with the hotfix content) is now present on main.",
+    "commands": [
+      {
+        "description": "main contains fix.txt with the hotfix content",
+        "command": "git -C /root/cprepo show main:fix.txt 2>/dev/null",
+        "expected_output": "hotfix-applied",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -rf /root/cprepo" }
+  ]
+}

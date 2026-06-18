@@ -44,7 +44,7 @@ function getCurrentTheme() {
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function TerminalComponent({ collapsed, onToggleCollapse }) {
+export default function TerminalComponent({ subject, collapsed, onToggleCollapse }) {
   const containerRef = useRef(null)
   const termRef      = useRef(null)
   const fitRef       = useRef(null)
@@ -147,7 +147,7 @@ export default function TerminalComponent({ collapsed, onToggleCollapse }) {
           </div>
           <span className={styles.barTitle}>
             <span className={styles.barIcon}>$_</span>
-            bash — kubekosh
+            bash — {subject?.name ? subject.name.toLowerCase() : 'kubekosh'}
           </span>
         </div>
         <div className={styles.barRight}>

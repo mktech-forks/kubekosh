@@ -1,0 +1,25 @@
+{
+  "id": "devops-terraform-mcq",
+  "title": "What terraform plan Does",
+  "category": "Infrastructure as Code",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Preview Before You Commit\n\nIn a typical Terraform workflow you run `terraform plan` and then, separately, `terraform apply`. What does `terraform plan` actually do?",
+  "options": [
+    { "id": "a", "text": "It compares your desired configuration against the recorded state and shows a preview (a diff) of what would be added, changed, or destroyed — without making any real changes." },
+    { "id": "b", "text": "It immediately creates, modifies, and destroys the real resources to match your configuration." },
+    { "id": "c", "text": "It deletes the state file so Terraform forgets all previously managed resources." },
+    { "id": "d", "text": "It downloads provider plugins but never inspects your configuration or state." }
+  ],
+  "correct_option": "a",
+  "explanation": "`terraform plan` is a **dry run**: it reads your desired configuration, compares it against the **state** (Terraform's record of real resources), and prints a diff of what it *would* add, change, or destroy. It makes **no** real changes. Actually applying those changes is the job of `terraform apply` — so option (b) describes apply, not plan. Option (c) describes something like `terraform state rm` / deleting state, which is destructive and unrelated. Option (d) is wrong because plan absolutely inspects both config and state to compute the diff. The plan step exists precisely so you can review the impact before committing with apply.",
+  "hints": [
+    {
+      "title": "Plan previews, apply executes",
+      "body": "Remember the two-step safety loop: plan shows the diff (no changes made), then apply performs it. State is what plan diffs against."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,29 @@
+{
+  "id": "devops-terraform-state-mcq",
+  "title": "Terraform State, Locking, and Concurrent Applies",
+  "category": "Infrastructure as Code",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Two Engineers, One State File\n\nYour team uses Terraform with an S3 remote backend:\n\n```hcl\nterraform {\n  backend \"s3\" {\n    bucket         = \"acme-tfstate\"\n    key            = \"prod/network/terraform.tfstate\"\n    region         = \"eu-west-1\"\n    dynamodb_table = \"acme-tf-locks\"\n    encrypt        = true\n  }\n}\n```\n\nTwo engineers kick off `terraform apply` against this same state at roughly the same time. A junior asks why the `dynamodb_table` line matters and whether it could be safely removed to simplify the config.\n\nWhich statement is correct?",
+  "options": [
+    { "id": "a", "text": "The DynamoDB table provides a distributed lock: the first apply acquires it and the second is blocked (or errors) until the lock is released, preventing two concurrent writes from corrupting the state file." },
+    { "id": "b", "text": "DynamoDB stores a backup copy of the state, so it can be removed because S3 versioning already protects against corruption from concurrent applies." },
+    { "id": "c", "text": "S3 strong read-after-write consistency already serializes the two applies, so the DynamoDB lock is purely advisory and redundant in modern AWS." },
+    { "id": "d", "text": "The lock only protects `terraform plan`; concurrent `apply` operations are safe because each apply writes to a separate per-engineer state key." }
+  ],
+  "correct_option": "a",
+  "explanation": "Terraform writes the entire state file as a unit; two concurrent applies can interleave reads and writes and clobber each other, leaving the recorded state out of sync with real infrastructure. The `dynamodb_table` configures the S3 backend's locking mechanism: before mutating state, Terraform writes a lock item to DynamoDB (conditional put on a unique LockID). The second apply cannot acquire the lock and fails fast with a lock error rather than racing. (b) is wrong: DynamoDB holds the lock metadata, not a state backup; S3 versioning lets you recover an old version but does not prevent the concurrent-write corruption in the first place. (c) is wrong: S3 consistency guarantees ordering of individual object operations, not mutual exclusion across a multi-step read-modify-write apply. (d) is wrong: the lock guards any state-mutating operation (including apply), and both engineers here use the same `key`, so there are no separate per-engineer states. Note also that state can contain sensitive values (passwords, keys) in plaintext, which is why `encrypt = true` matters; and pre-existing resources are brought under management with `terraform import`, not by editing state by hand.",
+  "hints": [
+    {
+      "title": "What does the lock actually prevent?",
+      "body": "Think about what happens when two processes each read the whole state, make changes, and write the whole state back. The lock makes that read-modify-write atomic across processes."
+    },
+    {
+      "title": "Backup vs lock",
+      "body": "S3 versioning is your recovery net. DynamoDB here is the mutual-exclusion mechanism. They solve different problems."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

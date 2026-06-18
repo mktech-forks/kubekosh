@@ -1,0 +1,23 @@
+{
+  "id": "aws-rightsizing-mcq",
+  "title": "Data-Driven EC2 Rightsizing",
+  "category": "Cost",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Recommendations to Downsize Over-Provisioned EC2\n\nAn organization suspects many of its EC2 instances are over-provisioned. They want **specific, data-driven recommendations** — derived from actual CPU, memory, network, and disk utilization metrics — telling them which instances to downsize or move to a different/cheaper instance type, ideally with projected savings and performance-risk ratings. They want this for EC2 instances, Auto Scaling groups, EBS volumes, and Lambda functions, with minimal manual analysis. Which AWS service BEST provides this?",
+  "options": [
+    { "id": "a", "text": "AWS Compute Optimizer" },
+    { "id": "b", "text": "AWS Trusted Advisor" },
+    { "id": "c", "text": "Amazon CloudWatch dashboards alone" },
+    { "id": "d", "text": "AWS Cost Explorer rightsizing report only" }
+  ],
+  "correct_option": "a",
+  "explanation": "**AWS Compute Optimizer** analyzes historical utilization metrics with machine learning and produces granular rightsizing recommendations for **EC2 instances, Auto Scaling groups, EBS volumes, and Lambda functions**, including the recommended instance type, projected savings, and a performance-risk assessment — exactly what is described. **Trusted Advisor** (B) includes a cost category that flags idle/underutilized resources, but its recommendations are coarser best-practice checks, not ML-driven rightsizing across all those resource types. **CloudWatch** (C) supplies the raw metrics but does no analysis or recommendation — you'd interpret it manually. **Cost Explorer** (D) offers an EC2 rightsizing recommendation feature but it is narrower (EC2-focused) and the question asks for ASG/EBS/Lambda coverage with utilization-based ML recommendations, which is Compute Optimizer's remit.",
+  "hints": [
+    { "title": "Who turns metrics into recommendations?", "body": "CloudWatch gives metrics; the requirement is for a service that converts utilization into concrete downsizing recommendations." },
+    { "title": "Breadth of resources", "body": "The scope (EC2, ASG, EBS, Lambda) points to the dedicated ML rightsizing service rather than the broad best-practice checker." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

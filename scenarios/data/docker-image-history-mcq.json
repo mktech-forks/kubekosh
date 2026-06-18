@@ -1,0 +1,26 @@
+{
+  "id": "docker-image-history-mcq",
+  "title": "Layers and Secrets",
+  "category": "Building Images",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## A Deleted File That Isn't Gone\n\nA Dockerfile does this:\n\n```dockerfile\nCOPY secret.key /secret.key\nRUN ./use-key.sh\nRUN rm /secret.key\n```\n\nWhy is shipping this image still a security problem, even though the file is removed?",
+  "options": [
+    { "id": "a", "text": "It isn't — the final `RUN rm` deletes the file, so the image is clean" },
+    { "id": "b", "text": "Each instruction creates a layer; the earlier layer that added `secret.key` still contains it and can be extracted from the image history" },
+    { "id": "c", "text": "The problem is only that the build is slow" },
+    { "id": "d", "text": "`rm` inside a container never actually deletes files" }
+  ],
+  "correct_option": "b",
+  "explanation": "Image layers are stacked and immutable. The `COPY secret.key` layer permanently records the file; a later `RUN rm` only adds a *new* layer that hides it in the final filesystem view. Anyone can `docker save`/`docker history` the image and recover the secret from the earlier layer. Fixes: never copy secrets into images, use multi-stage builds so secrets stay in a discarded stage, or use BuildKit `--secret` mounts which never persist to a layer.",
+  "hints": [
+    {
+      "title": "Inspect the layers",
+      "body": "docker history shows the instruction and size of every layer that makes up an image.",
+      "command": "docker history <image>"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,38 @@
+{
+  "id": "devops-makefile-task",
+  "title": "Automate Tasks With a Makefile",
+  "category": "CI/CD",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 4,
+  "description": "## A Makefile Target\n\n`make` is a simple, ubiquitous task runner. A target's recipe lines **must be indented with a TAB**, not spaces — the classic Makefile gotcha.\n\n**Your task:** create **`/root/Makefile`** with a target named **`hello`** that prints exactly **`Hello from Make`** when you run `make hello`.\n\n> 💡 Because the recipe needs a real TAB, use `printf` with `\\t` (as in the hint) rather than typing spaces in an editor.",
+  "hints": [
+    {
+      "title": "Create the Makefile (note the tab)",
+      "body": "The recipe line must start with a tab character. printf with \\t inserts one. The @ suppresses echoing the command itself.",
+      "command": "printf 'hello:\\n\\t@echo \"Hello from Make\"\\n' > /root/Makefile"
+    },
+    {
+      "title": "Run the target",
+      "body": "make <target> runs the recipe for that target.",
+      "command": "make -C /root hello"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/Makefile" }
+  ],
+  "validation": {
+    "description": "Checks that 'make hello' prints the expected line.",
+    "commands": [
+      {
+        "description": "'make hello' outputs 'Hello from Make'",
+        "command": "make -C /root hello 2>/dev/null",
+        "expected_output": "Hello from Make",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/Makefile" }
+  ]
+}

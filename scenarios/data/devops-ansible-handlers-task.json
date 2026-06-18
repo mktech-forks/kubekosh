@@ -1,0 +1,45 @@
+{
+  "id": "devops-ansible-handlers-task",
+  "title": "Ansible Handlers and Loops",
+  "category": "Configuration Management",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Notify Once, Loop Many\n\n**Your task:** write a playbook at **`/root/site.yml`** (a YAML list of one play targeting `web`) that:\n1. has a task that uses a **`loop`** (e.g. installing several packages)\n2. has a task that **`notify`s** a handler\n3. defines that handler in a **`handlers`** section\n\n> 💡 Handlers run once, at the end of the play, and only if a task notified them. Validate the YAML with `python3 -c \"import yaml; yaml.safe_load(open('/root/site.yml'))\"`.",
+  "hints": [
+    {
+      "title": "Play with loop + handler",
+      "body": "A task notifies a handler by name; the handlers section defines tasks with matching names. loop iterates a list using the item variable.",
+      "command": "printf -- '- hosts: web\\n  tasks:\\n    - name: install packages\\n      apt:\\n        name: \"{{ item }}\"\\n        state: present\\n      loop:\\n        - nginx\\n        - curl\\n    - name: deploy config\\n      copy:\\n        dest: /etc/app.conf\\n        content: \"ok\"\\n      notify: restart app\\n  handlers:\\n    - name: restart app\\n      service:\\n        name: app\\n        state: restarted\\n' > /root/site.yml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/site.yml" }
+  ],
+  "validation": {
+    "description": "Checks a valid play with handlers/tasks, a notify, and a loop.",
+    "commands": [
+      {
+        "description": "Valid play with both 'tasks' and 'handlers'",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/site.yml')); p=d[0]; print('ok' if 'tasks' in p and 'handlers' in p else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      },
+      {
+        "description": "A task notifies a handler",
+        "command": "grep -q 'notify' /root/site.yml && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "A loop is used",
+        "command": "grep -qE 'loop:|with_items:' /root/site.yml && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/site.yml" }
+  ]
+}

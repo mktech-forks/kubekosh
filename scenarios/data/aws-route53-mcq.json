@@ -1,0 +1,23 @@
+{
+  "id": "aws-route53-mcq",
+  "title": "Choosing a Route 53 Routing Policy",
+  "category": "Networking",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Lowest Latency Across Active Regions\n\nA company runs the **same application in three Regions** (`us-east-1`, `eu-west-1`, `ap-southeast-1`), all **active and healthy**. They want each user's DNS resolution to send them to the Region that gives that user the **lowest network latency**, which is not always the geographically closest one. Health checks should pull a Region out of rotation if it becomes unhealthy.\n\nWhich **Route 53 routing policy** should they configure?",
+  "options": [
+    { "id": "a", "text": "**Latency-based routing**, with one record per Region and an associated health check on each." },
+    { "id": "b", "text": "**Geolocation routing**, mapping each continent to its nearest Region." },
+    { "id": "c", "text": "**Weighted routing**, sending an equal one-third of traffic to each Region." },
+    { "id": "d", "text": "**Failover routing**, with one Region primary and the others as secondaries." }
+  ],
+  "correct_option": "a",
+  "explanation": "**Latency-based routing** answers each DNS query with the Region that offers the **lowest measured network latency** to the requesting resolver — which is exactly the stated goal, and notably *not* necessarily the geographically nearest one. Combined with **health checks**, an unhealthy Region is automatically removed from candidate answers. Option B, **geolocation routing**, decides purely by the *location* of the user (continent/country), which can route someone to a higher-latency Region if the network path is poor; it answers \"where is the user\" not \"which is fastest.\" Option C, **weighted routing**, splits traffic by fixed proportions (useful for blue/green or canary), ignoring latency entirely. Option D, **failover routing**, is active-passive (one primary, standby secondary) and would leave two healthy Regions idle, contradicting the all-active requirement.",
+  "hints": [
+    { "title": "Latency is measured, location is assumed", "body": "Latency-based routing reacts to actual network performance; geolocation only knows where the user is. They are not the same thing." },
+    { "title": "All Regions active", "body": "If every Region should serve traffic when healthy, rule out failover (active-passive) immediately." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

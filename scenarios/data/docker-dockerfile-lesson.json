@@ -1,0 +1,12 @@
+{
+  "id": "docker-dockerfile-lesson",
+  "title": "Writing a Dockerfile",
+  "category": "Building Images",
+  "difficulty": "Easy",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## Building Images With a Dockerfile\n\nA **Dockerfile** is a plain-text recipe for an image. `docker build` reads it instruction-by-instruction, and **each instruction creates a new layer** stacked on the previous one.\n\n### The instructions you'll meet first\n\n| Instruction | What it does |\n|---|---|\n| `FROM <image>` | The **base** image to build on. Always the first instruction. |\n| `WORKDIR <dir>` | Set the working directory for following instructions. |\n| `COPY <src> <dst>` | Copy files from the build context into the image. |\n| `RUN <cmd>` | Execute a command **at build time** (e.g. install packages) and commit the result as a layer. |\n| `EXPOSE <port>` | Document which port the container listens on. |\n| `CMD [...]` | The **default command** run when a container starts (overridable). |\n| `ENTRYPOINT [...]` | The executable a container always runs; `CMD` becomes its default arguments. |\n\n### A minimal example\n\n```dockerfile\nFROM alpine:latest\nWORKDIR /app\nCOPY hello.txt .\nCMD [\"cat\", \"hello.txt\"]\n```\n\nBuild and run it:\n\n```bash\ndocker build -t hello:1.0 .\ndocker run --rm hello:1.0\n```\n\n### Layer caching\n\nDocker caches each layer. If an instruction and everything before it are unchanged, the cached layer is reused — which is why you put **rarely-changing** instructions (like dependency installs) **before** frequently-changing ones (like copying your source).\n\nMark this lesson complete, then build your own image in the next task.",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

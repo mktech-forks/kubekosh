@@ -1,0 +1,20 @@
+{
+  "id": "devops-iac-config",
+  "subject": "devops",
+  "name": "Infrastructure as Code & Config Management",
+  "icon": "♾️",
+  "tagline": "Terraform, Ansible and idempotency",
+  "color": "#8b5cf6",
+  "colorDim": "rgba(139,92,246,0.12)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "devops-iac-lesson",
+    "devops-iac-vs-config-mcq",
+    "devops-terraform-mcq",
+    "devops-ansible-mcq",
+    "devops-idempotency-mcq",
+    "devops-ansible-playbook-task",
+    "devops-terraform-hcl-task",
+    "devops-cloudinit-task"
+  ]
+}

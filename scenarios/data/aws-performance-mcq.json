@@ -1,0 +1,23 @@
+{
+  "id": "aws-performance-mcq",
+  "title": "Scaling a Read-Heavy Relational Workload",
+  "category": "Performance",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Repeated Expensive Queries Hammering the Database\n\nA relational application on Amazon RDS is **read-heavy**: the same handful of expensive queries (e.g. product catalog and leaderboard lookups) are executed thousands of times per second, and the primary database's CPU is saturated under read load. The data changes infrequently, so slightly stale reads are acceptable for these hot queries. The team wants to **reduce load on the primary and improve read latency** without simply paying for an ever-bigger instance. Which approach BEST addresses this?",
+  "options": [
+    { "id": "a", "text": "Add an in-memory cache (Amazon ElastiCache) in front of the hot queries and/or add RDS read replicas to offload reads from the primary" },
+    { "id": "b", "text": "Vertically scale the primary RDS instance to the largest available instance class" },
+    { "id": "c", "text": "Switch the EBS volume to a higher provisioned-IOPS type and increase storage throughput" },
+    { "id": "d", "text": "Enable Multi-AZ on the RDS instance to handle the read traffic" }
+  ],
+  "correct_option": "a",
+  "explanation": "The bottleneck is **repeated, expensive read queries** on relatively static data — the classic case for a **caching layer**. Putting **ElastiCache** (Redis/Memcached) in front of those hot queries serves them from memory in sub-millisecond time and removes most of the load from the database; because slight staleness is acceptable, caching is safe. Adding **read replicas** further offloads reads the cache misses, scaling read throughput horizontally. **Vertical scaling** (B) buys headroom but is costly, has a ceiling, and doesn't address the inefficiency of recomputing the same results repeatedly — exactly what the team wants to avoid. **More EBS IOPS** (C) helps disk-bound I/O, not CPU saturation from query execution. **Multi-AZ** (D) is a high-availability/failover feature — the standby does **not** serve reads — so it does nothing for read scaling.",
+  "hints": [
+    { "title": "Same queries, static data", "body": "Recomputing identical results thousands of times is wasted work. What layer lets you compute once and serve many times?" },
+    { "title": "What Multi-AZ actually does", "body": "Multi-AZ is for failover, not read scaling. The standby is passive. Don't confuse it with read replicas." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,44 @@
+{
+  "id": "docker-healthcheck-task",
+  "title": "Add a Container Health Check",
+  "category": "Operations",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Configure a Runtime Health Check\n\nGive a container a health check so Docker can report whether it is actually working, not just running.\n\n**Requirements:**\n1. Run an **`alpine`** container named **`checked`** in the background (keep it alive)\n2. Configure a health check on it at run time (a `--health-cmd`)\n\n> 💡 `docker run -d --name checked --health-cmd='true' --health-interval=2s alpine sleep 3600`. A configured check appears under `.Config.Healthcheck`; after the first interval the status under `.State.Health.Status` becomes `healthy`.",
+  "hints": [
+    {
+      "title": "Attach a health check at run time",
+      "body": "Use --health-cmd (and optionally --health-interval) to define the probe without rebuilding the image.",
+      "command": "docker run -d --name checked --health-cmd='true' --health-interval=2s alpine sleep 3600"
+    },
+    {
+      "title": "Read the health status",
+      "body": "Inspect the live health status once the first check has run.",
+      "command": "docker inspect -f '{{.State.Health.Status}}' checked"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker rm -f checked 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that 'checked' is running and has a health check configured.",
+    "commands": [
+      {
+        "description": "Container 'checked' is running",
+        "command": "docker inspect -f '{{.State.Running}}' checked 2>/dev/null",
+        "expected_output": "true",
+        "match": "exact"
+      },
+      {
+        "description": "A health check is configured",
+        "command": "docker inspect -f '{{if .Config.Healthcheck}}configured{{else}}none{{end}}' checked 2>/dev/null",
+        "expected_output": "configured",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rm -f checked 2>/dev/null || true" }
+  ]
+}

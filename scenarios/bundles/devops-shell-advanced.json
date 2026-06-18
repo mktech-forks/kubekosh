@@ -1,0 +1,18 @@
+{
+  "id": "devops-shell-advanced",
+  "subject": "devops",
+  "name": "Shell & Scripting (Advanced)",
+  "icon": "♾️",
+  "tagline": "Strict-mode scripting and text engineering",
+  "color": "#6d28d9",
+  "colorDim": "rgba(109,40,217,0.14)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "devops-shell-strict-mode-mcq",
+    "devops-bash-traps-mcq",
+    "devops-robust-script-task",
+    "devops-awk-report-task",
+    "devops-log-topn-task",
+    "devops-sed-inplace-task"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "kubernetes",
+  "name": "Kubernetes",
+  "icon": "⎈",
+  "tagline": "Interactive Kubernetes Playground",
+  "color": "#326ce5",
+  "colorDim": "rgba(50,108,229,0.12)",
+  "environment": "k8s",
+  "readyLabel": "Cluster Ready",
+  "bundle_order": [
+    "k8s-basics",
+    "k8s-appdev",
+    "k8s-admin",
+    "k8s-security"
+  ]
+}

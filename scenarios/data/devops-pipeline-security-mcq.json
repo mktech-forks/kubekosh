@@ -1,0 +1,29 @@
+{
+  "id": "devops-pipeline-security-mcq",
+  "title": "Eliminating Long-Lived Cloud Keys in CI",
+  "category": "CI/CD",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Get the Static AWS Keys Out of CI\n\nYour GitHub Actions workflow deploys to AWS. Today it authenticates with a long-lived IAM user access key pair stored in `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` repository secrets. A security review flags this as a major supply-chain risk: the keys never expire, are copied into the runner's environment on every build, and would be catastrophic if leaked (e.g. via a malicious dependency or a poisoned action).\n\nWhat is the correct modern remediation?",
+  "options": [
+    { "id": "a", "text": "Configure OIDC federation: GitHub's OIDC provider issues a short-lived signed token per workflow run, which the job exchanges (via AssumeRoleWithWebIdentity) for temporary AWS credentials scoped to an IAM role with a trust policy restricting which repo/branch/environment may assume it. No long-lived cloud keys are stored anywhere." },
+    { "id": "b", "text": "Move the access keys into an encrypted secrets manager (e.g. AWS Secrets Manager) and have the workflow fetch them at runtime, so they are no longer hardcoded as repository secrets but still authenticate the deploy." },
+    { "id": "c", "text": "Rotate the IAM access keys automatically every 24 hours with a scheduled Lambda and update the GitHub secret via the API, so a leaked key is only valid for at most a day." },
+    { "id": "d", "text": "Encrypt the access keys with the repository's GPG key and decrypt them in the job; since the plaintext never lives in the secret store, a leak of the secret is harmless." }
+  ],
+  "correct_option": "a",
+  "explanation": "The root problem is the existence of standing, long-lived cloud credentials anywhere in CI. OIDC federation removes them entirely: the CI provider (GitHub Actions) acts as an OIDC identity provider and mints a short-lived JWT for each run; AWS STS validates that token against an IAM role's trust policy (which you scope to specific `repo:org/name:ref:...`/environment claims) and returns temporary credentials that expire in minutes. Nothing long-lived is stored, and the trust policy cryptographically binds usage to your specific workflow context. (b) is better than plaintext but still relies on long-lived keys existing in Secrets Manager and being handed to the runner — the standing-credential blast radius remains, and you've added a bootstrap-credential chicken-and-egg problem. (c) reduces the window but still ships real long-lived-style keys to the runner on every run and adds rotation machinery; a key leaked mid-window is still abusable, and the rotation credential itself is a new long-lived secret. (d) is security theater: the GPG private key needed to decrypt must itself live in CI, so you've just moved the long-lived secret, not eliminated it. Pair OIDC with broader supply-chain controls: SLSA provenance and signing artifacts/images with cosign so consumers can verify what your pipeline built.",
+  "hints": [
+    {
+      "title": "What's the actual risk?",
+      "body": "It's the existence of credentials that never expire and live in CI. The strongest fix removes standing credentials altogether rather than protecting or rotating them."
+    },
+    {
+      "title": "Workload identity federation",
+      "body": "OIDC lets CI prove its identity to the cloud and receive short-lived, tightly-scoped credentials per run via AssumeRoleWithWebIdentity."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

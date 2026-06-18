@@ -1,0 +1,12 @@
+{
+  "id": "linux",
+  "name": "Linux",
+  "icon": "🐧",
+  "tagline": "Hands-on Linux Command Line",
+  "color": "#f0b429",
+  "colorDim": "rgba(240,180,41,0.12)",
+  "environment": "bash",
+  "bundle_order": [
+    "linux-basics"
+  ]
+}

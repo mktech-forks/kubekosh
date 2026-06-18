@@ -1,0 +1,23 @@
+{
+  "id": "aws-iam-basics-mcq",
+  "title": "Giving an EC2 App AWS Access",
+  "category": "Foundations",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Credentials on an EC2 Instance\n\nA team is deploying an application onto **EC2 instances** in an Auto Scaling group. The application needs to read objects from an S3 bucket and publish metrics to CloudWatch via the AWS SDK. A developer proposes baking a long-lived IAM **user's access key and secret** into the application's configuration file so it can authenticate.\n\nAs the architect reviewing this, what is the correct and most secure way for the application to obtain AWS API permissions?",
+  "options": [
+    { "id": "a", "text": "Create an IAM **role** with the required S3 and CloudWatch permissions and attach it to the instances via an **instance profile**; the SDK retrieves temporary, auto-rotating credentials from the instance metadata service." },
+    { "id": "b", "text": "Create one IAM user per instance, generate access keys for each, and store them in the application config so every instance has its own identity." },
+    { "id": "c", "text": "Add the application's account to an IAM **group** that has the S3 and CloudWatch policies attached, then log in with the group credentials." },
+    { "id": "d", "text": "Embed the root account access keys in the AMI so all instances launched from it inherit full access." }
+  ],
+  "correct_option": "a",
+  "explanation": "An **IAM role** attached through an **instance profile** is the standard, secure pattern for EC2. The role's permissions are exposed to the instance as **temporary credentials** delivered through the Instance Metadata Service (IMDS) and **automatically rotated** by AWS — nothing long-lived is ever stored on disk or in config, so there are no keys to leak or rotate manually. Option B (per-instance IAM users with embedded keys) reintroduces exactly the long-lived-credential problem you're trying to avoid and does not scale with an Auto Scaling group. Option C misunderstands IAM **groups**: groups are only a way to attach policies to a collection of *users* — they are not principals you can log in as and cannot be assumed by an instance. Option D (root keys baked into an AMI) is a severe security anti-pattern; root credentials should never be used programmatically and ideally never created at all.",
+  "hints": [
+    { "title": "Prefer temporary over long-lived", "body": "Anything that lives in a config file (an access key) can be exfiltrated. Roles hand out short-lived credentials that rotate automatically." },
+    { "title": "What a group can and can't do", "body": "An IAM group is just a policy-attachment container for users. It is not a principal an EC2 instance can use." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

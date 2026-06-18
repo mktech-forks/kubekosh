@@ -1,0 +1,39 @@
+{
+  "id": "aws-cloudformation-param-task",
+  "title": "Parameterize a CloudFormation Template",
+  "category": "Migration",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Reusable Templates With Parameters\n\nParameters make a template reusable across environments; resources reference them with the `Ref` intrinsic.\n\n**Your task:** write **`/root/cfn-param.yaml`** that:\n1. has a **`Parameters`** section with a parameter named **`EnvName`** (Type `String`)\n2. has a **`Resources`** section that **references** that parameter (using `Ref` / `!Ref EnvName`)\n\n> 💡 You may use either the full form `Ref: EnvName` or the short form `!Ref EnvName`. The check looks for a Parameters section and a Ref to EnvName.",
+  "hints": [
+    {
+      "title": "Parameter + Ref",
+      "body": "Declare the parameter, then reference it from a resource property with Ref.",
+      "command": "printf 'Parameters:\\n  EnvName:\\n    Type: String\\n    Default: dev\\nResources:\\n  Topic:\\n    Type: AWS::SNS::Topic\\n    Properties:\\n      TopicName: !Ref EnvName\\n' > /root/cfn-param.yaml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/cfn-param.yaml" }
+  ],
+  "validation": {
+    "description": "Checks for a Parameters section, an EnvName parameter, and a Ref to it.",
+    "commands": [
+      {
+        "description": "Declares a Parameters section with EnvName",
+        "command": "grep -q 'Parameters:' /root/cfn-param.yaml && grep -q 'EnvName' /root/cfn-param.yaml && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "References the parameter with Ref",
+        "command": "grep -qE 'Ref:?[[:space:]]*[\"!]?EnvName|!Ref[[:space:]]+EnvName' /root/cfn-param.yaml && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/cfn-param.yaml" }
+  ]
+}

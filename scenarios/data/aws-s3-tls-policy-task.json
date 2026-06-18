@@ -1,0 +1,33 @@
+{
+  "id": "aws-s3-tls-policy-task",
+  "title": "Enforce TLS With a Bucket Policy",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Reject Non-HTTPS Requests\n\nA common compliance control is to **deny any S3 request not made over TLS**, using the `aws:SecureTransport` condition.\n\n**Your task:** write a bucket policy at **`/root/bucket-policy.json`** with a statement that **Denies** S3 actions when **`aws:SecureTransport`** is **`false`** (i.e. plain HTTP).\n\n> 💡 Use `\"Effect\": \"Deny\"`, `\"Action\": \"s3:*\"`, and a `Condition` with `\"Bool\": { \"aws:SecureTransport\": \"false\" }`.",
+  "hints": [
+    {
+      "title": "Deny-on-insecure-transport",
+      "body": "A Deny with a Bool condition on aws:SecureTransport=false blocks any non-HTTPS access.",
+      "command": "printf '{\\n  \"Version\": \"2012-10-17\",\\n  \"Statement\": [\\n    {\\n      \"Effect\": \"Deny\",\\n      \"Principal\": \"*\",\\n      \"Action\": \"s3:*\",\\n      \"Resource\": \"arn:aws:s3:::my-bucket/*\",\\n      \"Condition\": { \"Bool\": { \"aws:SecureTransport\": \"false\" } }\\n    }\\n  ]\\n}\\n' > /root/bucket-policy.json"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/bucket-policy.json" }
+  ],
+  "validation": {
+    "description": "Checks for a Deny statement conditioned on aws:SecureTransport=false.",
+    "commands": [
+      {
+        "description": "Denies requests when SecureTransport is false",
+        "command": "python3 -c \"import json; d=json.load(open('/root/bucket-policy.json')); s=d['Statement']; s=s if isinstance(s,list) else [s]; ok=any(st.get('Effect')=='Deny' and 'securetransport' in json.dumps(st.get('Condition',{})).lower() and 'false' in json.dumps(st.get('Condition',{})).lower() for st in s); print('ok' if ok else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/bucket-policy.json" }
+  ]
+}

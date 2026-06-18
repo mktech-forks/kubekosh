@@ -1,0 +1,39 @@
+{
+  "id": "devops-text-extract-task",
+  "title": "Filter Logs With grep",
+  "category": "Shell",
+  "difficulty": "Easy",
+  "type": "task",
+  "weight": 4,
+  "description": "## Count the Errors\n\nA sample access log has been placed at **`/root/access.log`**. Each line ends with an HTTP status code, for example:\n\n```\n10.0.0.2 GET /api 500\n```\n\n**Your task:** count how many lines have the status **`500`**, and write **just that number** to **`/root/result.txt`**.\n\n> 💡 `grep -c` counts matching lines. Redirect the count into the result file.",
+  "hints": [
+    {
+      "title": "Count matching lines",
+      "body": "grep -c prints the number of lines that match a pattern. Redirect it to the result file.",
+      "command": "grep -c '500' /root/access.log > /root/result.txt"
+    },
+    {
+      "title": "Check your answer",
+      "body": "Print the file to confirm it holds a single number.",
+      "command": "cat /root/result.txt"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/result.txt" },
+    { "command": "printf '10.0.0.1 GET /home 200\\n10.0.0.2 GET /api 500\\n10.0.0.3 POST /login 200\\n10.0.0.4 GET /api 500\\n10.0.0.5 GET /x 404\\n' > /root/access.log" }
+  ],
+  "validation": {
+    "description": "Checks that /root/result.txt contains the count of status-500 lines (2).",
+    "commands": [
+      {
+        "description": "result.txt contains 2",
+        "command": "cat /root/result.txt 2>/dev/null",
+        "expected_output": "2",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/result.txt /root/access.log" }
+  ]
+}

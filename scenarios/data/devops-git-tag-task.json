@@ -1,0 +1,37 @@
+{
+  "id": "devops-git-tag-task",
+  "title": "Tag a Release",
+  "category": "Git",
+  "difficulty": "Easy",
+  "type": "task",
+  "weight": 3,
+  "description": "## Mark a Version\n\nReleases are usually marked with a Git tag following semantic versioning.\n\nA repository with a commit is ready at **`/root/tagrepo`**.\n\n**Your task:** create a tag named **`v1.0.0`** on the latest commit.\n\n> 💡 `git tag v1.0.0` creates a lightweight tag; `git tag -a v1.0.0 -m \"release\"` creates an annotated one. Either satisfies this task. List tags with `git tag`.",
+  "hints": [
+    {
+      "title": "Create the tag",
+      "body": "An annotated tag stores a message and author; a lightweight tag is just a name pointing at a commit.",
+      "command": "cd /root/tagrepo && git tag -a v1.0.0 -m 'first release'"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -rf /root/tagrepo" },
+    { "command": "git config --global user.email lab@kubekosh.local" },
+    { "command": "git config --global user.name 'KubeKosh Lab'" },
+    { "command": "git init -b main /root/tagrepo" },
+    { "command": "cd /root/tagrepo && echo hello > file.txt && git add file.txt && git commit -m init" }
+  ],
+  "validation": {
+    "description": "Checks that a tag named v1.0.0 exists in /root/tagrepo.",
+    "commands": [
+      {
+        "description": "Tag 'v1.0.0' exists",
+        "command": "git -C /root/tagrepo tag --list v1.0.0 2>/dev/null",
+        "expected_output": "v1.0.0",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -rf /root/tagrepo" }
+  ]
+}

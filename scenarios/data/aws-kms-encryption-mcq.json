@@ -1,0 +1,23 @@
+{
+  "id": "aws-kms-encryption-mcq",
+  "title": "Controlling and Sharing Encryption Keys",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Cross-Account, Fully Audited Object Encryption\n\nA financial-services company stores sensitive reports in an S3 bucket in their **production account**. Compliance requires that the company **fully controls and audits every use of the encryption key** — including who can use it to decrypt, when it rotates, and an audit trail of each cryptographic operation. A separate **analytics account** must be granted decrypt access to read specific objects, and that access must be revocable independently of the bucket policy. Which encryption approach BEST meets these requirements?",
+  "options": [
+    { "id": "a", "text": "Enable SSE-S3 (Amazon S3-managed keys) on the bucket — S3 handles all encryption transparently" },
+    { "id": "b", "text": "Use SSE-KMS with a **customer managed KMS key** whose **key policy/grant** authorizes the analytics account, with key rotation enabled and CloudTrail recording every Decrypt/GenerateDataKey call" },
+    { "id": "c", "text": "Encrypt objects client-side with a key the application generates and stores in the application's own database, never involving KMS" },
+    { "id": "d", "text": "Use SSE-KMS with the **AWS managed key** `aws/s3` and add the analytics account to the S3 bucket policy" }
+  ],
+  "correct_option": "b",
+  "explanation": "Only a **customer managed KMS key (CMK)** gives you full control: you author the **key policy** (and can issue scoped **grants**) to allow the analytics account's principals to decrypt, you control **automatic rotation**, and **CloudTrail logs every cryptographic API call** (GenerateDataKey, Decrypt) for audit. KMS uses **envelope encryption** — S3 asks KMS for a data key, KMS returns a plaintext data key plus a copy encrypted under the CMK; the data is encrypted with the data key and the encrypted data key is stored beside the object. Revoking the grant or editing the key policy removes the analytics account's access independently of the bucket policy. \n\n(a) **SSE-S3** uses AWS-**owned** keys — you have no key policy, no per-operation CloudTrail visibility, and cannot grant another account decrypt at the key level; it fails every control/audit requirement. (d) The **AWS managed key** `aws/s3` cannot have its key policy edited and cannot be shared cross-account; adding the account to the bucket policy alone does not grant decrypt on an AWS managed key. (c) Pure client-side encryption with a homemade key store gives you no managed rotation, no KMS audit trail, and pushes key management risk onto your application — the opposite of \"fully controlled *and* audited via AWS\".",
+  "hints": [
+    { "title": "Who owns the key policy?", "body": "Only customer managed KMS keys have an editable key policy and support grants for cross-account use. AWS managed and AWS owned keys do not." },
+    { "title": "Audit trail", "body": "Every use of a KMS key (Decrypt, GenerateDataKey) is recorded in CloudTrail — but only KMS-backed encryption gives you that. SSE-S3 does not." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

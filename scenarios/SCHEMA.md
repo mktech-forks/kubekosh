@@ -1,17 +1,56 @@
 # KubeKosh Configuration Schema Reference
 
-KubeKosh uses two primary directories to define its curriculum, learning paths, and exam configurations:
-1. **Bundles (`scenarios/bundles`)**: Each file defines one high-level study bundle (e.g., CKA, CKAD, CKS), including active highlights, exam duration, ordered list of included scenarios, and other fields.
-2. **Scenarios (`scenarios/data`)**: Each file defines one individual exercise — a hands-on task or multiple-choice question (MCQ). Each scenario contains an environment setup script, cleanup script, hints, problem statement, automated validation script, and other fields.
+KubeKosh is a multi-subject learning platform. Content is a three-level hierarchy — **Subject → Bundle → Scenario** — defined across three directories:
+1. **Subjects (`scenarios/subjects`)**: Each file defines one top-level subject (e.g., Kubernetes, Linux), including its branding and — crucially — the **execution environment** its scenarios run in.
+2. **Bundles (`scenarios/bundles`)**: Each file defines one study bundle within a subject (e.g., CKA, CKAD, CKS), including exam duration and the ordered list of included scenarios.
+3. **Scenarios (`scenarios/data`)**: Each file defines one individual exercise — a reading lesson, a hands-on task, or a multiple-choice question (MCQ).
+
+> **Backward compatibility:** A bundle with no `subject` field defaults to `kubernetes`, and a scenario inherits its subject (and therefore its execution environment) from the bundle that lists it. Existing Kubernetes content needs no edits.
 
 ---
 
-## 1. Bundles Schema (`scenarios/bundles`)
+## 1. Subjects Schema (`scenarios/subjects`)
+
+Each file contains a **single subject object**. The filename must match the subject's `id` field (e.g., `linux.json`). The subjects directory is optional — when absent, a default `kubernetes` subject is synthesized so legacy layouts still boot.
+
+### Schema Fields
+* **`id`** *(string, required)*: A unique, kebab-case identifier for the subject (e.g., `linux`).
+* **`name`** *(string, required)*: Human-readable name shown in the subject nav (e.g., `Linux`).
+* **`icon`** *(string, required)*: An emoji or glyph (e.g., `🐧`).
+* **`tagline`** *(string, required)*: Short summary; also used as the header sub-brand when the subject is active.
+* **`color`** / **`colorDim`** *(string, required)*: Accent hex color and its translucent RGBA variant, for UI highlighting.
+* **`environment`** *(string, required)*: The runtime its scenarios run in. Determines how the terminal context, setup/teardown/validate commands, validation error handling, and the health probe behave. Supported values:
+  * **`k8s`** — runs against the in-container K3s cluster. `/context` sets the active `kubectl` namespace; validation suppresses `kubectl` "Error from server…" stderr; the header shows a readiness badge.
+  * **`bash`** — a plain shell. No cluster, no namespace; stderr is treated as legitimate command output; no readiness badge.
+  * **`docker`** — commands talk to an in-container Docker daemon (docker-in-docker, started by `scripts/env-init/docker.sh`). No namespace; stderr is treated as legitimate output (assert validations on stdout); the health probe runs `docker info`.
+* **`readyLabel`** *(string, optional)*: Text for the header readiness badge (e.g. `Cluster Ready`, `Docker Ready`). Omit for `bash`-style subjects that have no backing runtime — the badge is then hidden.
+* **`bundle_order`** *(array of strings, optional)*: Bundle IDs in display order; falls back to file order.
+
+### Example Subject
+```json
+{
+  "id": "linux",
+  "name": "Linux",
+  "icon": "🐧",
+  "tagline": "Hands-on Linux Command Line",
+  "color": "#f0b429",
+  "colorDim": "rgba(240,180,41,0.12)",
+  "environment": "bash",
+  "bundle_order": ["linux-basics"]
+}
+```
+
+> **Adding a new environment** (e.g. Docker, cloud CLIs): add an entry to the `ENVIRONMENTS` map in `backend/server.js` and, if the runtime needs provisioning, drop a `scripts/env-init/<env>.sh` script (launched in the background at startup). No endpoint changes are required.
+
+---
+
+## 2. Bundles Schema (`scenarios/bundles`)
 
 Each file contains a **single bundle object**. The filename must match the bundle's `id` field (e.g., `k8s-basics.json`).
 
 ### Schema Fields
 * **`id`** *(string, required)*: A unique, kebab-case identifier for the bundle (e.g., `k8s-basics`).
+* **`subject`** *(string, optional)*: The owning subject's `id` (e.g., `linux`). Defaults to `kubernetes` when omitted.
 * **`name`** *(string, required)*: The human-readable name of the bundle shown in navigation (e.g., `Kubernetes Basics`).
 * **`icon`** *(string, required)*: An emoji or glyph representing the bundle (e.g., `🌱`).
 * **`tagline`** *(string, required)*: A short summary of the bundle's objectives.
@@ -23,29 +62,29 @@ Each file contains a **single bundle object**. The filename must match the bundl
 ### Example Bundle
 ```json
 {
-  "id": "k8s-basics",
-  "name": "Kubernetes Basics",
-  "icon": "🌱",
-  "tagline": "Core concepts for beginners",
-  "color": "#3fb950",
-  "colorDim": "rgba(63,185,80,0.12)",
-  "exam_minutes": 60,
+  "id": "linux-basics",
+  "subject": "linux",
+  "name": "Linux Basics",
+  "icon": "🐧",
+  "tagline": "Files, permissions and the shell",
+  "color": "#f0b429",
+  "colorDim": "rgba(240,180,41,0.12)",
+  "exam_minutes": 30,
   "scenario_ids": [
-    "pod-basics-mcq",
-    "kubectl-essentials-mcq",
-    "namespaces-basics",
-    "deploy-nginx"
+    "linux-intro-lesson",
+    "linux-permissions-mcq",
+    "linux-create-file-task"
   ]
 }
 ```
 
 ---
 
-## 2. Scenarios Schema (`scenarios/data`)
+## 3. Scenarios Schema (`scenarios/data`)
 
 Each file contains a **single scenario object**. The filename must match the scenario's `id` field (e.g., `k8s-basics.json`).
 
-Scenarios are defined as JSON objects. A scenario can be either a hands-on console challenge (`"task"`) or a multiple-choice question (`"mcq"`).
+Scenarios are defined as JSON objects. A scenario can be a reading lesson (`"lesson"`), a hands-on console challenge (`"task"`), or a multiple-choice question (`"mcq"`).
 
 ### Common Fields (All Types)
 ```jsonc
@@ -54,7 +93,7 @@ Scenarios are defined as JSON objects. A scenario can be either a hands-on conso
   "title": "Human-readable Title",      // string — shown in sidebar list
   "category": "Workloads",             // string — groups scenarios in sidebar accordion
   "difficulty": "Easy",                // "Easy" | "Medium" | "Hard"
-  "type": "task",                      // "task" | "mcq"
+  "type": "task",                      // "lesson" | "task" | "mcq"
   "weight": 7,                         // number — points value (used for final grade scoring)
   "description": "## Markdown...",     // string — problem statement supporting GitHub-flavored Markdown
   "hints": [...],                      // array — see Hints schema below
@@ -79,7 +118,7 @@ Each hint is rendered as a collapsible card inside the Hints tab of the UI:
 ---
 
 ### Setup & Teardown Commands
-* **`setup_commands`**: Executed sequentially on the Kubernetes cluster when the user starts a scenario or clicks **"Prepare Environment"**. Useful for pre-deploying resources or injecting bugs.
+* **`setup_commands`**: Executed sequentially in the scenario's execution environment when the user starts a scenario or clicks **"Prepare Environment"**. For `k8s` subjects these are typically `kubectl` commands (pre-deploying resources or injecting bugs); for `bash` subjects they are plain shell commands. Useful for resetting state before an exercise.
 * **`teardown_commands`**: Optional cleanup commands run when moving away from or resetting a scenario.
 * Commands must be **objects** with a `command` key:
   ```jsonc
@@ -92,8 +131,21 @@ Each hint is rendered as a collapsible card inside the Hints tab of the UI:
 
 ---
 
+### Type: `"lesson"` — Reading Lesson
+Renders a markdown reading page only — no terminal, no hints tab, no validation. The user clicks **Mark as Complete** to finish it. A lesson counts toward bundle/exam progress by its `weight` like any other scenario. Omit `validation`, `options`, and `setup_commands` (give it a small `weight`, e.g. `1`).
+
+```jsonc
+{
+  "type": "lesson",
+  "weight": 1,
+  "description": "## Navigating the Filesystem\n\nEverything in Linux lives under `/` …"
+}
+```
+
+---
+
 ### Type: `"task"` — Hands-On Scenario
-Requires the user to run shell commands in the interactive terminal. The system runs an automated validation sequence to check the cluster state.
+Requires the user to run commands in the interactive terminal. The system runs an automated validation sequence to check the resulting state (cluster state for `k8s` subjects, filesystem/process state for `bash` subjects).
 
 ```jsonc
 {
@@ -119,6 +171,8 @@ Requires the user to run shell commands in the interactive terminal. The system 
 | `contains` | stdout must contain `expected_output` as a substring. |
 | `not_contains` | stdout must **not** contain `expected_output` as a substring. |
 | `regex` | stdout must match the regular expression in `expected_output`. |
+
+> **Validating against stdout:** For `bash` subjects, a command's **stderr is treated as legitimate output** and is included in the value matched against `expected_output` (only `k8s` subjects suppress `kubectl` API errors). Write validation commands that print the signal you want to `stdout` — e.g. `test -f /root/hello.txt && echo yes` (match `exact` `yes`) rather than relying on exit codes.
 
 ---
 

@@ -1,0 +1,22 @@
+{
+  "id": "aws-bedrock-guardrails-mcq",
+  "title": "Content Filtering for a GenAI App",
+  "category": "Generative AI",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Keep the Model On-Policy\n\nA company is launching a customer-facing assistant built on **Amazon Bedrock**. Compliance requires that the assistant **refuses a defined set of off-limits topics**, **blocks harmful/toxic content** in both user prompts and model responses, and **redacts personally identifiable information (PII)** — and the control must keep working even if the team swaps the underlying foundation model later.\n\nWhat is the most appropriate AWS-native control?",
+  "options": [
+    { "id": "a", "text": "Configure Amazon Bedrock Guardrails with denied topics, content filters, and PII redaction, and attach it to the model invocations" },
+    { "id": "b", "text": "Put AWS WAF in front of the application to block disallowed words in HTTP requests" },
+    { "id": "c", "text": "Run Amazon Macie on the conversation logs after the fact to find sensitive data" },
+    { "id": "d", "text": "Fine-tune the foundation model so it never produces disallowed content" }
+  ],
+  "correct_option": "a",
+  "explanation": "Amazon Bedrock Guardrails is purpose-built for exactly this: you define denied topics, content filters (hate, violence, etc.), and PII handling (block or redact), and the policy is evaluated on both the prompt and the response — independently of which foundation model is used, so it survives a model swap. AWS WAF (b) inspects HTTP traffic, not model semantics. Macie (c) is detective and after-the-fact, not a real-time preventive guardrail. Fine-tuning (d) is model-specific, expensive, brittle, and would have to be redone for every model change.",
+  "hints": [
+    { "title": "Decouple policy from the model", "body": "The requirement to keep working across model changes points to a control layered on top of the model, not baked into it." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

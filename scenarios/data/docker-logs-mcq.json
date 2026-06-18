@@ -1,0 +1,26 @@
+{
+  "id": "docker-logs-mcq",
+  "title": "Reading Container Logs",
+  "category": "Operations",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Where Do Logs Come From?\n\nFor `docker logs <container>` to show your application's output, where should the application write its logs?",
+  "options": [
+    { "id": "a", "text": "To a file inside the container, e.g. /var/log/app.log" },
+    { "id": "b", "text": "To the container's **stdout and stderr** — Docker captures these streams via its logging driver" },
+    { "id": "c", "text": "To the host's systemd journal directly" },
+    { "id": "d", "text": "To a special /dev/docker-logs device" }
+  ],
+  "correct_option": "b",
+  "explanation": "`docker logs` shows whatever the container's main process writes to **stdout/stderr**. Docker's logging driver (json-file by default) captures those streams. This is why the 12-factor convention is to log to stdout/stderr rather than to files — it lets the platform collect, rotate and ship logs uniformly. An app that writes only to a file inside the container will show nothing in `docker logs`.",
+  "hints": [
+    {
+      "title": "Follow logs live",
+      "body": "Use -f to stream and --tail to limit how many past lines you see.",
+      "command": "docker logs -f --tail 50 <container>"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

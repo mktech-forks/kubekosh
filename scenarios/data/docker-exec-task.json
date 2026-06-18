@@ -1,0 +1,39 @@
+{
+  "id": "docker-exec-task",
+  "title": "Run a Command Inside a Container",
+  "category": "Running Containers",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 4,
+  "description": "## Exec Into a Running Container\n\nA container named **`exectest`** (image `alpine`) is already **running** in the background.\n\n**Your task:** use `docker exec` to create the file **`/tmp/ready`** inside it, containing the text **`ok`**.\n\n> 💡 `docker exec <container> <command>` runs a command in an already-running container. To write a file you can run a shell: `docker exec exectest sh -c 'echo ok > /tmp/ready'`.",
+  "hints": [
+    {
+      "title": "Write a file via exec",
+      "body": "Run a shell inside the container with -c so redirection happens inside the container, not on the host.",
+      "command": "docker exec exectest sh -c 'echo ok > /tmp/ready'"
+    },
+    {
+      "title": "Verify from inside",
+      "body": "Read the file back to confirm its contents.",
+      "command": "docker exec exectest cat /tmp/ready"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker rm -f exectest 2>/dev/null || true" },
+    { "command": "docker run -d --name exectest alpine sleep 3600" }
+  ],
+  "validation": {
+    "description": "Checks that /tmp/ready inside the exectest container contains 'ok'.",
+    "commands": [
+      {
+        "description": "/tmp/ready inside 'exectest' contains 'ok'",
+        "command": "docker exec exectest cat /tmp/ready 2>/dev/null",
+        "expected_output": "ok",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rm -f exectest 2>/dev/null || true" }
+  ]
+}

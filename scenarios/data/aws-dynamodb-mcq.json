@@ -1,0 +1,23 @@
+{
+  "id": "aws-dynamodb-mcq",
+  "title": "Diagnosing a DynamoDB Hot Partition",
+  "category": "Databases",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Throttling Despite Plenty of Capacity\n\nA DynamoDB table stores IoT telemetry. The team provisioned far more capacity than the table's average consumed throughput, yet they see frequent **`ProvisionedThroughputExceededException` (throttling)** on writes. Investigation shows the partition key is `device_type`, and there are only a handful of device types — so almost all traffic lands on a few partition key values. The team needs a durable fix that lets the table use its capacity evenly across partitions.\n\nWhich change BEST resolves the throttling?",
+  "options": [
+    { "id": "a", "text": "Redesign the table to use a high-cardinality partition key (e.g. device_id, or a composite key) so requests spread evenly across many partitions" },
+    { "id": "b", "text": "Keep the schema and simply raise the provisioned write capacity units (WCU) substantially" },
+    { "id": "c", "text": "Migrate the data to Amazon RDS, which does not have partitions" },
+    { "id": "d", "text": "Enable DynamoDB Accelerator (DAX) to absorb the write traffic" }
+  ],
+  "correct_option": "a",
+  "explanation": "Throttling here is caused by a **hot partition**: a low-cardinality partition key (`device_type`) concentrates traffic onto a few partitions, so a small number of keys exhaust their per-partition share of throughput while the table as a whole is under-utilized. The durable fix is to choose a **high-cardinality partition key** (e.g. `device_id`) or a composite/sharded key so load distributes evenly — DynamoDB scales by spreading items across many partitions and only performs well when keys are well-distributed. **Raising WCU** (B) is wasteful and often ineffective because the bottleneck is one partition, not aggregate capacity (adaptive capacity helps but won't fully cure a severely skewed key). **Moving to RDS** (C) abandons the right tool over a fixable data-model issue. **DAX** (D) is a read-through/write-through cache that accelerates **reads**, not writes — it does not solve write throttling from a skewed key.",
+  "hints": [
+    { "title": "Aggregate vs per-key", "body": "If total capacity is high but you still throttle, the problem is distribution across partition keys, not the total." },
+    { "title": "What DAX accelerates", "body": "DAX is a caching layer aimed at read latency/offload. Ask whether the problem is reads or writes." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,12 @@
+{
+  "id": "devops-osi-lesson",
+  "title": "The OSI Model and TCP/IP",
+  "category": "Networking",
+  "difficulty": "Medium",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## How Networking Is Layered\n\nThe **OSI (Open Systems Interconnection) model** is a conceptual framework that splits network communication into **7 layers**. Each layer provides services to the one above it and relies on the one below. The model is a teaching and troubleshooting tool — real implementations don't map perfectly to it, but the vocabulary (\"that's a Layer 4 load balancer\", \"a Layer 7 proxy\") is everywhere in DevOps.\n\n### The 7 layers (top to bottom)\n\n| # | Layer | Responsibility | Example |\n|---|---|---|---|\n| 7 | **Application** | Interfaces apps use to access the network | HTTP, DNS, SSH |\n| 6 | **Presentation** | Encoding, encryption, compression | TLS, JPEG, ASCII/UTF-8 |\n| 5 | **Session** | Establishing/maintaining/closing sessions | Session setup, RPC |\n| 4 | **Transport** | End-to-end delivery, ports, reliability | TCP, UDP |\n| 3 | **Network** | Logical addressing and routing between networks | IP, ICMP, routers |\n| 2 | **Data Link** | Framing and delivery on the local link; MAC addresses | Ethernet, switches, ARP |\n| 1 | **Physical** | Transmitting raw bits over a medium | Cables, fiber, radio, NICs |\n\n> Mnemonic (top → bottom): **A**ll **P**eople **S**eem **T**o **N**eed **D**ata **P**rocessing.\n\n### Encapsulation\n\nAs data travels **down** the stack on the sender, each layer wraps it with its own header (and the link layer adds a trailer). On the receiver it travels **up**, each layer stripping its header:\n\n```\n[L7 data] -> [L4 TCP hdr | data] -> [L3 IP hdr | ...] -> [L2 frame | ... | trailer] -> bits\n```\n\n### How TCP/IP maps onto OSI\n\nThe **TCP/IP model** (what the Internet actually runs on) is simpler — 4 layers — and collapses several OSI layers together:\n\n| TCP/IP layer | Covers OSI layers | Examples |\n|---|---|---|\n| **Application** | 7 + 6 + 5 | HTTP, DNS, TLS, SSH |\n| **Transport** | 4 | TCP, UDP |\n| **Internet** | 3 | IP, ICMP |\n| **Link / Network Access** | 2 + 1 | Ethernet, Wi-Fi, ARP |\n\n### Why it matters\n\n- A **Layer 4** load balancer routes by IP/port without reading the payload; a **Layer 7** proxy can route by URL path or HTTP host.\n- When debugging, the OSI layers give you a checklist: cable/link up (L1/L2)? routable IP (L3)? port open (L4)? right app protocol/cert (L6/L7)?",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

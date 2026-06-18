@@ -1,0 +1,23 @@
+{
+  "id": "aws-vpc-design-mcq",
+  "title": "Outbound-Only Internet for Private Instances",
+  "category": "Networking",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Patching Without Exposure\n\nApplication servers run in **private subnets** of a VPC. They must be able to reach the internet **outbound** to download OS package updates and call a third-party HTTPS API, but they must **never be directly reachable from the internet inbound**. The instances use **IPv4** only.\n\nWhich solution satisfies both requirements?",
+  "options": [
+    { "id": "a", "text": "Deploy a **NAT Gateway** in a public subnet and add a route in the private subnets' route table sending `0.0.0.0/0` to the NAT Gateway." },
+    { "id": "b", "text": "Attach an **Internet Gateway** route (`0.0.0.0/0 -> igw`) directly to the private subnets' route table so the instances can reach the internet." },
+    { "id": "c", "text": "Add an **egress-only Internet Gateway** to the private subnets and route `0.0.0.0/0` to it." },
+    { "id": "d", "text": "Move the application servers into the **public subnet** and rely on their security groups to block inbound traffic." }
+  ],
+  "correct_option": "a",
+  "explanation": "A **NAT Gateway** is purpose-built for exactly this: it lives in a *public* subnet, and private instances route their `0.0.0.0/0` traffic to it. The NAT Gateway initiates outbound connections on their behalf and allows the return traffic, but because connections can only be *initiated outbound*, the private instances remain unreachable from the internet — meeting both requirements. Option B is wrong: routing a private subnet directly to an **Internet Gateway** is what *makes a subnet public*; with public IPs the instances would become inbound-reachable. Option C is a trap — an **egress-only Internet Gateway** provides outbound-only access but only for **IPv6** traffic, and the workload is IPv4. Option D technically can work with tight security groups, but it violates the design principle of keeping app servers private and relies entirely on firewall rules being correct; the question explicitly wants the servers to stay in private subnets.",
+  "hints": [
+    { "title": "Outbound-only IPv4 has a dedicated service", "body": "For IPv4 'outbound but never inbound,' AWS gives you the NAT Gateway. It sits in a public subnet and the private subnets route to it." },
+    { "title": "Watch the IPv6 decoy", "body": "Egress-only Internet Gateway sounds perfect but it is IPv6-only. The scenario says IPv4." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

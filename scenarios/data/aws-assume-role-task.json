@@ -1,0 +1,39 @@
+{
+  "id": "aws-assume-role-task",
+  "title": "Write a Cross-Account Trust Policy",
+  "category": "Organizations",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Let a CI Account Assume a Role\n\nCross-account access is done with role assumption: the target account defines a role whose **trust policy** allows a trusted account to call **`sts:AssumeRole`** — no long-lived keys shared.\n\n**Your task:** write a trust policy at **`/root/trust.json`** that allows the AWS account **`111122223333`** to assume the role (Principal `AWS`, action `sts:AssumeRole`, Effect Allow).\n\n> 💡 The trust (assume-role) policy uses `\"Principal\": { \"AWS\": \"arn:aws:iam::111122223333:root\" }` and `\"Action\": \"sts:AssumeRole\"`.",
+  "hints": [
+    {
+      "title": "Trust policy shape",
+      "body": "Allow the trusted account's root principal to call sts:AssumeRole.",
+      "command": "printf '{\\n  \"Version\": \"2012-10-17\",\\n  \"Statement\": [\\n    {\\n      \"Effect\": \"Allow\",\\n      \"Principal\": { \"AWS\": \"arn:aws:iam::111122223333:root\" },\\n      \"Action\": \"sts:AssumeRole\"\\n    }\\n  ]\\n}\\n' > /root/trust.json"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/trust.json" }
+  ],
+  "validation": {
+    "description": "Checks for an Allow statement with an AWS principal and sts:AssumeRole.",
+    "commands": [
+      {
+        "description": "Allows sts:AssumeRole for an AWS principal",
+        "command": "python3 -c \"import json; d=json.load(open('/root/trust.json')); s=d['Statement']; s=s if isinstance(s,list) else [s]; ok=any(st.get('Effect')=='Allow' and 'sts:AssumeRole' in (st['Action'] if isinstance(st['Action'],list) else [st['Action']]) and 'AWS' in (st.get('Principal') or {}) for st in s); print('ok' if ok else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      },
+      {
+        "description": "References the trusted account 111122223333",
+        "command": "grep -q '111122223333' /root/trust.json && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/trust.json" }
+  ]
+}

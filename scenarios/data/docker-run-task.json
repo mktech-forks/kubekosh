@@ -1,0 +1,44 @@
+{
+  "id": "docker-run-task",
+  "title": "Run Your First Container",
+  "category": "Running Containers",
+  "difficulty": "Easy",
+  "type": "task",
+  "weight": 4,
+  "description": "## Run a Detached Container\n\nStart a web server container from the **`nginx:alpine`** image.\n\n**Requirements:**\n1. The container must be named **`web`**\n2. It must run in the **background** (detached)\n3. It must be **running** when you validate\n\n> 💡 `docker run -d` starts a container detached. Use `--name` to give it a fixed name. Check it with `docker ps`.",
+  "hints": [
+    {
+      "title": "Run detached with a name",
+      "body": "The -d flag detaches; --name sets the container name so validation can find it.",
+      "command": "docker run -d --name web nginx:alpine"
+    },
+    {
+      "title": "Confirm it's running",
+      "body": "List running containers to verify the name and status.",
+      "command": "docker ps"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker rm -f web 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that a running container named 'web' exists and uses the nginx:alpine image.",
+    "commands": [
+      {
+        "description": "Container 'web' is running",
+        "command": "docker inspect -f '{{.State.Running}}' web 2>/dev/null",
+        "expected_output": "true",
+        "match": "exact"
+      },
+      {
+        "description": "Container 'web' uses the nginx:alpine image",
+        "command": "docker inspect -f '{{.Config.Image}}' web 2>/dev/null",
+        "expected_output": "nginx:alpine",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rm -f web 2>/dev/null || true" }
+  ]
+}

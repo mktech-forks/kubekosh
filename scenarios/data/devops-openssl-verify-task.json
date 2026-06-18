@@ -1,0 +1,39 @@
+{
+  "id": "devops-openssl-verify-task",
+  "title": "Sign and Verify an Artifact",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Prove Integrity With a Signature\n\nArtifact signing is the foundation of supply-chain trust: you sign with a private key, and anyone can verify with the public key.\n\nA file to sign is at **`/root/message.txt`**.\n\n**Your task:**\n1. generate an RSA private key at **`/root/priv.pem`**\n2. extract its public key to **`/root/pub.pem`**\n3. create a SHA-256 signature of `message.txt` at **`/root/sig.bin`**\n\nThe check verifies the signature with the public key — it must report **`Verified OK`**.\n\n> 💡 `openssl genrsa`, then `openssl rsa -pubout`, then `openssl dgst -sha256 -sign ...`.",
+  "hints": [
+    {
+      "title": "Key, public key, signature",
+      "body": "Generate the private key, derive the public key, then sign the file's SHA-256 digest with the private key.",
+      "command": "openssl genrsa -out /root/priv.pem 2048 && openssl rsa -in /root/priv.pem -pubout -out /root/pub.pem && openssl dgst -sha256 -sign /root/priv.pem -out /root/sig.bin /root/message.txt"
+    },
+    {
+      "title": "Verify it yourself",
+      "body": "Verification uses the public key and the signature against the original file.",
+      "command": "openssl dgst -sha256 -verify /root/pub.pem -signature /root/sig.bin /root/message.txt"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/priv.pem /root/pub.pem /root/sig.bin" },
+    { "command": "printf 'release-artifact-v1\\n' > /root/message.txt" }
+  ],
+  "validation": {
+    "description": "Checks that the signature verifies against the public key for message.txt.",
+    "commands": [
+      {
+        "description": "Signature verifies as 'Verified OK'",
+        "command": "openssl dgst -sha256 -verify /root/pub.pem -signature /root/sig.bin /root/message.txt 2>&1",
+        "expected_output": "Verified OK",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/priv.pem /root/pub.pem /root/sig.bin /root/message.txt" }
+  ]
+}

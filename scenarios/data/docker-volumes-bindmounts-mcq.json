@@ -1,0 +1,26 @@
+{
+  "id": "docker-volumes-bindmounts-mcq",
+  "title": "Volumes vs Bind Mounts",
+  "category": "Storage",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Where Does the Data Live?\n\nYou want a database container's data to **survive the container being removed and recreated**, while letting Docker manage the storage location for you (rather than pointing at a specific host path).\n\nWhich option fits best?",
+  "options": [
+    { "id": "a", "text": "A **named volume** — `docker run -v db-data:/var/lib/postgresql/data ...`" },
+    { "id": "b", "text": "A **bind mount** of a host directory — `docker run -v /home/user/db:/var/lib/postgresql/data ...`" },
+    { "id": "c", "text": "A **tmpfs** mount — `docker run --tmpfs /var/lib/postgresql/data ...`" },
+    { "id": "d", "text": "Nothing — data written inside a container is always persisted automatically" }
+  ],
+  "correct_option": "a",
+  "explanation": "A **named volume** (`-v db-data:/path`) is managed entirely by Docker (stored under its data root) and persists independently of any container's lifecycle — perfect for database data you want to keep without caring where on the host it sits. A **bind mount** also persists but ties you to a specific host path. **tmpfs** lives in memory and is lost on stop. And data in a container's writable layer is **destroyed** when the container is removed (option d is the classic misconception).",
+  "hints": [
+    {
+      "title": "Inspect a container's mounts",
+      "body": "The Mounts section of docker inspect shows whether a mount is a 'volume' or a 'bind', and its source.",
+      "command": "docker inspect -f '{{json .Mounts}}' <container>"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

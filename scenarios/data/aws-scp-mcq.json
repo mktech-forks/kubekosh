@@ -1,0 +1,23 @@
+{
+  "id": "aws-scp-mcq",
+  "title": "Stopping Even Admins from Disabling CloudTrail",
+  "category": "Organizations",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## A Guardrail Nobody Can Bypass\n\nA security team has an absolute requirement: in **every member account** of the AWS Organization, **no one — including each account's own IAM administrators and root user — may stop or delete the organization's CloudTrail trail**. Local account admins must not be able to weaken this control, even by editing their own IAM policies.\n\nWhich mechanism enforces this org-wide and cannot be overridden by an account admin?",
+  "options": [
+    { "id": "a", "text": "Apply a **Service Control Policy (SCP)** to the relevant OUs that **denies** `cloudtrail:StopLogging`, `cloudtrail:DeleteTrail`, and `cloudtrail:UpdateTrail` for the protected trail." },
+    { "id": "b", "text": "Attach an **IAM policy** denying those CloudTrail actions to every user and role in each member account." },
+    { "id": "c", "text": "Set an **IAM permission boundary** on the administrators in each account that excludes the CloudTrail actions." },
+    { "id": "d", "text": "Enable **CloudTrail log file validation** so tampering is detected after the fact." }
+  ],
+  "correct_option": "a",
+  "explanation": "An **SCP** sets the **permission ceiling** for member accounts and is administered from the management account, so **even an account's own administrator or root user cannot exceed or remove it**. An explicit `Deny` of the CloudTrail stop/delete/update actions in an SCP attached to the OUs is therefore the only option that is truly tamper-proof at the account level. Option B (an **IAM policy**) is administered *within* each member account — a local admin has the IAM permissions to edit or detach it, so it isn't a durable guardrail. Option C, a **permission boundary**, is a *per-principal* control that limits the maximum permissions of specific IAM entities; it isn't org-wide, doesn't apply to the **root user**, and a local admin who can manage IAM could alter or sidestep it. Option D, **log file validation**, only *detects* tampering after it happens — it does nothing to *prevent* disabling the trail.",
+  "hints": [
+    { "title": "Who can edit the control?", "body": "If the control lives inside the member account (IAM policy/boundary), a local admin can change it. SCPs live in the management account and bind the whole account." },
+    { "title": "SCPs bind root too", "body": "An SCP's ceiling applies even to the account root user — that's what makes it the right tool for non-negotiable guardrails." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

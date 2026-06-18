@@ -1,0 +1,23 @@
+{
+  "id": "aws-ec2-asg-mcq",
+  "title": "Elastic, Highly Available Web Tier",
+  "category": "Compute",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Surviving an AZ Outage Under Variable Load\n\nA company runs a **stateless** web/application tier on EC2 in a single Availability Zone behind a single large instance. Traffic is highly variable: quiet overnight, with sharp, unpredictable spikes during the day. The business now requires the tier to **stay available even if an entire Availability Zone fails** and to **scale automatically** with load while keeping cost reasonable during quiet periods. Session state has already been externalized to DynamoDB, so any instance can serve any request.\n\nWhich architecture BEST meets these requirements?",
+  "options": [
+    { "id": "a", "text": "Replace the instance with a much larger instance type and add a CloudWatch alarm that emails the team when CPU is high so they can resize it manually" },
+    { "id": "b", "text": "Put the instances in an EC2 Auto Scaling group spanning at least two Availability Zones behind an Application Load Balancer, using a target-tracking scaling policy on average CPU/request count" },
+    { "id": "c", "text": "Keep a single instance but enable an Elastic IP and a standby instance in the same AZ that you start manually if the primary fails" },
+    { "id": "d", "text": "Run the instance in one AZ and configure Route 53 latency-based routing to a copy in a second AZ that you keep permanently running at full size" }
+  ],
+  "correct_option": "b",
+  "explanation": "A stateless tier that must survive an AZ failure and scale with load is the canonical use case for an **Auto Scaling group across multiple AZs behind an Application Load Balancer**. The ASG spread across 2+ AZs gives high availability (if one AZ fails, capacity is launched/served in the others), and a **target-tracking** policy automatically adds/removes capacity to hold a metric (e.g. average CPU or ALB request count per target) near a target value — elasticity without manual intervention. Option A (vertical scaling) does not address AZ failure and requires manual, slow human response. Option C is single-AZ and manual, so it fails the HA requirement. Option D is single-AZ for the primary, keeps a full-size copy running permanently (no elasticity, higher cost), and relies on DNS rather than load balancing across a fleet.",
+  "hints": [
+    { "title": "What two requirements are coupled?", "body": "You need both fault tolerance across AZs AND automatic elasticity. Only one option delivers both without manual steps." },
+    { "title": "Vertical vs horizontal", "body": "A bigger single box (scale up) never survives losing the AZ that box lives in. Surviving an AZ outage requires capacity in another AZ (scale out)." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

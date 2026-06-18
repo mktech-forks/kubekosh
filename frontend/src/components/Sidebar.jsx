@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import styles from './Sidebar.module.css'
 
 const DIFF_COLOR = { Easy: 'green', Medium: 'amber', Hard: 'red' }
-const TYPE_ICON  = { task: '⚙', mcq: '◉' }
+const TYPE_ICON  = { task: '⚙', mcq: '◉', lesson: '📖' }
 
 async function resetProgress(scope, opts) {
   await fetch('/api/progress/reset', {
@@ -125,6 +125,7 @@ export default function Sidebar({
             className={`${styles.selectFilter} ${filterType !== 'All' ? styles[filterType] : ''}`}
           >
             <option value="All">All Types</option>
+            <option value="lesson">Lesson</option>
             <option value="task">Task</option>
             <option value="mcq">MCQ</option>
           </select>

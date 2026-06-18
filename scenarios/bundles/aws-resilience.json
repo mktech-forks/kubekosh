@@ -1,0 +1,18 @@
+{
+  "id": "aws-resilience",
+  "subject": "aws",
+  "name": "Resilience & Disaster Recovery",
+  "icon": "☁️",
+  "tagline": "Multi-region, DR strategies and RTO/RPO",
+  "color": "#ff9900",
+  "colorDim": "rgba(255,153,0,0.13)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "aws-dr-lesson",
+    "aws-dr-strategies-mcq",
+    "aws-multiregion-mcq",
+    "aws-route53-failover-mcq",
+    "aws-backup-mcq",
+    "aws-rto-rpo-mcq"
+  ]
+}

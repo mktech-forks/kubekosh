@@ -1,0 +1,25 @@
+{
+  "id": "devops-vcs-hosting-mcq",
+  "title": "Pull Requests and Code Review",
+  "category": "Git",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## The Unit of Collaboration\n\nGit hosting platforms such as **GitHub**, **GitLab**, and **Bitbucket** add collaboration features on top of plain Git. Central among them is the **pull request** (called a **merge request** on GitLab).\n\nWhat is the primary purpose of a pull/merge request?",
+  "options": [
+    { "id": "a", "text": "It compresses the repository to save storage space on the server." },
+    { "id": "b", "text": "It proposes merging one branch into another, providing a place for code review and a gate where automated checks (CI) must pass before merging." },
+    { "id": "c", "text": "It is the only way to clone a repository to your local machine." },
+    { "id": "d", "text": "It permanently locks a branch so no one else can commit to the project." }
+  ],
+  "correct_option": "b",
+  "explanation": "A **pull request** (PR) / **merge request** (MR) proposes integrating the commits from one branch (e.g. a feature branch) into another (e.g. `main`). It creates a focused space for **code review** — teammates comment on the diff, request changes, and approve — and it serves as a **gate** where CI pipelines (tests, linting, builds) run automatically; branch protection rules can require those checks and approvals to pass before the merge is allowed. Cloning (c) uses `git clone` and needs no PR; PRs neither compress storage (a) nor lock the whole project (d).",
+  "hints": [
+    {
+      "title": "Why do teams require PRs?",
+      "body": "Think about the two things teams want to happen automatically before code reaches main: human review and passing automated checks."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

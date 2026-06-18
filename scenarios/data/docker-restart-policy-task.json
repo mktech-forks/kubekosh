@@ -1,0 +1,39 @@
+{
+  "id": "docker-restart-policy-task",
+  "title": "Set a Restart Policy",
+  "category": "Operations",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 4,
+  "description": "## Keep a Container Running\n\nRestart policies tell Docker what to do when a container exits or the daemon restarts.\n\n**Requirements:**\n1. Run an **`alpine`** container named **`resilient`** in the background (keep it alive)\n2. Give it the restart policy **`unless-stopped`**\n\n> 💡 Use `--restart unless-stopped` on `docker run`. Inspect it with `docker inspect -f '{{.HostConfig.RestartPolicy.Name}}' resilient`.",
+  "hints": [
+    {
+      "title": "Apply a restart policy",
+      "body": "The --restart flag accepts no, on-failure, always, or unless-stopped.",
+      "command": "docker run -d --name resilient --restart unless-stopped alpine sleep 3600"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker rm -f resilient 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that 'resilient' is running with the unless-stopped restart policy.",
+    "commands": [
+      {
+        "description": "Container 'resilient' is running",
+        "command": "docker inspect -f '{{.State.Running}}' resilient 2>/dev/null",
+        "expected_output": "true",
+        "match": "exact"
+      },
+      {
+        "description": "Restart policy is 'unless-stopped'",
+        "command": "docker inspect -f '{{.HostConfig.RestartPolicy.Name}}' resilient 2>/dev/null",
+        "expected_output": "unless-stopped",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rm -f resilient 2>/dev/null || true" }
+  ]
+}

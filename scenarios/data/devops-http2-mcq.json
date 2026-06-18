@@ -1,0 +1,23 @@
+{
+  "id": "devops-http2-mcq",
+  "title": "HTTP/2 Multiplexing vs HTTP/3 over QUIC",
+  "category": "Networking",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Why does HTTP/3 still help when HTTP/2 already multiplexes?\n\nAn engineer notes that HTTP/2 already multiplexes many requests over a single connection, yet on lossy mobile networks a single dropped packet still stalls all the in-flight streams. They ask why HTTP/3 fixes this. Which statement is correct?",
+  "options": [
+    { "id": "a", "text": "HTTP/2 multiplexes concurrent streams over one TCP connection and compresses headers (HPACK), but because TCP guarantees in-order byte delivery, one lost segment blocks delivery of all multiplexed streams (transport-level head-of-line blocking). HTTP/3 runs over QUIC, which is built on UDP and implements independent per-stream reliability, so a lost packet only stalls its own stream — eliminating TCP head-of-line blocking; QUIC also integrates the TLS 1.3 handshake to reduce connection setup latency." },
+    { "id": "b", "text": "HTTP/2 already eliminates head-of-line blocking entirely; HTTP/3's only benefit is mandatory server push, which HTTP/2 lacks." },
+    { "id": "c", "text": "HTTP/3 runs over TCP with a new framing layer; its advantage is that it disables header compression, which had caused the CRIME attack in HTTP/2." },
+    { "id": "d", "text": "HTTP/2 uses a separate TCP connection per stream to avoid head-of-line blocking, while HTTP/3 multiplexes them all onto one UDP datagram per response, trading reliability for speed." }
+  ],
+  "correct_option": "a",
+  "explanation": "HTTP/2 multiplexes many logical streams over a **single TCP connection** and compresses headers with HPACK. But TCP delivers a single in-order byte stream, so if one segment is lost, the kernel withholds all subsequent bytes — including those belonging to other, fully-received HTTP/2 streams — until the gap is retransmitted. That is **transport-layer head-of-line blocking**, which HTTP/2 does *not* solve (refuting (b)). HTTP/3 runs over **QUIC, a transport on top of UDP**, that maintains independent reliability and ordering per stream, so a packet loss only delays the affected stream and the others proceed. QUIC also folds in the TLS 1.3 cryptographic handshake, cutting connection-establishment round trips. (c) is wrong: HTTP/3 is over UDP/QUIC, not TCP, and it uses QPACK header compression rather than disabling compression. (d) is wrong on both counts: HTTP/2 uses one connection (not one TCP connection per stream), and HTTP/3 does not cram a whole response into a single UDP datagram nor abandon reliability — QUIC provides reliable, ordered per-stream delivery.",
+  "hints": [
+    { "title": "Two layers of HOL blocking", "body": "HTTP/1.1 had application-layer HOL blocking; HTTP/2 fixed that with multiplexing but is still subject to TCP's transport-layer HOL blocking on packet loss." },
+    { "title": "QUIC's key move", "body": "By running over UDP and tracking loss/ordering per stream itself, QUIC ensures one lost packet only stalls its own stream, and it merges transport + TLS setup." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

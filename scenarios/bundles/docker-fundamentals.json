@@ -1,0 +1,24 @@
+{
+  "id": "docker-fundamentals",
+  "subject": "docker",
+  "name": "Docker Fundamentals",
+  "icon": "🐳",
+  "tagline": "Images, containers, volumes and builds",
+  "color": "#2496ed",
+  "colorDim": "rgba(36,150,237,0.12)",
+  "exam_minutes": 60,
+  "scenario_ids": [
+    "docker-intro-lesson",
+    "docker-architecture-mcq",
+    "docker-images-layers-mcq",
+    "docker-run-task",
+    "docker-port-publish-task",
+    "docker-dockerfile-lesson",
+    "docker-cmd-entrypoint-mcq",
+    "docker-build-image-task",
+    "docker-volumes-bindmounts-mcq",
+    "docker-volume-task",
+    "docker-exec-task",
+    "docker-cleanup-task"
+  ]
+}

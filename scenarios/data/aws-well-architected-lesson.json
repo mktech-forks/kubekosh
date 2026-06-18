@@ -1,0 +1,12 @@
+{
+  "id": "aws-well-architected-lesson",
+  "title": "The Well-Architected Framework",
+  "category": "Foundations",
+  "difficulty": "Medium",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## The Six Pillars\n\nThe **AWS Well-Architected Framework** is the lens architects use to review workloads and justify trade-offs. SAP-C02 questions are frequently really asking *\"which pillar does the requirement prioritize, and what design follows?\"* There are **six** pillars.\n\n| Pillar | Core idea | One-line design implication |\n|---|---|---|\n| **Operational Excellence** | Run and monitor systems; improve processes. | Automate operations as code (IaC, runbooks) and design for observability and small, reversible changes. |\n| **Security** | Protect data, systems, and assets. | Apply least privilege, encrypt in transit and at rest, and use identity (roles, not keys) with strong audit (CloudTrail). |\n| **Reliability** | Recover from failure; meet demand. | Design for failure across AZs/Regions, automate recovery, and test with backups and well-defined RTO/RPO. |\n| **Performance Efficiency** | Use resources efficiently as demand changes. | Pick the right resource types, scale elastically, and adopt managed/serverless services to avoid undifferentiated work. |\n| **Cost Optimization** | Avoid unnecessary cost. | Match supply to demand (auto scaling, Savings Plans/Spot), measure spend, and decommission waste. |\n| **Sustainability** | Minimize environmental impact. | Maximize utilization, choose efficient instance families/Regions, and reduce the resources needed per unit of work. |\n\n### Using the pillars\n\nThe pillars frequently **conflict**, and the architect's job is to make the trade-off explicit. Multi-Region active-active maximizes *Reliability* but hurts *Cost Optimization* and *Operational Excellence*; a single Spot fleet is great for *Cost* but poor for *Reliability* if the workload can't tolerate interruption.\n\n> A useful exam habit: read the scenario, identify the **dominant requirement** (\"must survive a Region outage\", \"must minimize steady-state cost\", \"must meet a strict compliance audit\"), map it to a pillar, and let that drive the answer.\n\nAWS provides the **Well-Architected Tool** in the console to run structured reviews against these pillars and track improvement items over time.",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

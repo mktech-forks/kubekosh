@@ -1,0 +1,25 @@
+{
+  "id": "devops-cloud-models-mcq",
+  "title": "IaaS vs PaaS vs SaaS",
+  "category": "Cloud",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Classify the Service Models\n\nThe cloud is usually described in three service models based on how much the provider manages for you. Consider these three examples:\n\n1. A **managed virtual machine** where you choose the OS, install software, and patch it yourself.\n2. A **managed application platform** (like Google App Engine or Heroku) where you push code and the platform handles the OS, runtime, and scaling.\n3. **Gmail** — a finished application you simply log into and use.\n\nWhich classification correctly maps these to **IaaS**, **PaaS**, and **SaaS**?",
+  "options": [
+    { "id": "a", "text": "1 = IaaS, 2 = PaaS, 3 = SaaS" },
+    { "id": "b", "text": "1 = PaaS, 2 = IaaS, 3 = SaaS" },
+    { "id": "c", "text": "1 = SaaS, 2 = PaaS, 3 = IaaS" },
+    { "id": "d", "text": "1 = IaaS, 2 = SaaS, 3 = PaaS" }
+  ],
+  "correct_option": "a",
+  "explanation": "The three models form a stack of increasing provider responsibility. **IaaS** (Infrastructure as a Service) gives you raw building blocks like VMs, storage, and networks — you manage the OS and everything above it; a managed VM fits here. **PaaS** (Platform as a Service) abstracts the OS and runtime away — you deploy code and the platform runs it; App Engine and Heroku are classic PaaS. **SaaS** (Software as a Service) is a complete, ready-to-use application accessed over the web with nothing for you to manage; Gmail is SaaS. So the correct mapping is 1 = IaaS, 2 = PaaS, 3 = SaaS.",
+  "hints": [
+    {
+      "title": "Think about what you manage",
+      "body": "More provider responsibility means less for you to manage. IaaS = you manage the OS up. PaaS = you manage only your code. SaaS = you manage nothing, just use the app."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

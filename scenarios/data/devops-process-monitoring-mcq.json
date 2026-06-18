@@ -1,0 +1,26 @@
+{
+  "id": "devops-process-monitoring-mcq",
+  "title": "Signals: SIGTERM vs SIGKILL",
+  "category": "Shell",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Stopping a Misbehaving Process\n\nA service is stuck. You find its PID with `ps` and confirm it's burning CPU in `top`. You want it to shut down **gracefully** first — finishing in-flight work, flushing buffers, closing files — and only force-kill it if it refuses to exit.\n\nWhich statement about the signals `kill` can send is correct?",
+  "options": [
+    { "id": "a", "text": "SIGTERM (15) asks the process to terminate gracefully and can be caught/handled, while SIGKILL (9) forcibly terminates it and cannot be caught, blocked, or ignored." },
+    { "id": "b", "text": "SIGKILL (9) requests a graceful shutdown, and SIGTERM (15) is the one that cannot be intercepted." },
+    { "id": "c", "text": "Both SIGTERM and SIGKILL can be caught and ignored by the process, so neither is guaranteed to stop it." },
+    { "id": "d", "text": "SIGKILL gives the process time to clean up, whereas SIGTERM kills it instantly with no cleanup." }
+  ],
+  "correct_option": "a",
+  "explanation": "**SIGTERM** (signal 15, the default for `kill`) is a polite request: the process can install a handler to catch it and shut down **gracefully** — finish current work, flush data, release resources. Because a well-behaved program should handle SIGTERM, it's what you send first (e.g. `kill <pid>` or `kill -TERM <pid>`). **SIGKILL** (signal 9) is the hammer: the kernel terminates the process immediately and it **cannot be caught, blocked, or ignored** — but that also means no cleanup happens. The correct workflow is to send SIGTERM first and reserve `kill -9` for processes that refuse to die. Options b and d invert the two signals, and option c is false because SIGKILL specifically cannot be intercepted.",
+  "hints": [
+    {
+      "title": "Try the graceful one first",
+      "body": "`kill <pid>` sends SIGTERM by default. Only escalate to `kill -9 <pid>` (SIGKILL) if the process ignores the polite request.",
+      "command": "kill -l"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

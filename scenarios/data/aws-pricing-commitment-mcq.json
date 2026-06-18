@@ -1,0 +1,23 @@
+{
+  "id": "aws-pricing-commitment-mcq",
+  "title": "Committing to Steady Compute Spend",
+  "category": "Cost",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Maximum Discount With Maximum Flexibility\n\nA company runs a **steady, 24/7 production baseline** of compute that has been stable for a year and is expected to continue. The catch: over the next term they expect to **change instance families and sizes**, shift some workloads from EC2 to Fargate, and possibly move between Regions as they re-architect. They want the **largest possible discount over On-Demand** while keeping the **maximum flexibility** to make those changes without losing the discount. The baseline is not interruptible.",
+  "options": [
+    { "id": "a", "text": "Purchase Compute Savings Plans for the steady baseline" },
+    { "id": "b", "text": "Purchase Standard Reserved Instances for specific instance types in a specific Region" },
+    { "id": "c", "text": "Run everything on Spot Instances to get the deepest discount" },
+    { "id": "d", "text": "Stay entirely On-Demand to retain flexibility" }
+  ],
+  "correct_option": "a",
+  "explanation": "**Compute Savings Plans** give RI-level discounts (commit to a $/hour spend for 1 or 3 years) while automatically applying across **any instance family, size, Region, OS, tenancy, and even Fargate and Lambda**. That is the best fit when the baseline is steady (so committing is safe) but the team needs freedom to change families, move to Fargate, and shift Regions without re-buying — the discount follows their usage. **Standard RIs** (B) offer a similar or slightly larger discount but are far less flexible: they are tied to instance attributes/Region and don't cover Fargate/Lambda, so re-architecting could strand them. **Spot** (C) gives the deepest discount but instances can be reclaimed with a 2-minute warning — unsuitable for a non-interruptible production baseline. **On-Demand** (D) is fully flexible but the most expensive, giving up the discount entirely.",
+  "hints": [
+    { "title": "Flexibility is the deciding axis", "body": "Two options give big discounts on steady usage. The tie-breaker is which one survives changing instance family, Region, and a move to Fargate." },
+    { "title": "Interruptible?", "body": "The baseline is explicitly not interruptible — that single fact removes Spot from contention regardless of its discount." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,50 @@
+{
+  "id": "devops-nginx-ratelimit-task",
+  "title": "Rate-Limit Requests in Nginx",
+  "category": "Web Servers",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Protect a Backend From Abuse\n\n**Your task:** write a complete Nginx config at **`/root/rl.conf`** that:\n1. defines a rate-limit zone named **`mylimit`** keyed by client IP (`limit_req_zone $binary_remote_addr ...`) at **`10r/s`**\n2. **applies** that zone (`limit_req zone=mylimit ...`) inside a `location`\n3. passes **`nginx -t`**\n\n> 💡 `limit_req_zone` is declared in the `http { }` context; `limit_req` is used in a `location`. Test with `nginx -t -c /root/rl.conf`.",
+  "hints": [
+    {
+      "title": "Define then apply the zone",
+      "body": "Declare the shared-memory zone with a rate in http{}, then reference it in a location with limit_req (burst smooths spikes).",
+      "command": "printf 'events {}\\nhttp {\\n  limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;\\n  server {\\n    listen 80;\\n    location / {\\n      limit_req zone=mylimit burst=20 nodelay;\\n      return 200 \"ok\";\\n    }\\n  }\\n}\\n' > /root/rl.conf"
+    },
+    {
+      "title": "Validate",
+      "body": "nginx -t checks the syntax and the directive contexts.",
+      "command": "nginx -t -c /root/rl.conf"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/rl.conf" }
+  ],
+  "validation": {
+    "description": "Checks valid config, a 10r/s zone named mylimit, and that it is applied.",
+    "commands": [
+      {
+        "description": "Configuration passes nginx -t",
+        "command": "nginx -t -c /root/rl.conf 2>&1",
+        "expected_output": "successful",
+        "match": "contains"
+      },
+      {
+        "description": "Declares a 10r/s limit zone named 'mylimit'",
+        "command": "grep -qE 'limit_req_zone.*zone=mylimit.*rate=10r/s' /root/rl.conf && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "Applies the zone with limit_req",
+        "command": "grep -qE 'limit_req[[:space:]]+zone=mylimit' /root/rl.conf && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/rl.conf" }
+  ]
+}

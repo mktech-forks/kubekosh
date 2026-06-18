@@ -1,0 +1,39 @@
+{
+  "id": "devops-gitlab-rules-task",
+  "title": "GitLab Pipeline With Rules and Artifacts",
+  "category": "CI/CD",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## A Real Multi-Stage Pipeline\n\n**Your task:** write **`/root/pipeline.yml`** that:\n1. declares **`stages`**: `build`, `test`, `deploy`\n2. has a **`build`** job (stage build) that produces **`artifacts`** (an `artifacts.paths` list)\n3. has a **`deploy`** job that uses **`needs`** and a **`rules`** clause (e.g. only on the default branch)\n\n> 💡 Validate the YAML with `python3 -c \"import yaml; yaml.safe_load(open('/root/pipeline.yml'))\"`.",
+  "hints": [
+    {
+      "title": "Stages, artifacts, needs, rules",
+      "body": "Declare the stage order, attach artifacts.paths to build, and gate deploy with rules + needs.",
+      "command": "printf 'stages:\\n  - build\\n  - test\\n  - deploy\\n\\nbuild:\\n  stage: build\\n  script:\\n    - echo building\\n  artifacts:\\n    paths:\\n      - dist/\\n\\ndeploy:\\n  stage: deploy\\n  needs:\\n    - build\\n  rules:\\n    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH\\n  script:\\n    - echo deploying\\n' > /root/pipeline.yml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/pipeline.yml" }
+  ],
+  "validation": {
+    "description": "Checks the stages list and the presence of artifacts, needs and rules.",
+    "commands": [
+      {
+        "description": "stages are build, test, deploy",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/pipeline.yml')); s=d.get('stages'); print('ok' if s==['build','test','deploy'] else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      },
+      {
+        "description": "Uses artifacts, needs and rules",
+        "command": "grep -q 'artifacts:' /root/pipeline.yml && grep -q 'needs:' /root/pipeline.yml && grep -q 'rules:' /root/pipeline.yml && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/pipeline.yml" }
+  ]
+}

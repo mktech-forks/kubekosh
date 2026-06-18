@@ -1,0 +1,25 @@
+{
+  "id": "devops-language-choice-mcq",
+  "title": "The Go-To DevOps Language",
+  "category": "Getting Started",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Picking a Language for Automation\n\nYou've inherited a pile of one-off automation: provisioning scripts, log parsers, glue between APIs, deployment helpers, and small CLI tools. You want a **single language** that the broader DevOps community reaches for first — readable, ubiquitous on Linux, and backed by a huge ecosystem of libraries for automation and cloud APIs.\n\nWhich language is the best single answer?",
+  "options": [
+    { "id": "a", "text": "Python — readable, pre-installed on most Linux distros, and with a vast ecosystem (requests, boto3, Ansible, etc.) for automation and cloud tooling." },
+    { "id": "b", "text": "Bash only — every task should be a shell script, no matter how complex." },
+    { "id": "c", "text": "Java — its verbosity and JVM startup make it the natural fit for quick glue scripts." },
+    { "id": "d", "text": "C++ — manual memory management makes it ideal for everyday automation chores." }
+  ],
+  "correct_option": "a",
+  "explanation": "**Python** is the most common go-to language for DevOps automation and glue code. It's highly readable, ships on virtually every Linux distribution, and has an enormous ecosystem for exactly this work (HTTP via `requests`, cloud SDKs like `boto3`, configuration management like Ansible which is itself written in Python). It hits the sweet spot between throwaway shell scripts and full applications. **Bash** (b) is essential for short pipelines and gluing commands together, but it becomes fragile and hard to maintain for anything with real logic, data structures or error handling. **Java** (c) is verbose with slow startup — fine for large services, awkward for quick scripts. **C++** (d) is a systems language; its manual memory management and compile cycle make it a poor fit for routine automation. (Note: **Go** is also extremely popular for building cloud-native *tooling* and binaries — Docker, Kubernetes and Terraform are written in Go — but as the single best answer for everyday scripting/glue, Python wins.)",
+  "hints": [
+    {
+      "title": "Scripting vs. building",
+      "body": "Distinguish 'quick automation and glue' (favors a readable, batteries-included scripting language) from 'building a distributed system binary' (favors Go). The question asks about the former."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

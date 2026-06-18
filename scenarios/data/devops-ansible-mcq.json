@@ -1,0 +1,25 @@
+{
+  "id": "devops-ansible-mcq",
+  "title": "How Ansible Connects to Hosts",
+  "category": "Configuration Management",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Agent or No Agent?\n\nA team is choosing a configuration management tool and wants to avoid installing and maintaining a long-running daemon on every server. They're considering **Ansible**. Which statement correctly describes how Ansible operates?",
+  "options": [
+    { "id": "a", "text": "Ansible is **agentless** — it pushes configuration to hosts over SSH, driven by YAML playbooks, an inventory of hosts, and reusable modules. No daemon is required on the managed nodes." },
+    { "id": "b", "text": "Ansible requires a persistent agent daemon installed and running on every managed node, which polls a central server for changes." },
+    { "id": "c", "text": "Ansible only works on the control machine and cannot configure remote hosts at all." },
+    { "id": "d", "text": "Ansible replaces SSH with its own custom always-on network protocol that must be opened on every host." }
+  ],
+  "correct_option": "a",
+  "explanation": "Ansible is **agentless**: it connects to managed hosts over standard **SSH** (WinRM on Windows) and **pushes** changes from a control node, so there's nothing to install or keep running on the targets beyond Python. You describe desired state in **YAML playbooks**, list targets in an **inventory**, and use **modules** as the units of work. This contrasts with the classic **Chef/Puppet** model (option b), where an **agent daemon** on each node periodically **pulls** configuration from a central server. Option (c) is wrong — configuring remote hosts is exactly Ansible's purpose. Option (d) is wrong — Ansible uses ordinary SSH, not a bespoke always-on protocol.",
+  "hints": [
+    {
+      "title": "Push over SSH vs pull with an agent",
+      "body": "Ansible = agentless, push over SSH. Chef/Puppet = an agent daemon on each node that pulls from a server. The team wants to avoid daemons, so think agentless."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

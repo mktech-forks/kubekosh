@@ -1,0 +1,23 @@
+{
+  "id": "devops-tls-handshake-mcq",
+  "title": "TLS 1.3 Handshake, SNI, and Mutual TLS",
+  "category": "Networking",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## What actually changed in TLS 1.3?\n\nA security review asks you to justify migrating an edge fleet from TLS 1.2 to TLS 1.3 and to explain its privacy and authentication properties. Which statement is accurate?",
+  "options": [
+    { "id": "a", "text": "TLS 1.3 completes a full handshake in one round trip (1-RTT) before application data, removes static RSA key exchange so every cipher suite provides forward secrecy via (EC)DHE, and uses only AEAD ciphers; SNI is still sent in cleartext in the ClientHello unless Encrypted Client Hello (ECH) is used; mutual TLS adds client authentication by having the client present its own certificate." },
+    { "id": "b", "text": "TLS 1.3 is always 0-RTT for the first connection to a new server, encrypts SNI by default in every deployment, and mutual TLS means both sides use the same shared symmetric key derived out of band." },
+    { "id": "c", "text": "TLS 1.3 keeps RSA key exchange for backward compatibility but removes (EC)DHE; SNI was introduced in TLS 1.3 and is therefore always encrypted; mTLS simply pins the server certificate on the client." },
+    { "id": "d", "text": "TLS 1.3 requires two round trips like TLS 1.2 but compresses the certificate; forward secrecy is optional and negotiated per connection; SNI is encrypted because it moves into the (encrypted) ServerHello." }
+  ],
+  "correct_option": "a",
+  "explanation": "TLS 1.3 reduces the normal handshake to **1-RTT** (the client can send application data after one round trip; a resumption 0-RTT \"early data\" mode exists but it is an optional, replay-risky optimization, not the default for a fresh connection — so (b) is wrong). It **removes static RSA key transport and other non-forward-secret key exchanges**, mandating ephemeral (EC)DHE so all suites are forward-secret, and it removes legacy/CBC ciphers in favour of AEAD — the opposite of (c)'s claim that RSA is kept and (EC)DHE removed. SNI is sent in the **cleartext ClientHello** in both TLS 1.2 and 1.3; encrypting it requires the separate Encrypted Client Hello (ECH) extension, so it is *not* encrypted by default — defeating (b)/(c)/(d) which variously claim SNI is always or inherently encrypted. (d) also wrongly says TLS 1.3 is 2-RTT and that forward secrecy is optional. Mutual TLS (mTLS) adds **client** authentication: the server requests and verifies a client certificate in addition to the client verifying the server — not a shared key (b) nor mere cert pinning (c).",
+  "hints": [
+    { "title": "Forward secrecy is mandatory now", "body": "TLS 1.3 dropped static RSA key exchange; every suite uses ephemeral Diffie-Hellman, so a stolen server private key cannot decrypt past sessions." },
+    { "title": "SNI is not secret by default", "body": "The server name is in the cleartext ClientHello in TLS 1.2 and 1.3 alike. Encrypted Client Hello (ECH) is the mechanism that hides it, and it is not universally deployed." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,57 @@
+{
+  "id": "docker-network-task",
+  "title": "Wire Two Containers Together",
+  "category": "Networking",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Connect Containers on a User-Defined Network\n\n**Requirements:**\n1. Create a user-defined bridge network named **`appnet`**\n2. Run an **`alpine`** container named **`db`** attached to `appnet` (keep it alive, e.g. `sleep 3600`)\n3. Run an **`alpine`** container named **`app`** attached to `appnet` (also kept alive)\n\nOn a user-defined network, `app` and `db` can resolve each other by name.\n\n> 💡 `docker network create appnet`, then `docker run -d --name db --network appnet alpine sleep 3600` (and similarly for `app`).",
+  "hints": [
+    {
+      "title": "Create the network",
+      "body": "A user-defined bridge network provides automatic DNS between attached containers.",
+      "command": "docker network create appnet"
+    },
+    {
+      "title": "Attach containers at run time",
+      "body": "Use --network to attach each container to appnet as it starts.",
+      "command": "docker run -d --name db --network appnet alpine sleep 3600 && docker run -d --name app --network appnet alpine sleep 3600"
+    },
+    {
+      "title": "Verify connectivity by name",
+      "body": "From app, ping db by its container name to confirm DNS works on the shared network.",
+      "command": "docker exec app ping -c1 db"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker rm -f db app 2>/dev/null || true" },
+    { "command": "docker network rm appnet 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that 'appnet' exists and both 'db' and 'app' are attached to it.",
+    "commands": [
+      {
+        "description": "Network 'appnet' exists",
+        "command": "docker network inspect appnet -f '{{.Name}}' 2>/dev/null",
+        "expected_output": "appnet",
+        "match": "exact"
+      },
+      {
+        "description": "Container 'db' is attached to 'appnet'",
+        "command": "docker network inspect appnet -f '{{range .Containers}}{{.Name}} {{end}}' 2>/dev/null",
+        "expected_output": "db",
+        "match": "contains"
+      },
+      {
+        "description": "Container 'app' is attached to 'appnet'",
+        "command": "docker network inspect appnet -f '{{range .Containers}}{{.Name}} {{end}}' 2>/dev/null",
+        "expected_output": "app",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rm -f db app 2>/dev/null || true" },
+    { "command": "docker network rm appnet 2>/dev/null || true" }
+  ]
+}

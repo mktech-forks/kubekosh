@@ -1,0 +1,23 @@
+{
+  "id": "devops-multiregion-mcq",
+  "title": "DR Strategies and RTO/RPO Trade-offs",
+  "category": "Cloud",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Near-zero downtime, near-zero data loss\n\nA payments platform must survive the loss of an entire region with **near-zero RTO and near-zero RPO** — essentially no downtime and effectively no lost transactions — and the business accepts a high cost to achieve it. Which disaster-recovery strategy fits, and why?",
+  "options": [
+    { "id": "a", "text": "Active-active multi-region (multi-site): full production capacity runs in two or more regions simultaneously serving live traffic with continuous data replication, so a region loss is absorbed with near-zero RTO/RPO. It is the most expensive option because you fully run (and keep in sync) more than one region. RTO is how long recovery takes (max tolerable downtime); RPO is the maximum acceptable data loss measured as a point in time before the incident." },
+    { "id": "b", "text": "Backup and restore: keep regular backups in another region and rebuild on demand. With frequent enough backups this achieves near-zero RTO/RPO at the lowest cost." },
+    { "id": "c", "text": "Pilot light: keep only a minimal core (e.g. a replicated database) running in the second region and provision the rest after failover. This gives near-zero RTO because the database is already warm." },
+    { "id": "d", "text": "Warm standby: run a scaled-down but always-on copy of the full stack and scale it up on failover. Because it is always running, warm standby delivers identical RTO/RPO to active-active at lower cost, making active-active never worthwhile." }
+  ],
+  "correct_option": "a",
+  "explanation": "The spectrum, from cheapest/slowest to most expensive/fastest, is: **backup-and-restore** (recreate from backups — hours of RTO, RPO bounded by backup frequency), **pilot light** (core data replicated, minimal compute running, the rest provisioned on failover — RTO in tens of minutes), **warm standby** (a scaled-down but always-running full stack that you scale up — RTO in minutes), and **active-active / multi-site** (full capacity live in multiple regions with continuous replication — **near-zero RTO and RPO**, highest cost). Only active-active meets *near-zero on both* RTO and RPO, so (a) is correct. **Backup-restore (b)** always incurs restore/rebuild time and loses everything since the last backup — it cannot give near-zero RTO/RPO and is the cheapest precisely because of that trade-off. **Pilot light (c)** still has to provision and scale the non-core tiers after failover, so RTO is not near-zero even though the DB is warm. **Warm standby (d)** is faster than pilot light but still requires scaling up and cutover, so it does not match active-active's near-zero RTO, and the blanket claim that it makes active-active \"never worthwhile\" is false. Definitions: **RTO (Recovery Time Objective)** = the maximum tolerable time to restore service after an incident; **RPO (Recovery Point Objective)** = the maximum tolerable amount of data loss, expressed as the point in time before the incident to which you can recover.",
+  "hints": [
+    { "title": "RTO vs RPO", "body": "RTO = how long you can be down (time to recover). RPO = how much data you can lose (the recovery point before the incident). Near-zero on both is the most demanding target." },
+    { "title": "Cost tracks recovery speed", "body": "backup-restore < pilot light < warm standby < active-active in both cost and recovery speed. Only active-active runs full capacity everywhere at once, giving near-zero RTO/RPO." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

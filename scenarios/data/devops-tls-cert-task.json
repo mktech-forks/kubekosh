@@ -1,0 +1,39 @@
+{
+  "id": "devops-tls-cert-task",
+  "title": "Generate a Self-Signed TLS Certificate",
+  "category": "Networking",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Mint a Certificate With openssl\n\n**Your task:** use **`openssl`** to create a self-signed X.509 certificate at **`/root/server.crt`** (with its private key at **`/root/server.key`**) whose **Common Name (CN)** is **`kubekosh.local`**.\n\n> 💡 `openssl req -x509` can generate the key and a self-signed cert in one command. Provide the subject non-interactively with `-subj \"/CN=kubekosh.local\"`. Inspect it with `openssl x509 -noout -subject -in /root/server.crt`.",
+  "hints": [
+    {
+      "title": "One-shot self-signed cert",
+      "body": "req -x509 with -newkey generates a key and a self-signed certificate; -nodes leaves the key unencrypted; -subj sets the subject without prompts.",
+      "command": "openssl req -x509 -newkey rsa:2048 -nodes -keyout /root/server.key -out /root/server.crt -days 365 -subj '/CN=kubekosh.local'"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/server.crt /root/server.key" }
+  ],
+  "validation": {
+    "description": "Checks that a valid certificate exists with CN=kubekosh.local.",
+    "commands": [
+      {
+        "description": "Certificate subject contains CN kubekosh.local",
+        "command": "openssl x509 -in /root/server.crt -noout -subject 2>/dev/null",
+        "expected_output": "kubekosh.local",
+        "match": "contains"
+      },
+      {
+        "description": "Private key file exists",
+        "command": "test -f /root/server.key && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/server.crt /root/server.key" }
+  ]
+}

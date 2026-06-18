@@ -1,0 +1,29 @@
+{
+  "id": "devops-gitops-reconcile-mcq",
+  "title": "GitOps Reconciliation and Drift Self-Heal",
+  "category": "GitOps",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Someone Hand-Edited Production\n\nYour cluster is managed by Argo CD. The desired state of a `Deployment` lives in Git: `replicas: 3`, image `app:v2.1`. The Application is configured with automated sync and **self-heal enabled** (`syncPolicy.automated.selfHeal: true`).\n\nDuring an incident, an on-call engineer runs:\n\n```bash\nkubectl scale deployment/api --replicas=8\n```\n\nGit is not changed. What happens on the next reconciliation, and why?",
+  "options": [
+    { "id": "a", "text": "The controller detects that live state (8 replicas) diverges from the Git-declared desired state (3 replicas), reports the Application as OutOfSync, and — because self-heal is on — reverts the live Deployment back to 3 replicas to match Git." },
+    { "id": "b", "text": "Argo CD treats the most recent change as authoritative (last-write-wins), so it updates the Git manifest to `replicas: 8` to match the live cluster and re-marks the Application as Synced." },
+    { "id": "c", "text": "Because the change was made with kubectl rather than through Argo CD, the controller ignores it; manual changes are out of scope for reconciliation and the 8 replicas persist." },
+    { "id": "d", "text": "The Application is flagged OutOfSync but nothing is changed automatically even with self-heal, since self-heal only re-applies on Git commits, not on live-cluster drift." }
+  ],
+  "correct_option": "a",
+  "explanation": "GitOps controllers (Argo CD, Flux) run a continuous reconciliation loop: they compare the live cluster state against the desired state declared in Git and report any divergence as drift (OutOfSync). Git is the single source of truth, so the live cluster is reconciled toward Git, never the other way around. With self-heal enabled, the controller doesn't just report drift — it actively re-applies the Git-declared manifest, reverting the manual `kubectl scale` back to 3 replicas. (b) is backwards: GitOps never auto-writes back to Git from the cluster; that would defeat Git as the source of truth. (c) is wrong: reconciliation compares actual cluster state regardless of how a change was introduced, so manual kubectl edits are exactly the drift self-heal exists to catch. (d) is wrong: self-heal's entire purpose is to correct live-cluster drift between commits; without self-heal the Application would be marked OutOfSync but left as-is until a manual/auto sync. (Sync waves, via the `argocd.argoproj.io/sync-wave` annotation, order resource application within a sync but are unrelated to this drift behavior.)",
+  "hints": [
+    {
+      "title": "Which way does reconciliation flow?",
+      "body": "Git is the source of truth. The controller drives the cluster toward Git, not Git toward the cluster."
+    },
+    {
+      "title": "Report vs repair",
+      "body": "Detecting drift marks the app OutOfSync. Self-heal is the extra step that actually re-applies Git to undo the drift."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

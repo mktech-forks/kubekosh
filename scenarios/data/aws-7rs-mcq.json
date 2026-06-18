@@ -1,0 +1,23 @@
+{
+  "id": "aws-7rs-mcq",
+  "title": "Choosing a Migration Strategy",
+  "category": "Migration",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Mapping a Workload to the Right \"R\"\n\nA company is exiting its data center under a tight deadline. One workload is a stable, in-house Java application running on Linux VMs with a self-managed PostgreSQL database on the same servers. The team has **no appetite to change application code**, has limited engineering bandwidth, and simply wants to get the servers running on AWS **as quickly as possible with minimal change**, deferring any optimization until after the move. Which of the 7 Rs BEST fits this workload?",
+  "options": [
+    { "id": "a", "text": "Rehost — lift and shift the VMs to Amazon EC2 with no code changes (e.g., using Application Migration Service)" },
+    { "id": "b", "text": "Replatform — move the database to Amazon RDS and tweak the application during the migration" },
+    { "id": "c", "text": "Refactor — re-architect the application into microservices on Lambda and managed services" },
+    { "id": "d", "text": "Repurchase — replace the in-house application with an equivalent SaaS product" }
+  ],
+  "correct_option": "a",
+  "explanation": "The requirements — **no code change**, **minimal effort**, **fastest possible exit from the data center**, optimize later — define a classic **Rehost (\"lift and shift\")**. Application Migration Service (MGN) replicates the servers block-level and cuts over to EC2 with minimal downtime and no application rewrite.\n\n(b) **Replatform** ('lift, tinker, and shift') would move the DB to RDS and make small changes — valuable, but it adds work and time the team explicitly wants to defer; it's a good *post-migration* step, not the fastest exit. (c) **Refactor** re-architects to cloud-native — the highest effort and longest timeline, directly contradicting 'minimal change, as quickly as possible.' (d) **Repurchase** swaps the app for a SaaS product, but this is a custom in-house application with no indication an equivalent SaaS exists, and it would require data/process migration and retraining. Rehost is the only strategy that matches every stated constraint.",
+  "hints": [
+    { "title": "Read the constraints", "body": "'No code change', 'minimal change', and 'as quickly as possible' are the signature of one specific R." },
+    { "title": "Optimize later", "body": "Deferring optimization until after the move points to lift-and-shift, then modernize." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

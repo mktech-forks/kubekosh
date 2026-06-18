@@ -1,0 +1,23 @@
+{
+  "id": "devops-iam-least-privilege-mcq",
+  "title": "IAM Roles, Least Privilege, and Explicit Deny",
+  "category": "Cloud",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Giving a VM-hosted app access to object storage\n\nAn application running on a cloud VM needs read/write access to one object-storage bucket. A developer proposes baking a long-lived access key + secret into the app's config file. A reviewer also asks how policy evaluation resolves when one policy allows an action and another explicitly denies it. Which approach and explanation are correct?",
+  "options": [
+    { "id": "a", "text": "Attach an IAM role to the VM (an instance profile) so the app obtains short-lived, automatically-rotated credentials via STS instead of embedding static keys; scope the role's policy to only the required actions on that one bucket (least privilege). In IAM evaluation an explicit Deny always overrides any Allow, so a guardrail Deny on, say, deleting other buckets wins even if a broad Allow is also attached." },
+    { "id": "b", "text": "Embedding a long-lived access key is fine as long as it is encrypted at rest; roles are only for cross-account access. When an Allow and an explicit Deny both apply, the most recently attached policy wins." },
+    { "id": "c", "text": "Attach an IAM role, but note that roles grant *permanent* credentials just like access keys; the only benefit is avoiding a config file. An explicit Deny is overridden by an explicit Allow that is more specific (e.g. names the exact resource ARN)." },
+    { "id": "d", "text": "Use the cloud account's root credentials on the VM so the app never hits permission errors, then restrict it later; in policy evaluation, Allow and Deny cancel out, leaving the action implicitly denied." }
+  ],
+  "correct_option": "a",
+  "explanation": "The correct pattern is to attach an **IAM role** to the instance (an instance profile). The app then retrieves **temporary, automatically-rotated** credentials issued by STS from the instance metadata service — there is no long-lived secret to leak, commit, or rotate manually. The role's policy should grant **only** the specific actions on the specific bucket (least privilege). This refutes (b) (\"embedding a key is fine\") and (c) (\"roles grant permanent credentials\") — role credentials are explicitly *short-lived*, which is the whole point. On evaluation order: across all applicable identity and resource policies, an **explicit Deny always wins** over any Allow, regardless of specificity or attachment order; the absence of an Allow is an *implicit* deny, and any *explicit* Deny is final. That makes (b)'s \"most recent wins,\" (c)'s \"specific Allow overrides Deny,\" and (d)'s \"Allow and Deny cancel out\" all wrong. (d) is also a serious anti-pattern: using root credentials on a workload violates least privilege and never gets safely \"restricted later.\"",
+  "hints": [
+    { "title": "Roles over keys", "body": "Attaching a role to compute yields temporary credentials via STS that rotate automatically — no static secret in code or config to be stolen." },
+    { "title": "Deny is absolute", "body": "IAM is default-deny; an Allow grants, but any explicit Deny that matches the request overrides every Allow, independent of order or specificity." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

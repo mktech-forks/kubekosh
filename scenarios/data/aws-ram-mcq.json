@@ -1,0 +1,23 @@
+{
+  "id": "aws-ram-mcq",
+  "title": "Sharing Central VPC Subnets",
+  "category": "Organizations",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## One Network, Many Accounts\n\nA platform team maintains a **central networking account** that owns a VPC with carefully managed subnets (and a Transit Gateway, and Route 53 Resolver rules). They want **multiple application accounts in the same AWS Organization** to launch their workloads **directly into these centrally-managed subnets**, so the network team keeps sole control of routing and IP space while app teams just consume capacity — without duplicating the VPC into each account.\n\nWhich service enables this?",
+  "options": [
+    { "id": "a", "text": "**AWS Resource Access Manager (RAM)**: share the subnets (and TGW, Resolver rules) with the other accounts/OUs so they can launch resources into the shared subnets while ownership stays central." },
+    { "id": "b", "text": "Recreate an identical copy of the VPC, subnets, and route tables in **each** application account and keep them in sync manually." },
+    { "id": "c", "text": "Establish **VPC peering** from the central VPC to every application account's own VPC." },
+    { "id": "d", "text": "Use **IAM cross-account roles** so app accounts can assume into the networking account and run their instances there." }
+  ],
+  "correct_option": "a",
+  "explanation": "**AWS Resource Access Manager (RAM)** is built to **share AWS resources across accounts** in an Organization without duplicating them. Sharing **VPC subnets** via RAM enables **shared VPC**: the networking account remains the **owner** of the subnets, route tables, and IP space, while participant accounts can **launch their own resources directly into those subnets**. RAM also shares Transit Gateways, Route 53 Resolver rules, License Manager configs, and more. Option B (copying the VPC into every account) is the duplication the requirement explicitly rejects and creates an ongoing sync/IP-management nightmare. Option C (**VPC peering**) connects *separate* VPCs at the network level — app teams would still own their own VPCs, defeating the goal of one centrally-managed network and adding non-transitive peering sprawl. Option D (cross-account roles) would put app workloads *inside the networking account*, breaking account isolation and billing boundaries — not the intent.",
+  "hints": [
+    { "title": "Share, don't copy", "body": "When the goal is many accounts consuming one centrally-owned resource without duplication, think Resource Access Manager." },
+    { "title": "Shared VPC keeps ownership central", "body": "RAM-shared subnets let app accounts launch into them while the network account still owns routing and IP space." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

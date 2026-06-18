@@ -1,0 +1,23 @@
+{
+  "id": "aws-mgn-dms-mcq",
+  "title": "Heterogeneous Database Migration",
+  "category": "Migration",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Oracle to Aurora PostgreSQL with Minimal Downtime\n\nA company must migrate a large, busy **on-premises Oracle** database to **Amazon Aurora PostgreSQL**. The application runs 24/7, so the cutover window must be **minimal** — the business will tolerate only a few minutes of downtime. Because the source and target engines differ, the **schema and proprietary objects** (stored procedures, data types) must be converted. Which approach BEST meets these requirements?",
+  "options": [
+    { "id": "a", "text": "Use the AWS Schema Conversion Tool (SCT) to convert the schema, then AWS Database Migration Service (DMS) with full-load plus ongoing change data capture (CDC) to keep the target in sync until a brief cutover" },
+    { "id": "b", "text": "Use Application Migration Service (MGN) to replicate the database server block-level and cut over to EC2" },
+    { "id": "c", "text": "Take an Oracle data dump (Data Pump export), copy it to S3, and import it into Aurora during a maintenance window" },
+    { "id": "d", "text": "Create an Oracle RDS snapshot and restore it as an Aurora PostgreSQL cluster" }
+  ],
+  "correct_option": "a",
+  "explanation": "Oracle → Aurora PostgreSQL is a **heterogeneous** migration (different engines), so you need two things: **schema conversion** and **low-downtime data movement**. The **AWS Schema Conversion Tool (SCT)** converts the schema and flags/rewrites proprietary objects (PL/SQL, data types). **AWS DMS** then performs a **full load** and switches to **ongoing replication via change data capture (CDC)**, applying changes from the live Oracle source to Aurora so the target stays current until a brief, planned cutover — meeting the minimal-downtime requirement.\n\n(b) **MGN** rehosts *servers* block-level to EC2; it does not convert a database engine or migrate between Oracle and PostgreSQL — wrong tool for a DB engine change. (c) A **Data Pump dump → S3 → import** is a one-time bulk load with significant downtime (no continuous sync), and Data Pump output is Oracle-specific — it won't load into PostgreSQL without conversion. (d) **Snapshot/restore across engines is impossible**: an Oracle RDS snapshot cannot be restored as Aurora PostgreSQL; snapshots only restore to the same engine. SCT + DMS (with CDC) is the canonical heterogeneous, minimal-downtime pattern.",
+  "hints": [
+    { "title": "Same engine or different?", "body": "Different source/target engines means you need schema conversion (SCT) on top of data migration (DMS)." },
+    { "title": "Minimal downtime", "body": "Ongoing replication (CDC) is what lets you keep the target in sync and cut over in minutes rather than during a long offline load." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

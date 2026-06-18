@@ -1,0 +1,50 @@
+{
+  "id": "devops-nginx-config-task",
+  "title": "Write an Nginx Reverse Proxy Config",
+  "category": "Web Servers",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Configure a Reverse Proxy\n\nA reverse proxy accepts client requests and forwards them to a backend service.\n\n**Your task:** write a **complete** Nginx configuration file at **`/root/nginx-site.conf`** that:\n1. **listens on port 8080**\n2. **proxies** all requests to the upstream **`http://127.0.0.1:3000`**\n3. passes `nginx -t` (valid configuration)\n\n> 💡 A standalone config needs an `events { }` block and an `http { }` block containing your `server { }`. Test it with `nginx -t -c /root/nginx-site.conf`.",
+  "hints": [
+    {
+      "title": "Minimal valid reverse-proxy config",
+      "body": "Wrap a server block in http{} and provide an (empty) events{} block. proxy_pass forwards to the upstream.",
+      "command": "printf 'events {}\\nhttp {\\n  server {\\n    listen 8080;\\n    location / {\\n      proxy_pass http://127.0.0.1:3000;\\n    }\\n  }\\n}\\n' > /root/nginx-site.conf"
+    },
+    {
+      "title": "Validate the syntax",
+      "body": "nginx -t parses the file and reports whether the configuration test is successful.",
+      "command": "nginx -t -c /root/nginx-site.conf"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/nginx-site.conf" }
+  ],
+  "validation": {
+    "description": "Checks that the config is valid Nginx, listens on 8080, and proxies to port 3000.",
+    "commands": [
+      {
+        "description": "Configuration passes nginx -t",
+        "command": "nginx -t -c /root/nginx-site.conf 2>&1",
+        "expected_output": "successful",
+        "match": "contains"
+      },
+      {
+        "description": "Listens on port 8080",
+        "command": "grep -qE 'listen[[:space:]]+8080' /root/nginx-site.conf && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "Proxies to the 127.0.0.1:3000 upstream",
+        "command": "grep -q 'proxy_pass.*3000' /root/nginx-site.conf && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/nginx-site.conf" }
+  ]
+}

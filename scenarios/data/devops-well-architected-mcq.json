@@ -1,0 +1,23 @@
+{
+  "id": "devops-well-architected-mcq",
+  "title": "Designing for High Availability",
+  "category": "Cloud",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## A single-AZ stack keeps going down\n\nA production web tier runs as several instances behind a load balancer, but everything sits in **one availability zone**. A recent AZ-level outage took the whole service offline. Which change most improves availability against the failure of an entire availability zone?",
+  "options": [
+    { "id": "a", "text": "Spread the instances across multiple availability zones behind a load balancer that health-checks targets and stops routing to unhealthy ones, and configure auto-scaling to maintain capacity across those AZs, so the loss of one AZ leaves healthy capacity in the others." },
+    { "id": "b", "text": "Replace the fleet with one much larger instance type (vertical scaling); a bigger instance is more reliable and removes the dependency on the load balancer." },
+    { "id": "c", "text": "Keep the single-AZ design but take frequent snapshots/backups; backups guarantee the service stays available because you can restore quickly after the AZ fails." },
+    { "id": "d", "text": "Enable detailed monitoring and alerting on the existing single-AZ instances so the on-call engineer is paged faster when the AZ fails." }
+  ],
+  "correct_option": "a",
+  "explanation": "An availability zone is an isolated failure domain. The only way to survive losing an entire AZ is to have running capacity in **other** AZs. Distributing instances across multiple AZs behind a load balancer that performs health checks (so traffic is steered away from failed/unhealthy targets) and using auto-scaling to keep healthy capacity in each zone is the textbook high-availability pattern — that is (a). **Vertical scaling (b)** only makes one instance bigger; it improves capacity, not availability, and a single large instance still dies with its AZ (and removing the load balancer reduces resilience). **Backups (c)** protect against data loss and aid recovery (RPO/RTO) but do not keep the service *available* during the outage — restoring takes time and the data plane is still single-AZ. **Better monitoring (d)** shortens detection time but does nothing to keep serving traffic when the AZ is gone. High availability comes from redundancy across independent failure domains, not from larger instances, backups, or alerting alone.",
+  "hints": [
+    { "title": "Availability vs durability vs observability", "body": "Backups address durability/recovery, monitoring addresses detection. Staying online through a zone failure requires redundant running capacity in other zones." },
+    { "title": "Scale out, not just up", "body": "A bigger single instance shares the fate of its AZ. Redundancy across AZs with health-checked load balancing is what removes the single point of failure." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

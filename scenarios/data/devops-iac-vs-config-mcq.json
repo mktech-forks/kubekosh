@@ -1,0 +1,25 @@
+{
+  "id": "devops-iac-vs-config-mcq",
+  "title": "Provisioning vs Configuration Management",
+  "category": "Infrastructure as Code",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Which Tool Category Fits the Task?\n\nTwo related but distinct categories of tooling exist:\n\n- **Provisioning** tools (Terraform, CloudFormation) **create the infrastructure itself** — VMs, networks, load balancers, databases.\n- **Configuration management** tools (Ansible, Chef, Puppet) **configure software on machines that already exist** — install packages, edit config files, manage services.\n\nThe task: *\"Spin up three brand-new virtual machines, a private network, and a load balancer in the cloud from scratch.\"* Which category best fits, and why?",
+  "options": [
+    { "id": "a", "text": "**Provisioning** (e.g. Terraform) — the task is creating new cloud infrastructure that does not yet exist." },
+    { "id": "b", "text": "**Configuration management** (e.g. Ansible) — the task is installing and configuring software on the machines." },
+    { "id": "c", "text": "Either one works identically; provisioning and configuration management are just two names for the same thing." },
+    { "id": "d", "text": "Neither — creating VMs and load balancers can only be done manually in the cloud console." }
+  ],
+  "correct_option": "a",
+  "explanation": "Creating brand-new VMs, networks, and load balancers is **provisioning** — bringing infrastructure into existence — which is the job of tools like Terraform and CloudFormation. **Configuration management** (Ansible, Chef, Puppet) operates on machines that *already exist*, installing packages and editing configs. They are complementary, not interchangeable: a common pipeline uses Terraform to provision the servers, then Ansible to configure the software on them. So the task described — building infrastructure from scratch — is squarely provisioning.",
+  "hints": [
+    {
+      "title": "Does the resource exist yet?",
+      "body": "If you're CREATING infrastructure that doesn't exist, that's provisioning. If you're configuring software ON existing machines, that's configuration management."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

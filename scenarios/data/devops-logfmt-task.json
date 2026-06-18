@@ -1,0 +1,34 @@
+{
+  "id": "devops-logfmt-task",
+  "title": "Analyze JSON Logs With jq",
+  "category": "Logging",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Count Errors in Structured Logs\n\nStructured logging emits one JSON object per line. A file **`/root/app.log`** contains such lines, each with a **`level`** field.\n\n**Your task:** using **`jq`**, count how many lines have **`level == \"error\"`** and write just the number to **`/root/errors.txt`**.\n\n> 💡 `jq` reads a stream of JSON values. Use `-s` (slurp) to collect them into an array, filter with `select(.level == \"error\")`, and take the `length`.",
+  "hints": [
+    {
+      "title": "Slurp, filter, count",
+      "body": "Slurp all lines into an array, keep only error-level entries, then count them.",
+      "command": "jq -s '[.[] | select(.level==\"error\")] | length' /root/app.log > /root/errors.txt"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/errors.txt" },
+    { "command": "printf '{\"level\":\"info\",\"msg\":\"a\"}\\n{\"level\":\"error\",\"msg\":\"b\"}\\n{\"level\":\"warn\",\"msg\":\"c\"}\\n{\"level\":\"error\",\"msg\":\"d\"}\\n' > /root/app.log" }
+  ],
+  "validation": {
+    "description": "Checks that /root/errors.txt contains the count of error-level lines (2).",
+    "commands": [
+      {
+        "description": "errors.txt contains 2",
+        "command": "cat /root/errors.txt 2>/dev/null | tr -d ' '",
+        "expected_output": "2",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/errors.txt /root/app.log" }
+  ]
+}

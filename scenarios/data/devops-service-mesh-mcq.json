@@ -1,0 +1,25 @@
+{
+  "id": "devops-service-mesh-mcq",
+  "title": "What a Service Mesh Does",
+  "category": "Networking",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Service-to-Service Communication\n\nYour microservices need mutual TLS, automatic retries, traffic splitting for canary releases, and per-call telemetry — ideally **without rewriting application code**. Which best describes a **service mesh** (e.g. Istio, Linkerd, Consul, built on proxies like Envoy)?",
+  "options": [
+    { "id": "a", "text": "A dedicated infrastructure layer — usually injected as **sidecar proxies** next to each service — that manages service-to-service traffic, enforces **mutual TLS**, and adds retries, traffic management and observability transparently to the app" },
+    { "id": "b", "text": "A CI/CD tool that builds and deploys your microservices from source" },
+    { "id": "c", "text": "A distributed database that the microservices use to store their shared state" },
+    { "id": "d", "text": "A drop-in replacement for your container runtime (containerd / Docker) on each node" }
+  ],
+  "correct_option": "a",
+  "explanation": "A **service mesh** is a dedicated **infrastructure layer for service-to-service communication**. It typically deploys a **sidecar proxy** (commonly Envoy) alongside each service instance; all traffic flows through these proxies, which transparently provide **mutual TLS** encryption/identity, **retries**, timeouts, **traffic management** (canary/blue-green splitting), and rich **observability** — all **without changing application code**. Istio, Linkerd and Consul are mesh implementations. It is not a CI/CD tool (b), not a database (c), and not a container runtime (d) — those are entirely different layers of the stack.",
+  "hints": [
+    {
+      "title": "It's a networking layer, not the app",
+      "body": "The defining trait is the sidecar proxy intercepting traffic to handle mTLS, retries, routing and telemetry — so developers get these features for free without touching their service code."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

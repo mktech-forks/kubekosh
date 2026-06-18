@@ -1,0 +1,20 @@
+{
+  "id": "devops-shell-scripting",
+  "subject": "devops",
+  "name": "Shell & Scripting",
+  "icon": "♾️",
+  "tagline": "Terminal, text processing and bash",
+  "color": "#8b5cf6",
+  "colorDim": "rgba(139,92,246,0.12)",
+  "exam_minutes": 45,
+  "scenario_ids": [
+    "devops-shell-lesson",
+    "devops-process-monitoring-mcq",
+    "devops-text-tools-mcq",
+    "devops-pipes-mcq",
+    "devops-bash-script-task",
+    "devops-text-extract-task",
+    "devops-jq-task",
+    "devops-find-logs-task"
+  ]
+}

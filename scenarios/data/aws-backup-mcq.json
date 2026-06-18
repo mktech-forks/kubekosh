@@ -1,0 +1,23 @@
+{
+  "id": "aws-backup-mcq",
+  "title": "Centralized, Auditable Backups at Scale",
+  "category": "Resilience",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## One Backup Policy Across Many Services and Accounts\n\nAn enterprise must satisfy a compliance mandate: a **single, centrally managed and auditable backup policy** covering Amazon EBS volumes, RDS databases, DynamoDB tables, and EFS file systems, spread across **dozens of AWS accounts** in an AWS Organization. Requirements include scheduled backups, retention/lifecycle rules, **cross-Region and cross-account copies** for resilience, and centralized reporting/evidence for auditors. The team wants to avoid bespoke per-service scripting.\n\nWhich approach BEST meets these requirements?",
+  "options": [
+    { "id": "a", "text": "AWS Backup with backup plans, applied org-wide via AWS Organizations backup policies, with cross-Region and cross-account copy and AWS Backup Audit Manager for reporting" },
+    { "id": "b", "text": "Write Lambda functions per service that call each service's native snapshot API on a schedule and store results in S3" },
+    { "id": "c", "text": "Have each team manually take EBS/RDS snapshots and DynamoDB on-demand backups in their own accounts" },
+    { "id": "d", "text": "Enable S3 Versioning and Cross-Region Replication and store everything in S3" }
+  ],
+  "correct_option": "a",
+  "explanation": "**AWS Backup** is the AWS-native service for exactly this: it provides centralized, policy-based backup across many services (EBS, RDS, Aurora, DynamoDB, EFS, FSx, and more) via **backup plans**, can be enforced across an entire AWS Organization through **backup policies**, supports **cross-Region and cross-account copy** for resilience and isolation, and offers **AWS Backup Audit Manager** for compliance reporting and evidence — meeting the auditability mandate with no custom code. **Per-service Lambda scripting** (B) and **manual snapshots** (C) reintroduce exactly the bespoke, inconsistent, hard-to-audit work the requirement says to avoid, and don't give centralized governance. **S3 Versioning + CRR** (D) protects S3 objects only — it does not back up EBS, RDS, DynamoDB, or EFS.",
+  "hints": [
+    { "title": "Central + multi-service + multi-account", "body": "When the requirement spans many services AND many accounts with central policy and audit, look for the single managed service built to govern backups org-wide." },
+    { "title": "Scope of S3 features", "body": "Versioning and replication are S3-only. They can't back up block storage or databases." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

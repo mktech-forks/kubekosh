@@ -1,0 +1,33 @@
+{
+  "id": "aws-s3-lifecycle-task",
+  "title": "Author an S3 Lifecycle Policy",
+  "category": "Storage",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Tier Cold Data to Glacier\n\nLifecycle rules move objects to cheaper storage automatically as they age.\n\n**Your task:** write an S3 lifecycle configuration at **`/root/lifecycle.json`** with a **`Rules`** list containing a rule that **transitions** objects to **`GLACIER`** after **30 days**.\n\n> 💡 The shape is `{ \"Rules\": [ { \"ID\": \"...\", \"Status\": \"Enabled\", \"Filter\": {\"Prefix\": \"\"}, \"Transitions\": [ { \"Days\": 30, \"StorageClass\": \"GLACIER\" } ] } ] }`.",
+  "hints": [
+    {
+      "title": "Lifecycle rule with a transition",
+      "body": "A rule needs a Status and a Transitions list specifying Days and StorageClass.",
+      "command": "printf '{\\n  \"Rules\": [\\n    {\\n      \"ID\": \"archive-old\",\\n      \"Status\": \"Enabled\",\\n      \"Filter\": { \"Prefix\": \"\" },\\n      \"Transitions\": [ { \"Days\": 30, \"StorageClass\": \"GLACIER\" } ]\\n    }\\n  ]\\n}\\n' > /root/lifecycle.json"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/lifecycle.json" }
+  ],
+  "validation": {
+    "description": "Checks for a Rules list with a GLACIER transition.",
+    "commands": [
+      {
+        "description": "A rule transitions objects to GLACIER",
+        "command": "python3 -c \"import json; d=json.load(open('/root/lifecycle.json')); r=d.get('Rules',[]); ok=isinstance(r,list) and any('GLACIER' in json.dumps(rule).upper() and 'TRANSITION' in json.dumps(rule).upper() for rule in r); print('ok' if ok else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/lifecycle.json" }
+  ]
+}

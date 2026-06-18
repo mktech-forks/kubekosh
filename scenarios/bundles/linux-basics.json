@@ -1,0 +1,15 @@
+{
+  "id": "linux-basics",
+  "name": "Linux Basics",
+  "subject": "linux",
+  "icon": "🐧",
+  "tagline": "Files, permissions and the shell",
+  "color": "#f0b429",
+  "colorDim": "rgba(240,180,41,0.12)",
+  "exam_minutes": 30,
+  "scenario_ids": [
+    "linux-intro-lesson",
+    "linux-permissions-mcq",
+    "linux-create-file-task"
+  ]
+}

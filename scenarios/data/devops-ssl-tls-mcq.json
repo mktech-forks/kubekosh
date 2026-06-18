@@ -1,0 +1,25 @@
+{
+  "id": "devops-ssl-tls-mcq",
+  "title": "What TLS Provides",
+  "category": "Networking",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Securing the Connection\n\nWhen a browser connects to `https://` site, a **TLS** handshake takes place before any HTTP data is exchanged: the server presents a **certificate**, the parties agree on keys, and the session is encrypted.\n\nWhich statement best describes what TLS actually provides?",
+  "options": [
+    { "id": "a", "text": "**Confidentiality** (encryption of data **in transit**), **server authentication** via the server's certificate, and **integrity** so tampering is detected." },
+    { "id": "b", "text": "It encrypts your data **at rest** on the server's disk, so stored files are safe even if the disk is stolen." },
+    { "id": "c", "text": "It guarantees the web application has no bugs or vulnerabilities." },
+    { "id": "d", "text": "It speeds up the connection by compressing all responses." }
+  ],
+  "correct_option": "a",
+  "explanation": "**TLS** secures data **in transit** on the wire. It provides three things: **confidentiality** — the session is encrypted so eavesdroppers see only ciphertext; **authentication** — the server proves its identity with a certificate signed by a trusted Certificate Authority, so the client knows it's talking to the real server (not an impostor); and **integrity** — message authentication detects any tampering with the data en route. During the handshake the parties verify the certificate and negotiate session keys. TLS does **not** encrypt data **at rest** on disk (b) — that's a separate concern (disk/database encryption), it cannot make application code bug-free (c), and modern TLS does not compress responses to speed them up (d).",
+  "hints": [
+    {
+      "title": "In transit vs at rest",
+      "body": "TLS protects bytes while they travel over the network. Protecting bytes sitting on a disk is a different mechanism entirely."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

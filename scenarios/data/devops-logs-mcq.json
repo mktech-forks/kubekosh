@@ -1,0 +1,25 @@
+{
+  "id": "devops-logs-mcq",
+  "title": "Centralized & Structured Logging",
+  "category": "Logging",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Logs Across Many Containers\n\nYou run dozens of microservice containers across many hosts. Why is **centralized, structured logging** (using a system like ELK, Loki, or Splunk with JSON-formatted logs) considered best practice?",
+  "options": [
+    { "id": "a", "text": "Because aggregating logs from all hosts/containers into one searchable system — with structured (JSON) fields — lets you search, filter and correlate events across services from a single place" },
+    { "id": "b", "text": "Because keeping plain-text logs only on each container's local disk makes them faster to write and that's all that matters" },
+    { "id": "c", "text": "Because structured logs let the application run without ever emitting any errors" },
+    { "id": "d", "text": "Because a log aggregator replaces the need for metrics and tracing entirely" }
+  ],
+  "correct_option": "a",
+  "explanation": "With many ephemeral containers spread across hosts, logs scattered on local disks are nearly impossible to investigate — and they vanish when a container dies. **Centralizing** them into one searchable store (ELK, Loki, Splunk) means you can query everything from one place. Making logs **structured** (JSON with consistent fields like `level`, `service`, `trace_id`) lets you filter and **correlate** events across services precisely, instead of grepping free-form text. Local-only plain text (b) defeats both goals; structured logging doesn't prevent errors (c); and logs complement — not replace — metrics and traces (d).",
+  "hints": [
+    {
+      "title": "Search and correlate",
+      "body": "Two wins: aggregation puts all logs in one queryable place, and structure (consistent JSON fields) makes filtering and cross-service correlation reliable."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

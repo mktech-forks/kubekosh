@@ -1,0 +1,23 @@
+{
+  "id": "aws-global-infra-mcq",
+  "title": "Region, AZ, or Edge?",
+  "category": "Foundations",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Placing the Tiers Correctly\n\nA media company serves a single-page application backed by a large catalog of **static assets** (images, video thumbnails, JS/CSS) to a **global** audience that complains about slow page loads from distant geographies. The same application uses a **relational database** that must survive the failure of an individual data center within its primary Region without data loss, but does **not** need to be globally distributed.\n\nThe team must choose where each tier lives. Which design correctly maps each requirement to the appropriate layer of AWS global infrastructure?",
+  "options": [
+    { "id": "a", "text": "Serve the static assets from an S3 bucket fronted by **CloudFront** (edge locations cache content close to users worldwide), and run the database on **Amazon RDS with Multi-AZ** in the primary Region." },
+    { "id": "b", "text": "Replicate the static assets into a bucket in every Availability Zone of the primary Region, and deploy the database to a CloudFront edge location for the lowest possible latency." },
+    { "id": "c", "text": "Deploy the entire application, including the database, to a single Availability Zone and enable Route 53 latency-based routing to reduce global latency." },
+    { "id": "d", "text": "Put the static assets in one S3 bucket in the primary Region with no CDN, and run the database across multiple Regions using cross-Region read replicas for AZ-level resilience." }
+  ],
+  "correct_option": "a",
+  "explanation": "**CloudFront** uses hundreds of **edge locations (PoPs)** to cache static content physically close to users, which is exactly what fixes global latency for static assets — origin S3 stays in one Region. For the database, **RDS Multi-AZ** maintains a synchronous standby in a *different Availability Zone* in the same Region and fails over automatically, satisfying \"survive a single data center failure without data loss\" — which is an AZ-level concern, not a Region-level one. Option B confuses concepts: you cannot run a database \"at an edge location,\" and AZ-level bucket replication does nothing for global latency. Option C uses one AZ (no resilience at all) and latency-based routing across Regions you don't have. Option D over-engineers with cross-Region replicas (a multi-Region, not multi-AZ, construct), leaves global users without a CDN, and read replicas are asynchronous — not a substitute for Multi-AZ HA.",
+  "hints": [
+    { "title": "Match the layer to the need", "body": "Global low-latency content delivery is an edge/CloudFront problem. Surviving one data center in a Region is an Availability Zone problem. They are different layers." },
+    { "title": "What 'Multi-AZ' actually means", "body": "RDS Multi-AZ keeps a synchronous standby in another AZ within the same Region. It is for high availability inside a Region, not for global distribution." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

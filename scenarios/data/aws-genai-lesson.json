@@ -1,0 +1,12 @@
+{
+  "id": "aws-genai-lesson",
+  "title": "Generative AI for Solutions Architects",
+  "category": "Generative AI",
+  "difficulty": "Medium",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## Designing Safe GenAI Workloads on AWS\n\nThe SAP-C02 guide flags **generative and agentic AI** as an emerging area. As an architect you are expected to design **security and responsible-AI controls** around foundation models — not to train them.\n\n### The core building blocks\n\n| Service | Role |\n|---|---|\n| **Amazon Bedrock** | Managed access to foundation models (FMs) via a single API; no model hosting to manage. |\n| **Bedrock Guardrails** | Policy layer on top of FMs: filter harmful content, block **denied topics**, and **redact/deny PII** — applied consistently regardless of the underlying model. |\n| **Bedrock AgentCore Identity** | Identity and **scoped access control** for **agentic** AI applications (agents that call tools/APIs on a user's behalf), so an agent acts with least privilege. |\n| **AWS Step Functions** | Orchestrates **human-in-the-loop** approval workflows — pause an AI-initiated action until a person approves (task token / callback pattern). |\n\n### Responsible-AI design principles\n\n- **Guardrails at the boundary** — enforce content and PII policy on both prompts and responses, decoupled from the model choice.\n- **Least-privilege agents** — give agentic apps a scoped identity (AgentCore Identity) rather than broad, shared credentials.\n- **Human oversight** — insert approval gates (Step Functions) before high-impact or irreversible AI actions.\n- **Auditability & privacy** — enable model-invocation logging; Bedrock does **not** use your prompts/outputs to train the base models.\n\nThese controls combine into a defense-in-depth pattern: scoped identity → guardrails → human approval → audit log. Mark complete, then work through the emerging-topic questions.",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,12 @@
+{
+  "id": "linux-intro-lesson",
+  "title": "Navigating the Filesystem",
+  "category": "Getting Started",
+  "difficulty": "Easy",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## Navigating the Linux Filesystem\n\nEverything in Linux is organised under a single root directory, `/`. Paths either start from the root (**absolute**, e.g. `/etc/hostname`) or from where you currently are (**relative**, e.g. `logs/app.log`).\n\n### Core commands\n\n| Command | What it does |\n|---|---|\n| `pwd` | Print the **current** working directory |\n| `ls` | List directory contents (`ls -l` for details, `ls -a` to include hidden files) |\n| `cd <dir>` | Change directory (`cd ..` goes up one level, `cd ~` goes home) |\n| `cat <file>` | Print a file's contents |\n| `mkdir <dir>` | Create a directory |\n| `touch <file>` | Create an empty file (or update its timestamp) |\n\n### A few useful ideas\n\n- **Hidden files** start with a dot (`.bashrc`). They are skipped by `ls` unless you pass `-a`.\n- **`~`** is a shortcut for your home directory (here, `/root`).\n- Tab-completion saves typing — start a name and press `Tab`.\n\nWhen you are comfortable with these, mark this lesson complete and move on to the exercises.",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

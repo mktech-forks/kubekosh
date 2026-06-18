@@ -1,0 +1,18 @@
+{
+  "id": "aws-fundamentals",
+  "subject": "aws",
+  "name": "Foundations & Well-Architected",
+  "icon": "☁️",
+  "tagline": "Global infrastructure, IAM and the WAF pillars",
+  "color": "#ff9900",
+  "colorDim": "rgba(255,153,0,0.13)",
+  "exam_minutes": 40,
+  "scenario_ids": [
+    "aws-intro-lesson",
+    "aws-well-architected-lesson",
+    "aws-global-infra-mcq",
+    "aws-iam-basics-mcq",
+    "aws-pricing-models-mcq",
+    "aws-shared-responsibility-mcq"
+  ]
+}

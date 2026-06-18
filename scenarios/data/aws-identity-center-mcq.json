@@ -1,0 +1,23 @@
+{
+  "id": "aws-identity-center-mcq",
+  "title": "Single Sign-On Across 50 Accounts",
+  "category": "Organizations",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Workforce Access at Scale\n\nA company has **50 AWS accounts** in an Organization and roughly 1,500 employees. They already manage employee identities in a corporate **external identity provider** (their HR-integrated IdP supporting SAML/SCIM). Requirements:\n\n- Employees get **single sign-on** to the AWS Console and CLI across all accounts using their existing corporate credentials.\n- Access levels (e.g. read-only auditor, developer, admin) are defined **centrally** and assigned to groups, then applied consistently to many accounts.\n- No long-lived AWS credentials, and onboarding/offboarding is driven from the corporate IdP.\n\nWhich solution fits best?",
+  "options": [
+    { "id": "a", "text": "Use **IAM Identity Center** (formerly AWS SSO): connect the external IdP, define **permission sets**, and assign groups to accounts for federated SSO across the organization." },
+    { "id": "b", "text": "Create an **IAM user for every employee in every account** and distribute passwords and access keys." },
+    { "id": "c", "text": "Create a single shared IAM admin user in the management account and have all employees log in with it." },
+    { "id": "d", "text": "Generate **long-lived access keys** centrally and email them to each employee for CLI access to all accounts." }
+  ],
+  "correct_option": "a",
+  "explanation": "**IAM Identity Center** is the AWS service for **centralized workforce SSO** across an entire Organization. You connect your **external IdP** (SAML for sign-on, SCIM for user/group provisioning), define **permission sets** (reusable role templates like auditor/developer/admin), and **assign groups to accounts** — Identity Center then federates users into each account assuming a role that issues **temporary credentials**, with console *and* CLI support. Onboarding/offboarding flows from the IdP. Option B (an IAM user per employee per account) is precisely the unscalable, unmanageable anti-pattern Identity Center exists to replace — 1,500 × 50 identities to provision and rotate. Option C (one shared admin user) destroys auditability and least privilege. Option D (long-lived access keys emailed out) is a serious security failure: long-lived credentials, no central control, no federation.",
+  "hints": [
+    { "title": "Federate, don't duplicate", "body": "If the company already has a corporate IdP and many accounts, the answer is almost always centralized federation, not per-account IAM users." },
+    { "title": "Permission sets are the unit", "body": "IAM Identity Center applies reusable permission sets to groups across many accounts — that's how you keep access consistent at scale." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

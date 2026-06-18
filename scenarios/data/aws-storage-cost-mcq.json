@@ -1,0 +1,23 @@
+{
+  "id": "aws-storage-cost-mcq",
+  "title": "Lifecycle Strategy for Log Retention",
+  "category": "Cost",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Hot for 30 Days, Then Cheap for 7 Years\n\nAn application writes log files to Amazon S3. The logs are **accessed heavily for the first 30 days** (debugging, dashboards), after which they are **rarely if ever read** but must be **retained for 7 years** for compliance, at the **lowest possible storage cost**. Occasional retrieval after 30 days is acceptable even if it takes hours. Which S3 strategy BEST meets these requirements?",
+  "options": [
+    { "id": "a", "text": "An S3 Lifecycle policy that keeps objects in S3 Standard for 30 days, transitions them to S3 Glacier Deep Archive, and expires them after 7 years" },
+    { "id": "b", "text": "Keep all logs in S3 Standard for the full 7 years to guarantee instant access" },
+    { "id": "c", "text": "Move logs to S3 Standard-IA on day 1 and leave them there for 7 years" },
+    { "id": "d", "text": "Delete logs after 30 days and re-generate them if an auditor ever asks" }
+  ],
+  "correct_option": "a",
+  "explanation": "The access pattern is predictable — hot for 30 days, then cold for years with tolerance for hours-long retrieval — which is the ideal case for an **S3 Lifecycle policy**: serve fast/cheap reads from **S3 Standard** during the active window, then **transition to S3 Glacier Deep Archive** (the lowest-cost archival class, retrieval in hours) for the long compliance tail, and finally an **expiration action** deletes objects at 7 years. Keeping everything in **Standard** (B) is by far the most expensive for 7 years of rarely-read data. **Standard-IA from day 1** (C) is wrong twice: it penalizes the heavy first-30-day reads with retrieval fees and is still much pricier than Deep Archive for the long cold tail. **Deleting after 30 days** (D) violates the 7-year retention requirement (and logs are not reliably re-creatable).",
+  "hints": [
+    { "title": "Known pattern = lifecycle rules", "body": "When the cool-down timing is known (30 days), a lifecycle transition is better than letting a class auto-tier." },
+    { "title": "Cheapest archival tier", "body": "For data read maybe never but kept for years, with hours-acceptable retrieval, which class is the absolute cheapest at rest?" }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,44 @@
+{
+  "id": "linux-create-file-task",
+  "title": "Create and Write to a File",
+  "category": "Files",
+  "difficulty": "Easy",
+  "type": "task",
+  "weight": 3,
+  "description": "## Create a File With Specific Contents\n\nUsing the terminal below, create a file and write a single word into it.\n\n**Your tasks:**\n1. Create a file at **`/root/hello.txt`**\n2. Its contents must include the word **`kubekosh`**\n\n> 💡 You can do both in one step with output redirection (`>`), or create the file first and edit it. When you're done, open the **Validate** tab and run the checks.",
+  "hints": [
+    {
+      "title": "Write text to a file in one command",
+      "body": "The `>` operator redirects a command's output into a file, creating it if it doesn't exist (and overwriting it if it does).",
+      "command": "echo kubekosh > /root/hello.txt"
+    },
+    {
+      "title": "Verify the contents",
+      "body": "Use cat to print the file and confirm the word is there before validating.",
+      "command": "cat /root/hello.txt"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/hello.txt" }
+  ],
+  "validation": {
+    "description": "Checks that /root/hello.txt exists and contains the word 'kubekosh'.",
+    "commands": [
+      {
+        "description": "File /root/hello.txt exists",
+        "command": "test -f /root/hello.txt && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      },
+      {
+        "description": "File contains the word 'kubekosh'",
+        "command": "cat /root/hello.txt",
+        "expected_output": "kubekosh",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/hello.txt" }
+  ]
+}

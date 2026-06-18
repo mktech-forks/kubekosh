@@ -1,0 +1,23 @@
+{
+  "id": "aws-rto-rpo-mcq",
+  "title": "What Does a 6-Hour Snapshot Constrain?",
+  "category": "Resilience",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Mapping a Backup Schedule to the Right Metric\n\nAn application's only backup mechanism is an automated **snapshot of its database taken every 6 hours**. There is no continuous replication or transaction-log shipping. During a DR review, an architect is asked: given this 6-hour snapshot interval (and assuming restore time itself is handled separately), which recovery metric does this backup schedule directly determine, and what is its worst-case value?",
+  "options": [
+    { "id": "a", "text": "It determines the RTO, which is up to 6 hours of downtime" },
+    { "id": "b", "text": "It determines the RPO, which is up to 6 hours of potential data loss" },
+    { "id": "c", "text": "It determines both RTO and RPO equally at 6 hours" },
+    { "id": "d", "text": "It determines neither; snapshot frequency is unrelated to RTO and RPO" }
+  ],
+  "correct_option": "b",
+  "explanation": "**RPO (Recovery Point Objective)** is the maximum acceptable amount of **data loss** measured as a time window — it is governed by how often you capture recoverable copies of the data. With snapshots every 6 hours and nothing in between, a failure just before the next snapshot loses up to ~6 hours of changes, so the snapshot interval **directly sets the RPO at up to 6 hours**. **RTO (Recovery Time Objective)** is the maximum acceptable **downtime to recover**, which is driven by how long it takes to detect, provision, and restore — not by how often you snapshot — so A and C are wrong (they conflate the two metrics). D is wrong because backup frequency is precisely what bounds RPO. To reduce RPO below 6 hours you would snapshot more frequently or add continuous replication / log shipping.",
+  "hints": [
+    { "title": "Two different questions", "body": "RPO answers \"how much data can I lose?\" (data-loss window). RTO answers \"how long until I'm back up?\" (downtime). Which one does backup frequency bound?" },
+    { "title": "Where the 6 hours lives", "body": "The gap between backups is the window of changes you could lose — that's the data-loss metric, not the recovery-time metric." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

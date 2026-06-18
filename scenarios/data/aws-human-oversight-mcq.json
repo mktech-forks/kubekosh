@@ -1,0 +1,22 @@
+{
+  "id": "aws-human-oversight-mcq",
+  "title": "Human Approval for AI Actions",
+  "category": "Generative AI",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Put a Human in the Loop\n\nAn AI workflow can propose **high-impact, irreversible actions** (for example, issuing a customer refund or modifying production infrastructure). Governance requires that such an action **pauses for explicit human approval** before it executes, and the workflow must resume automatically once a person approves or rejects.\n\nWhich AWS service is best suited to orchestrate this human-in-the-loop approval step?",
+  "options": [
+    { "id": "a", "text": "AWS Step Functions, using a task that waits on a callback (task token) until a human approves or rejects" },
+    { "id": "b", "text": "Amazon SNS, by emailing the team and letting the action proceed immediately" },
+    { "id": "c", "text": "An EventBridge rule that triggers the action as soon as the AI proposes it" },
+    { "id": "d", "text": "A Lambda function that sleeps for 24 hours and then runs the action regardless" }
+  ],
+  "correct_option": "a",
+  "explanation": "AWS Step Functions can model a human-in-the-loop gate with the wait-for-callback pattern: the state machine pauses on a task token and only resumes when an external approval (or rejection) is sent back, after which it branches accordingly. SNS (b) and EventBridge (c) only notify or trigger — they don't pause and wait for a decision. A Lambda that sleeps then proceeds (d) is not real oversight; it executes the action without an actual approval and is bounded by Lambda's timeout.",
+  "hints": [
+    { "title": "Pause, wait, resume", "body": "You need an orchestrator that can suspend execution until an external human decision arrives, then continue — that's a workflow/state-machine capability." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

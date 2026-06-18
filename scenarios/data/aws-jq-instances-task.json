@@ -1,0 +1,34 @@
+{
+  "id": "aws-jq-instances-task",
+  "title": "Parse describe-instances With jq",
+  "category": "Migration",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Mine the CLI Output\n\nAutomating AWS means parsing JSON from the CLI. A captured **`aws ec2 describe-instances`** output is at **`/root/instances.json`** (Reservations → Instances, each with a `State.Name`).\n\n**Your task:** using **`jq`**, count how many instances are in the **`running`** state and write just the number to **`/root/running.txt`**.\n\n> 💡 Flatten across reservations with `.Reservations[].Instances[]`, filter with `select(.State.Name == \"running\")`, collect into an array, and take `length`.",
+  "hints": [
+    {
+      "title": "Flatten, filter, count",
+      "body": "Iterate every instance across all reservations, keep the running ones, and count them.",
+      "command": "jq '[.Reservations[].Instances[] | select(.State.Name==\"running\")] | length' /root/instances.json > /root/running.txt"
+    }
+  ],
+  "setup_commands": [
+    { "command": "printf '{\"Reservations\":[{\"Instances\":[{\"InstanceId\":\"i-1\",\"State\":{\"Name\":\"running\"}},{\"InstanceId\":\"i-2\",\"State\":{\"Name\":\"stopped\"}}]},{\"Instances\":[{\"InstanceId\":\"i-3\",\"State\":{\"Name\":\"running\"}}]}]}\\n' > /root/instances.json" },
+    { "command": "rm -f /root/running.txt" }
+  ],
+  "validation": {
+    "description": "Checks that /root/running.txt contains the count of running instances (2).",
+    "commands": [
+      {
+        "description": "running.txt contains 2",
+        "command": "cat /root/running.txt 2>/dev/null | tr -d ' '",
+        "expected_output": "2",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/running.txt /root/instances.json" }
+  ]
+}

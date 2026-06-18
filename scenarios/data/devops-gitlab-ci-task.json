@@ -1,0 +1,39 @@
+{
+  "id": "devops-gitlab-ci-task",
+  "title": "Write a GitLab CI Pipeline",
+  "category": "CI/CD",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Define Pipeline Stages\n\nGitLab CI reads a YAML file that declares an ordered list of **`stages`** and jobs that each belong to a stage and run a **`script`**.\n\n**Your task:** write a file at **`/root/gitlab-ci.yml`** that:\n1. declares a top-level **`stages`** list containing at least **`build`** and **`test`**\n2. defines at least one job with a **`stage`** and a **`script`**\n\n> 💡 Validate the YAML with `python3 -c \"import yaml; yaml.safe_load(open('/root/gitlab-ci.yml'))\"`.",
+  "hints": [
+    {
+      "title": "Pipeline skeleton",
+      "body": "Declare the stages order, then jobs that reference a stage and run script commands.",
+      "command": "printf 'stages:\\n  - build\\n  - test\\n\\nbuild-job:\\n  stage: build\\n  script:\\n    - echo building\\n\\ntest-job:\\n  stage: test\\n  script:\\n    - echo testing\\n' > /root/gitlab-ci.yml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/gitlab-ci.yml" }
+  ],
+  "validation": {
+    "description": "Checks for a stages list with build and test, plus a job script.",
+    "commands": [
+      {
+        "description": "stages list contains 'build' and 'test'",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/gitlab-ci.yml')); s=d.get('stages'); print('ok' if isinstance(s,list) and 'build' in s and 'test' in s else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      },
+      {
+        "description": "Defines at least one job script",
+        "command": "grep -q 'script:' /root/gitlab-ci.yml && echo yes",
+        "expected_output": "yes",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/gitlab-ci.yml" }
+  ]
+}

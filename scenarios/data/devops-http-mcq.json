@@ -1,0 +1,25 @@
+{
+  "id": "devops-http-mcq",
+  "title": "HTTP Status Codes",
+  "category": "Networking",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Reading the Response\n\nHTTP responses carry a numeric **status code** whose first digit indicates a class: **2xx** success, **3xx** redirect, **4xx** client error, **5xx** server error.\n\nYour browser hits a site fronted by a reverse proxy and receives **`502 Bad Gateway`**. What does this most likely mean?",
+  "options": [
+    { "id": "a", "text": "The client sent a malformed request and should fix and retry it." },
+    { "id": "b", "text": "The proxy/gateway received an invalid or no response from the **upstream** backend server it was trying to reach." },
+    { "id": "c", "text": "The page moved permanently and the client should follow a redirect." },
+    { "id": "d", "text": "The request succeeded and the resource is being returned normally." }
+  ],
+  "correct_option": "b",
+  "explanation": "`502 Bad Gateway` is a **5xx server-side error**: a server acting as a **gateway or proxy** got an invalid (or no) response from the **upstream** server it forwarded the request to — commonly the backend is down, crashed, or unreachable. It is *not* a client mistake (that would be a **4xx**, e.g. `400 Bad Request` or `404 Not Found`), not a redirect (**3xx**, e.g. `301 Moved Permanently`), and not success (**2xx**, e.g. `200 OK`). Note also **HTTP vs HTTPS**: HTTPS is HTTP carried over a TLS-encrypted connection — the status codes are identical, only the transport is secured.",
+  "hints": [
+    {
+      "title": "What does the leading digit tell you?",
+      "body": "5xx means the server side failed. A gateway/proxy returning 5xx is reporting a problem talking to the server behind it, not a problem with your request."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "devops-cloud-advanced",
+  "subject": "devops",
+  "name": "Cloud Architecture (Advanced)",
+  "icon": "♾️",
+  "tagline": "VPCs, IAM, multi-region and cost",
+  "color": "#6d28d9",
+  "colorDim": "rgba(109,40,217,0.14)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "devops-well-architected-mcq",
+    "devops-vpc-networking-mcq",
+    "devops-iam-least-privilege-mcq",
+    "devops-multiregion-mcq",
+    "devops-autoscaling-mcq",
+    "devops-cost-optimization-mcq",
+    "devops-cidr-task"
+  ]
+}

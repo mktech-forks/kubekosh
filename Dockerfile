@@ -9,7 +9,7 @@ ENV K3S_KUBECONFIG_MODE=644
 # ── System deps ─────────────────────────────────────────────────────────────────────
 RUN apt-get update && apt-get install -y \
     curl wget git vim nano jq bash bash-completion \
-    ca-certificates gnupg lsb-release \
+    ca-certificates gnupg lsb-release openssl \
     nginx \
     iproute2 iptables iputils-ping \
     procps htop \
@@ -36,6 +36,12 @@ RUN set -eux && \
     ln -sf /usr/local/bin/k3s /usr/local/bin/kubectl && \
     ln -sf /usr/local/bin/k3s /usr/local/bin/crictl
 
+# ── Docker engine (docker-in-docker for the Docker subject) ──────────────────
+# Provides dockerd + the docker CLI. Started on demand by scripts/env-init/docker.sh
+# with the vfs storage driver (overlay-in-overlay is unreliable in a container).
+RUN apt-get update && apt-get install -y docker.io \
+    && rm -rf /var/lib/apt/lists/*
+
 
 # ── App files ─────────────────────────────────────────────────────────────────
 WORKDIR /app
@@ -56,12 +62,14 @@ RUN cd frontend && VITE_APP_VERSION=${VITE_APP_VERSION} npm run build
 # Copy everything else
 COPY backend/  ./backend/
 COPY scenarios/ ./scenarios/
+COPY scripts/env-init/ /app/scripts/env-init/
 COPY scripts/entrypoint.sh /entrypoint.sh
 COPY scripts/nginx.conf /etc/nginx/nginx.conf
 
-# Strip any Windows-style \r from the entrypoint so heredocs inside it
+# Strip any Windows-style \r from the shell scripts so heredocs inside them
 # don't produce scripts with \r in shebang lines (causes execvp ENOENT).
-RUN sed -i 's/\r//' /entrypoint.sh && chmod +x /entrypoint.sh
+RUN sed -i 's/\r//' /entrypoint.sh && chmod +x /entrypoint.sh \
+    && for f in /app/scripts/env-init/*.sh; do sed -i 's/\r//' "$f" && chmod +x "$f"; done
 
 
 # ── Directories & k3s static config ─────────────────────────────────────────

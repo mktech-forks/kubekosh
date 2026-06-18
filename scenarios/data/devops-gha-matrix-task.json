@@ -1,0 +1,39 @@
+{
+  "id": "devops-gha-matrix-task",
+  "title": "Matrix Builds and Job Dependencies",
+  "category": "CI/CD",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Fan Out, Then Gate\n\n**Your task:** write a GitHub Actions workflow at **`/root/matrix.yml`** that:\n1. has a **`test`** job using a **`strategy.matrix`** over **`node: [18, 20]`**\n2. has a **`deploy`** job that runs **only after** `test` succeeds (via **`needs: test`**)\n\n> 💡 A matrix runs the job once per combination; `needs` creates an ordering/dependency edge. Validate the YAML with `python3 -c \"import yaml; yaml.safe_load(open('/root/matrix.yml'))\"`.",
+  "hints": [
+    {
+      "title": "Matrix + needs",
+      "body": "Put strategy.matrix under the test job; give deploy a needs key pointing at test so it waits.",
+      "command": "printf 'on: push\\njobs:\\n  test:\\n    runs-on: ubuntu-latest\\n    strategy:\\n      matrix:\\n        node: [18, 20]\\n    steps:\\n      - run: echo testing ${{ matrix.node }}\\n  deploy:\\n    needs: test\\n    runs-on: ubuntu-latest\\n    steps:\\n      - run: echo deploying\\n' > /root/matrix.yml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/matrix.yml" }
+  ],
+  "validation": {
+    "description": "Checks the test job has a matrix and the deploy job needs test.",
+    "commands": [
+      {
+        "description": "test job defines a strategy.matrix",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/matrix.yml')); t=d['jobs']['test']; print('ok' if 'matrix' in t.get('strategy',{}) else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      },
+      {
+        "description": "deploy job depends on test (needs)",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/matrix.yml')); n=d['jobs']['deploy'].get('needs'); print('ok' if n=='test' or (isinstance(n,list) and 'test' in n) else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/matrix.yml" }
+  ]
+}

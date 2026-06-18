@@ -24,7 +24,7 @@ async function resetProgress(scope, opts) {
   })
 }
 
-export default function ScenarioPanel({ scenario, onProgressUpdate, onScenarioStart, isExamMode, examProgress }) {
+export default function ScenarioPanel({ scenario, subject, onProgressUpdate, onScenarioStart, isExamMode, examProgress }) {
   const [tab, setTab] = useState('problem')
   const [setupState, setSetupState] = useState('idle') // idle | running | done | error
   const [validating, setValidating] = useState(false)
@@ -32,6 +32,7 @@ export default function ScenarioPanel({ scenario, onProgressUpdate, onScenarioSt
   const [selectedOption, setSelectedOption] = useState(null)
   const [mcqResult, setMcqResult] = useState(null)
   const [submitting, setSubmitting] = useState(false)
+  const [completing, setCompleting] = useState(false)
   const [hintsRevealed, setHintsRevealed] = useState([])
   const [copiedCmd, setCopiedCmd] = useState(null)
   const [localTimeSpent, setLocalTimeSpent] = useState(0)
@@ -155,6 +156,15 @@ export default function ScenarioPanel({ scenario, onProgressUpdate, onScenarioSt
     setSubmitting(false)
   }
 
+  async function markComplete() {
+    setCompleting(true)
+    try {
+      await fetch(`/api/scenarios/${scenario.id}/complete`, { method: 'POST' })
+      onProgressUpdate()
+    } catch {}
+    setCompleting(false)
+  }
+
   function copyCmd(cmd, idx) {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(cmd).then(() => {
@@ -184,7 +194,7 @@ export default function ScenarioPanel({ scenario, onProgressUpdate, onScenarioSt
   if (!scenario) {
     return (
       <div className={styles.empty}>
-        <div className={styles.emptyIcon}>⎈</div>
+        <div className={styles.emptyIcon}>{subject?.icon || '⎈'}</div>
         <div className={styles.emptyTitle}>Select a scenario</div>
         <div className={styles.emptySub}>Choose from the left panel to start practising</div>
       </div>
@@ -204,7 +214,7 @@ export default function ScenarioPanel({ scenario, onProgressUpdate, onScenarioSt
           <span className={`${styles.diff} ${styles[scenario.difficulty?.toLowerCase()]}`}>
             {scenario.difficulty}
           </span>
-          <span className={styles.typeTag}>{scenario.type === 'mcq' ? 'Multiple Choice' : 'Hands-on Task'}</span>
+          <span className={styles.typeTag}>{scenario.type === 'mcq' ? 'Multiple Choice' : scenario.type === 'lesson' ? 'Lesson' : 'Hands-on Task'}</span>
           {!isExamMode && <span className={styles.weight}>{scenario.weight} pts</span>}
         </div>
         <div className={styles.titleRow}>
@@ -274,7 +284,7 @@ export default function ScenarioPanel({ scenario, onProgressUpdate, onScenarioSt
 
       {/* Tabs */}
       <div className={styles.tabs}>
-        {['problem', ...(isExamMode ? [] : ['hints']), ...(scenario.type === 'task' ? ['validate'] : [])].map(t => (
+        {['problem', ...((isExamMode || scenario.type === 'lesson') ? [] : ['hints']), ...(scenario.type === 'task' ? ['validate'] : [])].map(t => (
           <button
             key={t}
             className={`${styles.tab} ${tab === t ? styles.activeTab : ''}`}
@@ -328,6 +338,25 @@ export default function ScenarioPanel({ scenario, onProgressUpdate, onScenarioSt
             <div className="md">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{scenario.description}</ReactMarkdown>
             </div>
+
+            {/* Lesson — mark as read/complete */}
+            {scenario.type === 'lesson' && (
+              <div className={styles.mcqSection}>
+                {isCompleted || isExamCompleted ? (
+                  <div className={`${styles.mcqResult} ${styles.mcqCorrect}`}>
+                    <div className={styles.mcqResultTitle}>✓ Lesson complete</div>
+                  </div>
+                ) : (
+                  <button
+                    className={styles.submitBtn}
+                    onClick={markComplete}
+                    disabled={completing}
+                  >
+                    {completing ? 'Saving…' : '✓ Mark as Complete'}
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* MCQ options */}
             {scenario.type === 'mcq' && (
@@ -469,7 +498,7 @@ export default function ScenarioPanel({ scenario, onProgressUpdate, onScenarioSt
               </div>
             )}
             {validResult?.error && (
-              <div className={styles.validateError}>⚠ Validation failed to run. Is the cluster reachable?</div>
+              <div className={styles.validateError}>⚠ Validation failed to run. Is the lab environment reachable?</div>
             )}
           </div>
         )}

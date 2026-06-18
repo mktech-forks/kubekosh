@@ -1,0 +1,26 @@
+{
+  "id": "docker-security-mcq",
+  "title": "Least Privilege for Containers",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Reducing Blast Radius\n\nA container only needs to read its application files and serve HTTP. Which combination best applies the principle of **least privilege**?",
+  "options": [
+    { "id": "a", "text": "Run as root but on a user-defined network" },
+    { "id": "b", "text": "Run as a non-root user, with a read-only root filesystem, and drop all Linux capabilities it doesn't need" },
+    { "id": "c", "text": "Run with `--privileged` so it never hits a permission error" },
+    { "id": "d", "text": "Add `--cap-add=ALL` to avoid debugging capability issues" }
+  ],
+  "correct_option": "b",
+  "explanation": "Least privilege means giving the container only what it needs: a **non-root** user (`USER` in the Dockerfile or `--user`), a **read-only** root filesystem (`--read-only`, with `--tmpfs` for any writable scratch space), and **dropping capabilities** (`--cap-drop=ALL` then add back only the few required). `--privileged` and `--cap-add=ALL` do the exact opposite — they hand the container near-host-level power and massively increase the blast radius if it is compromised.",
+  "hints": [
+    {
+      "title": "Combine the flags",
+      "body": "These hardening options stack: --user, --read-only, --cap-drop=ALL, --security-opt=no-new-privileges.",
+      "command": "docker run --user 1000 --read-only --cap-drop=ALL myimage"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,29 @@
+{
+  "id": "devops-tracing-mcq",
+  "title": "Distributed Tracing: Context Propagation and Sampling",
+  "category": "Monitoring",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Keep the Error Traces, Sample the Rest\n\nYour platform emits OpenTelemetry traces across a dozen services. Trace volume is huge and you can't afford to store all of it. Product requirement: **retain every trace that contains an error (any span with an error status), but keep only ~1% of normal successful traces.**\n\nA span carries the trace identity to downstream services so the whole request becomes one connected trace.\n\nWhich approach satisfies the requirement, and what carries the trace identity between services?",
+  "options": [
+    { "id": "a", "text": "Use tail-based sampling: the collector buffers all spans of a trace and decides whether to keep it AFTER the trace completes, so it can retain traces containing an error and downsample the rest. Trace context is propagated between services via the W3C `traceparent` header (trace-id, span-id, flags)." },
+    { "id": "b", "text": "Use head-based (probabilistic) sampling at the entry service: each trace is kept or dropped at its start based on a 1% probability, which still guarantees all error traces are retained because errors override the sampling decision. Context propagates via the `Authorization` header." },
+    { "id": "c", "text": "Disable sampling entirely and rely on log-based filtering: store all spans, then delete successful traces in a nightly batch job. Trace identity is reconstructed by matching timestamps and source IPs across services." },
+    { "id": "d", "text": "Use tail-based sampling, but propagate the decision via a per-service random seed so each service independently keeps 1% of its spans; error spans are kept by raising each service's local sampling rate to 100% when it sees an error." }
+  ],
+  "correct_option": "a",
+  "explanation": "Head-based sampling decides at the very start of a trace, before any downstream span (and therefore before any error) is known — so it cannot reliably guarantee retention of traces that turn out to contain an error. Tail-based sampling buffers the complete trace at the collector and applies the keep/drop policy after seeing all spans, which is exactly what lets you keep 100% of error-containing traces while downsampling successful ones. Trace identity is carried across service boundaries by the W3C Trace Context `traceparent` header (version-trace_id-parent_id-trace_flags), which is how independently-collected spans are stitched into a single trace tree. (b) is wrong: a head-based decision happens before errors exist, and the standard propagation header is `traceparent`, not `Authorization`; you can't 'override' for errors you haven't seen yet. (c) is wrong: storing everything defeats the cost goal, and reconstructing traces by timestamp/IP correlation is unreliable — that's precisely why propagated trace IDs exist. (d) is wrong: per-service independent sampling shreds traces — different services would keep different fragments, so you'd rarely have a complete trace, and a downstream error span can't retroactively cause already-dropped upstream spans to be kept. (e) is wrong: tail-based sampling makes 'keep all error traces' entirely achievable without storing everything.",
+  "hints": [
+    {
+      "title": "When is the decision made?",
+      "body": "You can only guarantee keeping error traces if you decide after seeing the whole trace. That's the difference between head-based (at the start) and tail-based (after completion)."
+    },
+    {
+      "title": "What stitches spans together?",
+      "body": "The W3C traceparent header propagates the trace-id (and parent span-id) so spans from different services join into one trace."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

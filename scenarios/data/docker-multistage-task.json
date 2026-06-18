@@ -1,0 +1,47 @@
+{
+  "id": "docker-multistage-task",
+  "title": "Build a Multi-Stage Image",
+  "category": "Building Images",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Compile in One Stage, Ship Another\n\nA build context is prepared at **`/root/multilab`** with this multi-stage `Dockerfile`:\n\n```dockerfile\nFROM alpine:latest AS build\nRUN echo 'compiled-artifact' > /app.bin\n\nFROM alpine:latest\nCOPY --from=build /app.bin /app.bin\nCMD [\"cat\", \"/app.bin\"]\n```\n\nThe first stage produces an artifact; the final stage copies **only** that artifact — none of the build steps.\n\n**Requirements:**\n1. Build the image and tag it **`slimapp:1.0`**\n2. Running it must print the artifact contents\n\n> 💡 `cd /root/multilab && docker build -t slimapp:1.0 .`",
+  "hints": [
+    {
+      "title": "Build the multi-stage image",
+      "body": "docker build resolves all stages and keeps only the final one as the resulting image.",
+      "command": "cd /root/multilab && docker build -t slimapp:1.0 ."
+    },
+    {
+      "title": "Run it to confirm the artifact was copied",
+      "body": "The final stage's CMD prints the file copied from the build stage.",
+      "command": "docker run --rm slimapp:1.0"
+    }
+  ],
+  "setup_commands": [
+    { "command": "mkdir -p /root/multilab" },
+    { "command": "printf 'FROM alpine:latest AS build\\nRUN echo \"compiled-artifact\" > /app.bin\\n\\nFROM alpine:latest\\nCOPY --from=build /app.bin /app.bin\\nCMD [\"cat\", \"/app.bin\"]\\n' > /root/multilab/Dockerfile" },
+    { "command": "docker rmi -f slimapp:1.0 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that slimapp:1.0 was built and prints the artifact copied from the build stage.",
+    "commands": [
+      {
+        "description": "Image 'slimapp:1.0' exists",
+        "command": "docker image inspect slimapp:1.0 -f '{{.RepoTags}}' 2>/dev/null",
+        "expected_output": "slimapp:1.0",
+        "match": "contains"
+      },
+      {
+        "description": "Running the image prints the artifact",
+        "command": "docker run --rm slimapp:1.0 2>/dev/null",
+        "expected_output": "compiled-artifact",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rmi -f slimapp:1.0 2>/dev/null || true" },
+    { "command": "rm -rf /root/multilab" }
+  ]
+}

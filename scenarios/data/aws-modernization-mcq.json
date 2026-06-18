@@ -1,0 +1,23 @@
+{
+  "id": "aws-modernization-mcq",
+  "title": "Modernizing a Migrated Monolith",
+  "category": "Migration",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Reducing Ops Overhead After a Lift-and-Shift\n\nA company rehosted a monolithic application onto a large Amazon EC2 instance. In production they observe two pain points: a few components experience **bursty, unpredictable traffic** (driving them to oversize the whole instance for peak), while the rest of the app is steady. The team also spends significant time **patching and operating the servers and a self-managed database**. They want to **reduce operational overhead** and **scale the bursty components independently** of the rest. Which modernization approach is BEST?",
+  "options": [
+    { "id": "a", "text": "Refactor the bursty components into AWS Lambda functions (or containers on ECS/Fargate) that scale independently, and move the self-managed database to a managed service such as Amazon RDS/Aurora or DynamoDB" },
+    { "id": "b", "text": "Keep the monolith as-is and move it to a larger EC2 instance type to absorb the bursts" },
+    { "id": "c", "text": "Rehost the same monolith again onto an EC2 Auto Scaling group of identical large instances" },
+    { "id": "d", "text": "Leave the architecture unchanged and add more read replicas to the self-managed database" }
+  ],
+  "correct_option": "a",
+  "explanation": "The goals are **independent scaling of bursty components** and **lower operational overhead**. The right post-migration move is to **refactor**: peel the bursty components out of the monolith into **Lambda** (or containers on **ECS/Fargate**) so they scale on demand without oversizing the whole app, and shift the self-managed database to a **managed data store** (RDS/Aurora or DynamoDB) so AWS handles patching, backups, and HA. This decouples scaling and cuts the ops burden directly.\n\n(b) A **bigger instance** is vertical scaling of the entire monolith — you still pay for peak across all components, you still can't scale the bursty parts independently, and the operational burden (patching, self-managed DB) remains. (c) **Auto Scaling identical monolith instances** scales the *whole* application as a unit, not the bursty components individually, and replicating a large monolith is wasteful; it also leaves the DB self-managed. (d) **Read replicas** address read load on the DB but do nothing for component-level scaling or the operational overhead of self-managing the database and servers. Only refactoring the bursty pieces to serverless/containers plus managed data stores meets both objectives.",
+  "hints": [
+    { "title": "Independent scaling", "body": "Scaling a whole monolith (bigger box or more identical boxes) is not the same as scaling individual components — that requires decoupling." },
+    { "title": "Operational overhead", "body": "Managed services (Lambda, Fargate, RDS/Aurora, DynamoDB) remove patching/backup/HA toil that self-managed EC2 + DB carries." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

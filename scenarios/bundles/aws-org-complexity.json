@@ -1,0 +1,20 @@
+{
+  "id": "aws-org-complexity",
+  "subject": "aws",
+  "name": "Organizational Complexity",
+  "icon": "☁️",
+  "tagline": "Organizations, SCPs, Control Tower and multi-account",
+  "color": "#ff9900",
+  "colorDim": "rgba(255,153,0,0.13)",
+  "exam_minutes": 55,
+  "scenario_ids": [
+    "aws-organizations-lesson",
+    "aws-scp-mcq",
+    "aws-control-tower-mcq",
+    "aws-identity-center-mcq",
+    "aws-cross-account-mcq",
+    "aws-ram-mcq",
+    "aws-scp-task",
+    "aws-assume-role-task"
+  ]
+}

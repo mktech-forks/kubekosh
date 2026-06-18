@@ -1,0 +1,23 @@
+{
+  "id": "aws-iam-advanced-mcq",
+  "title": "Safely Delegating Role Creation",
+  "category": "Security",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Delegating Admin Without Privilege Escalation\n\nA platform team wants to let each application team's **team lead create and manage IAM roles** for their own services, so the central security team is no longer a bottleneck. However, security mandates that **no role a team lead creates can ever exceed a fixed permission ceiling** (for example, never grant `iam:*`, never touch billing, never modify organization settings) — even though the team leads themselves are allowed to call `iam:CreateRole` and attach policies. What is the BEST mechanism to enforce this ceiling on the roles they create?",
+  "options": [
+    { "id": "a", "text": "Require team leads to attach a **permission boundary** to every role they create, and use an IAM policy condition so they can only create roles that have the approved boundary attached" },
+    { "id": "b", "text": "Apply a single **Service Control Policy** at the organization root that denies the unwanted actions for everyone in the account" },
+    { "id": "c", "text": "Give the team leads a larger identity-based IAM policy that explicitly lists every allowed action, and trust them not to grant more" },
+    { "id": "d", "text": "Use an IAM **resource-based policy** on each role to limit what the role can do" }
+  ],
+  "correct_option": "a",
+  "explanation": "A **permission boundary** is an IAM managed policy that sets the **maximum permissions** an IAM entity (user or role) can have — the entity's effective permissions are the *intersection* of its identity policy and its boundary. This is the purpose-built feature for **safe delegation**: you let team leads call `iam:CreateRole` and attach policies, but a `Condition` on their permissions (`iam:PermissionsBoundary`) forces every role they create to carry the approved boundary. Even if a lead attaches `AdministratorAccess` to a new role, the boundary caps it at the ceiling. \n\n(b) An **SCP** is an org/account-wide guardrail; it caps *everyone* in the account uniformly and is not a per-principal delegation tool — it cannot say \"these specific roles created by team leads are capped while other principals are unaffected,\" and it is managed by the org admin, not delegated to team leads. (c) A bigger identity policy on the leads does nothing to constrain the *roles they create*; the new roles can still be given broader permissions. (d) A **resource-based policy** controls *who can access a resource*, not the *maximum permissions of a principal*; it is the wrong control plane entirely. Remember the evaluation order: **explicit Deny > SCP ∩ permission boundary ∩ identity policy (∩ resource policy for cross-account)** — and an explicit Deny anywhere always wins.",
+  "hints": [
+    { "title": "Cap vs. grant", "body": "Permission boundaries and SCPs both *cap* maximum permissions; identity policies *grant*. The trick is which cap is per-principal and delegatable." },
+    { "title": "Delegation pattern", "body": "The canonical AWS pattern for 'let devs make roles but never above X' is: allow iam:CreateRole only when a specific PermissionsBoundary is attached." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

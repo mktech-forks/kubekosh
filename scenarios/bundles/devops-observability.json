@@ -1,0 +1,19 @@
+{
+  "id": "devops-observability",
+  "subject": "devops",
+  "name": "Observability & Security",
+  "icon": "♾️",
+  "tagline": "Monitoring, logs, secrets and service mesh",
+  "color": "#8b5cf6",
+  "colorDim": "rgba(139,92,246,0.12)",
+  "exam_minutes": 45,
+  "scenario_ids": [
+    "devops-monitoring-lesson",
+    "devops-observability-pillars-lesson",
+    "devops-prometheus-mcq",
+    "devops-logs-mcq",
+    "devops-secrets-mcq",
+    "devops-service-mesh-mcq",
+    "devops-prometheus-config-task"
+  ]
+}

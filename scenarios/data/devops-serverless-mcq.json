@@ -1,0 +1,25 @@
+{
+  "id": "devops-serverless-mcq",
+  "title": "What Makes Serverless Serverless",
+  "category": "Cloud",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## A Defining Characteristic of Serverless\n\nA team moves an image-processing job to **AWS Lambda**. They notice that when no images are being uploaded, nothing runs and they are billed nothing for compute; when a burst of uploads arrives, many copies run in parallel automatically. Which statement best captures the defining characteristic of serverless/FaaS being demonstrated?",
+  "options": [
+    { "id": "a", "text": "It is event-driven and automatically scales to zero when idle — you pay only for actual execution, and the provider manages all the servers." },
+    { "id": "b", "text": "There are no servers involved at all; the code runs directly in the network with no host." },
+    { "id": "c", "text": "You must keep at least one VM running continuously so the function can respond." },
+    { "id": "d", "text": "Serverless functions cannot scale, so each new request must wait for the previous one to finish." }
+  ],
+  "correct_option": "a",
+  "explanation": "Serverless/FaaS is **event-driven**: functions run in response to triggers (HTTP, file upload, queue, timer). When idle they **scale to zero** so you pay nothing for compute, and under load the platform spins up concurrent instances automatically. The key point is that the provider fully manages the servers for you. Option (b) is a common myth — there *are* servers, you just don't manage them. Option (c) describes a traditional always-on VM, the opposite of scale-to-zero. Option (d) is wrong because automatic horizontal scaling is one of serverless's main strengths.",
+  "hints": [
+    {
+      "title": "Focus on the billing and scaling behavior",
+      "body": "The clue is 'nothing runs and you pay nothing when idle' plus 'many copies run in parallel automatically'. That points to scale-to-zero and event-driven auto-scaling."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

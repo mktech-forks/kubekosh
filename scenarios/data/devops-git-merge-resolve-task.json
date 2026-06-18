@@ -1,0 +1,45 @@
+{
+  "id": "devops-git-merge-resolve-task",
+  "title": "Merge a Divergent Branch",
+  "category": "Git",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Integrate a Feature With a Merge Commit\n\nThe repository at **`/root/mergerepo`** has diverged: `main` and `feature` each have commits the other lacks (`feature` added **`feature.txt`**). You are on `main`.\n\n**Your task:** merge `feature` into `main` so that:\n1. `main` contains **`feature.txt`**\n2. the merge creates a **merge commit** (use `--no-ff` so a merge commit is recorded even if a fast-forward were possible)\n\n> 💡 `git merge --no-ff feature -m \"merge feature\"`. Because the branches diverged, a merge commit with two parents is produced.",
+  "hints": [
+    {
+      "title": "Create a merge commit",
+      "body": "--no-ff forces a merge commit; -m supplies its message so no editor opens.",
+      "command": "cd /root/mergerepo && git merge --no-ff feature -m 'merge feature'"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -rf /root/mergerepo" },
+    { "command": "git config --global user.email lab@kubekosh.local" },
+    { "command": "git config --global user.name 'KubeKosh Lab'" },
+    { "command": "git init -b main /root/mergerepo" },
+    { "command": "cd /root/mergerepo && echo base > base.txt && git add base.txt && git commit -m base" },
+    { "command": "cd /root/mergerepo && git switch -c feature && echo feat > feature.txt && git add feature.txt && git commit -m feature" },
+    { "command": "cd /root/mergerepo && git switch main && echo more >> base.txt && git commit -am 'main work'" }
+  ],
+  "validation": {
+    "description": "Checks that main contains feature.txt and history has exactly one merge commit.",
+    "commands": [
+      {
+        "description": "main contains feature.txt",
+        "command": "git -C /root/mergerepo show main:feature.txt 2>/dev/null",
+        "expected_output": "feat",
+        "match": "contains"
+      },
+      {
+        "description": "A merge commit was created",
+        "command": "git -C /root/mergerepo rev-list --merges --count HEAD 2>/dev/null",
+        "expected_output": "1",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -rf /root/mergerepo" }
+  ]
+}

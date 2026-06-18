@@ -1,0 +1,47 @@
+{
+  "id": "docker-build-args-task",
+  "title": "Parameterize a Build With ARG",
+  "category": "Building Images",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Pass a Value at Build Time\n\n`ARG` declares a variable available **only during the build**, settable with `--build-arg`. A build context is prepared at **`/root/arglab`** with this `Dockerfile`:\n\n```dockerfile\nFROM alpine:latest\nARG GREETING=default\nRUN echo \"$GREETING\" > /greeting.txt\nCMD [\"cat\", \"/greeting.txt\"]\n```\n\n**Requirements:**\n1. Build the image tagged **`greeter:1.0`**\n2. Override the `GREETING` build arg so the baked-in file contains **`kubekosh`**\n\n> 💡 `cd /root/arglab && docker build --build-arg GREETING=kubekosh -t greeter:1.0 .`",
+  "hints": [
+    {
+      "title": "Pass a build arg",
+      "body": "--build-arg NAME=value sets an ARG declared in the Dockerfile for that build.",
+      "command": "cd /root/arglab && docker build --build-arg GREETING=kubekosh -t greeter:1.0 ."
+    },
+    {
+      "title": "Verify the baked-in value",
+      "body": "Running the image prints the greeting that was written at build time.",
+      "command": "docker run --rm greeter:1.0"
+    }
+  ],
+  "setup_commands": [
+    { "command": "mkdir -p /root/arglab" },
+    { "command": "printf 'FROM alpine:latest\\nARG GREETING=default\\nRUN echo \"$GREETING\" > /greeting.txt\\nCMD [\"cat\", \"/greeting.txt\"]\\n' > /root/arglab/Dockerfile" },
+    { "command": "docker rmi -f greeter:1.0 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that greeter:1.0 was built with GREETING=kubekosh baked in.",
+    "commands": [
+      {
+        "description": "Image 'greeter:1.0' exists",
+        "command": "docker image inspect greeter:1.0 -f '{{.RepoTags}}' 2>/dev/null",
+        "expected_output": "greeter:1.0",
+        "match": "contains"
+      },
+      {
+        "description": "Baked-in greeting is 'kubekosh'",
+        "command": "docker run --rm greeter:1.0 2>/dev/null",
+        "expected_output": "kubekosh",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rmi -f greeter:1.0 2>/dev/null || true" },
+    { "command": "rm -rf /root/arglab" }
+  ]
+}

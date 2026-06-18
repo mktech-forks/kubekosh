@@ -23,13 +23,18 @@ function ReloadModal({ state, data, error, onClose, onReload }) {
             <div className={styles.reloadModalSub}>{data?.message}</div>
             <div className={styles.reloadStats}>
               <div className={styles.reloadStat}>
-                <span className={styles.reloadStatNum}>{data?.scenarios_count ?? '—'}</span>
-                <span className={styles.reloadStatLabel}>Scenarios</span>
+                <span className={styles.reloadStatNum}>{data?.subjects_count ?? '—'}</span>
+                <span className={styles.reloadStatLabel}>Subjects</span>
               </div>
               <div className={styles.reloadStatDivider} />
               <div className={styles.reloadStat}>
                 <span className={styles.reloadStatNum}>{data?.bundles_count ?? '—'}</span>
                 <span className={styles.reloadStatLabel}>Bundles</span>
+              </div>
+              <div className={styles.reloadStatDivider} />
+              <div className={styles.reloadStat}>
+                <span className={styles.reloadStatNum}>{data?.scenarios_count ?? '—'}</span>
+                <span className={styles.reloadStatLabel}>Scenarios</span>
               </div>
             </div>
             <div className={styles.reloadModalActions}>
@@ -61,7 +66,7 @@ function ReloadModal({ state, data, error, onClose, onReload }) {
 }
 
 // ── Header ────────────────────────────────────────────────────────────────────
-export default function Header({ clusterReady, onShowHistory }) {
+export default function Header({ clusterReady, subject, onShowHistory }) {
   const [theme, setTheme] = useState(
     () => localStorage.getItem('kubekosh-theme') || 'dark'
   )
@@ -102,7 +107,7 @@ export default function Header({ clusterReady, onShowHistory }) {
             <span className={styles.logoText}>KubeKosh</span>
             <span className={styles.version}>{import.meta.env.VITE_APP_VERSION}</span>
           </div>
-          <span className={styles.tagline}>Interactive Kubernetes Playground</span>
+          <span className={styles.tagline}>{subject?.tagline || 'Interactive Hands-on Labs'}</span>
         </div>
 
         <div className={styles.right}>
@@ -135,11 +140,20 @@ export default function Header({ clusterReady, onShowHistory }) {
             </button>
           </div>
 
-          {/* Cluster status */}
-          <div className={`${styles.clusterBadge} ${clusterReady ? styles.ready : styles.notReady}`}>
-            <span className={styles.dot} />
-            <span>{clusterReady ? 'Cluster Ready' : 'Connecting…'}</span>
-          </div>
+          {/* Environment readiness — only shown for subjects with a backing
+              runtime (Kubernetes cluster, Docker daemon, …). Plain-shell
+              subjects have no readyLabel and show nothing. */}
+          {(() => {
+            const readyLabel = subject?.readyLabel
+              || ((!subject || subject.environment === 'k8s') ? 'Cluster Ready' : null)
+            if (!readyLabel) return null
+            return (
+              <div className={`${styles.clusterBadge} ${clusterReady ? styles.ready : styles.notReady}`}>
+                <span className={styles.dot} />
+                <span>{clusterReady ? readyLabel : 'Connecting…'}</span>
+              </div>
+            )
+          })()}
 
           {/* Exam history */}
           <div className={styles.historyBtnContainer}>

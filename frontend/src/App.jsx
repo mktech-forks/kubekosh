@@ -3,6 +3,8 @@ import Sidebar from './components/Sidebar'
 import ScenarioPanel from './components/ScenarioPanel'
 import Terminal from './components/Terminal'
 import Header from './components/Header'
+import SubjectNav from './components/SubjectNav'
+import Catalog from './components/Catalog'
 import BundleNav from './components/BundleNav'
 import ExamTimer from './components/ExamTimer'
 import ExamReport from './components/ExamReport'
@@ -22,7 +24,12 @@ const DEFAULT_TERM_H = 280
 const TERM_COLLAPSE_PX = 60
 
 export default function App() {
+  const [subjects, setSubjects] = useState([])
+  const [activeSubjectId, setActiveSubjectId] = useState(null)
+  const [catalogOpen, setCatalogOpen] = useState(false)
+
   const [bundles, setBundles] = useState([])
+  const [allBundles, setAllBundles] = useState([])   // every bundle, for the subject search index
   const [activeBundleId, setActiveBundleId] = useState(null)
 
   const [scenarios, setScenarios] = useState([])
@@ -57,29 +64,48 @@ export default function App() {
   // Track previous scenario id to teardown on switch
   const prevActiveIdRef = useRef(null)
 
-  // ── Cluster health ────────────────────────────────────────────────────────
+  // ── Cluster/environment health (subject-aware) ────────────────────────────
   useEffect(() => {
     async function check() {
       try {
-        const d = await fetch('/api/health').then(r => r.json())
+        const qs = activeSubjectId ? `?subject=${activeSubjectId}` : ''
+        const d = await fetch(`/api/health${qs}`).then(r => r.json())
         setClusterReady(d.cluster === 'ready')
       } catch { setClusterReady(false) }
     }
     check()
     const t = setInterval(check, 8000)
     return () => clearInterval(t)
+  }, [activeSubjectId])
+
+  // ── Load subjects + full bundle index (once) ──────────────────────────────
+  useEffect(() => {
+    fetch('/api/subjects')
+      .then(r => r.json())
+      .then(data => {
+        setSubjects(data)
+        if (data.length > 0) setActiveSubjectId(prev => prev || data[0].id)
+      })
+      .catch(console.error)
+    fetch('/api/bundles')   // all bundles (no subject filter) → search index
+      .then(r => r.json())
+      .then(setAllBundles)
+      .catch(console.error)
   }, [])
 
-  // ── Load bundles (once) ───────────────────────────────────────────────────
+  // ── Load bundles for the active subject ───────────────────────────────────
   useEffect(() => {
-    fetch('/api/bundles')
+    if (!activeSubjectId) return
+    fetch(`/api/bundles?subject=${activeSubjectId}`)
       .then(r => r.json())
       .then(data => {
         setBundles(data)
-        if (data.length > 0) setActiveBundleId(data[0].id)
+        // Only auto-select the subject's first bundle when none of its bundles
+        // is currently active (e.g. on subject switch).
+        setActiveBundleId(prev => (data.some(b => b.id === prev) ? prev : (data[0]?.id || null)))
       })
       .catch(console.error)
-  }, [])
+  }, [activeSubjectId])
 
   // ── Restore active exam session on load ───────────────────────────────────
   useEffect(() => {
@@ -88,6 +114,7 @@ export default function App() {
       .then(async s => {
         if (s) {
           setExamSession(s)
+          if (s.subject) setActiveSubjectId(s.subject)
           setActiveBundleId(s.bundle_id)
           // Load exam-specific progress
           const ep = await fetch(`/api/sessions/${s.id}/exam-progress`).then(r => r.json()).catch(() => ({}))
@@ -136,12 +163,27 @@ export default function App() {
       .catch(console.error)
   }, [activeId])
 
+  // Navigate to a subject (and optionally a specific bundle within it). Setting
+  // both at once is safe: the bundles-load effect preserves activeBundleId when
+  // it belongs to the new subject, otherwise it falls back to the first bundle.
+  const navigateTo = useCallback((subjectId, bundleId = null) => {
+    if (examSession) return   // switching is locked during an exam
+    setActiveSubjectId(subjectId)
+    setActiveBundleId(bundleId)
+    setActiveId(null)
+    setScenario(null)
+  }, [examSession])
+
   const refreshProgress = useCallback(async () => {
-    const [bundleData, scenarioData] = await Promise.all([
+    const [subjectData, bundleData, allBundleData, scenarioData] = await Promise.all([
+      fetch('/api/subjects').then(r => r.json()),
+      fetch(`/api/bundles${activeSubjectId ? `?subject=${activeSubjectId}` : ''}`).then(r => r.json()),
       fetch('/api/bundles').then(r => r.json()),
       fetch(`/api/scenarios?bundle=${activeBundleId}`).then(r => r.json()),
     ])
+    setSubjects(subjectData)
     setBundles(bundleData)
+    setAllBundles(allBundleData)
     setScenarios(scenarioData)
     setProgress(Object.fromEntries(scenarioData.map(s => [s.id, s.progress])))
     if (activeId) {
@@ -157,7 +199,7 @@ export default function App() {
         setExamProgress(ep || {})
       }
     }
-  }, [activeBundleId, activeId, examSession])
+  }, [activeSubjectId, activeBundleId, activeId, examSession])
 
   // ── Exam actions ──────────────────────────────────────────────────────────
   const startExam = useCallback(async (bundleId, customMinutes) => {
@@ -255,11 +297,21 @@ export default function App() {
   const currentSidebarW = sidebarCollapsed ? SIDEBAR_COLLAPSED_W : sidebarW
   const currentTermH = termCollapsed ? MIN_TERM_H : termH
   const activeBundle = bundles.find(b => b.id === activeBundleId) || null
-  const isMcq = scenario?.type === 'mcq'
+  const activeSubject = subjects.find(s => s.id === activeSubjectId) || null
+  // Terminal is only meaningful for hands-on tasks; hide it for MCQ and lessons.
+  const hideTerminal = scenario?.type === 'mcq' || scenario?.type === 'lesson'
 
   return (
     <div className={styles.app}>
-      <Header clusterReady={clusterReady} onShowHistory={() => setShowHistory(true)} />
+      <Header clusterReady={clusterReady} subject={activeSubject} onShowHistory={() => setShowHistory(true)} />
+
+      {/* Subject context bar (opens the Catalog for browsing) */}
+      <SubjectNav
+        subjects={subjects}
+        activeSubjectId={activeSubjectId}
+        examSession={examSession}
+        onBrowse={() => setCatalogOpen(true)}
+      />
 
       {/* Bundle navigation bar */}
       <BundleNav
@@ -311,6 +363,7 @@ export default function App() {
           <div className={styles.scenarioWrap}>
             <ScenarioPanel
               scenario={scenario}
+              subject={activeSubject}
               onProgressUpdate={refreshProgress}
               onScenarioStart={handleScenarioStart}
               isExamMode={!!examSession}
@@ -318,13 +371,14 @@ export default function App() {
             />
           </div>
 
-          {!isMcq && (
+          {!hideTerminal && (
             <div className={styles.termHandle} onMouseDown={onTermDragDown} />
           )}
 
-          {!isMcq && (
+          {!hideTerminal && (
             <div className={styles.terminalWrap} style={{ height: currentTermH }}>
               <Terminal
+                subject={activeSubject}
                 collapsed={termCollapsed}
                 onToggleCollapse={() => setTermCollapsed(c => !c)}
               />
@@ -360,6 +414,17 @@ export default function App() {
       {/* Exam history modal */}
       {showHistory && (
         <ExamHistory onClose={() => setShowHistory(false)} />
+      )}
+
+      {/* Subject/bundle catalog */}
+      {catalogOpen && (
+        <Catalog
+          subjects={subjects}
+          allBundles={allBundles}
+          activeSubjectId={activeSubjectId}
+          onNavigate={(sid, bid) => { navigateTo(sid, bid); setCatalogOpen(false) }}
+          onClose={() => setCatalogOpen(false)}
+        />
       )}
 
       <footer className={styles.footer}>

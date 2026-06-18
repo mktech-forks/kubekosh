@@ -1,0 +1,39 @@
+{
+  "id": "devops-makefile-advanced-task",
+  "title": "A Real Makefile With Dependencies",
+  "category": "CI/CD",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 5,
+  "description": "## Targets That Depend on Each Other\n\n**Your task:** create **`/root/Makefile`** that:\n1. defines a variable **`IMAGE = myapp`**\n2. declares **`.PHONY`** for its targets\n3. has a **`build`** target that prints **`building myapp`** (use the variable)\n4. has a **`deploy`** target that **depends on `build`** and prints **`deploying`**\n\nRunning `make deploy` must therefore build **then** deploy.\n\n> 💡 Recipe lines need a real TAB — use `printf` with `\\t`. Prerequisites go after the colon: `deploy: build`.",
+  "hints": [
+    {
+      "title": "Variables, .PHONY and prerequisites",
+      "body": "Reference the variable as $(IMAGE). A target's prerequisites (after the colon) run first. @ hides the command echo.",
+      "command": "printf 'IMAGE = myapp\\n.PHONY: build deploy\\nbuild:\\n\\t@echo \"building $(IMAGE)\"\\ndeploy: build\\n\\t@echo \"deploying\"\\n' > /root/Makefile"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/Makefile" }
+  ],
+  "validation": {
+    "description": "Checks that 'make deploy' builds (with the variable) then deploys.",
+    "commands": [
+      {
+        "description": "Build step prints the image name from the variable",
+        "command": "make -C /root deploy 2>/dev/null",
+        "expected_output": "building myapp",
+        "match": "contains"
+      },
+      {
+        "description": "Deploy step runs after build",
+        "command": "make -C /root deploy 2>/dev/null",
+        "expected_output": "deploying",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/Makefile" }
+  ]
+}

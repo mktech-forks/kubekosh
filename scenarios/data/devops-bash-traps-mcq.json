@@ -1,0 +1,24 @@
+{
+  "id": "devops-bash-traps-mcq",
+  "title": "Signals, Traps, and Guaranteed Cleanup",
+  "category": "Shell",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Make the temp directory always get cleaned up\n\nA long-running job creates a temporary working directory and must remove it no matter how the script ends — normal exit, an error under `set -e`, or the operator pressing Ctrl-C. The author also wants a counter, incremented inside a pipeline, to survive after the pipeline finishes:\n\n```bash\ntmp=$(mktemp -d)\ncount=0\nsomecmd | while read -r line; do count=$((count+1)); done\necho \"$count\"\n```\n\nWhich approach is correct?",
+  "options": [
+    { "id": "a", "text": "Use `trap 'rm -rf \"$tmp\"' EXIT` — the EXIT trap runs on normal exit, on `exit`, on errexit, and (because the default INT/TERM handling terminates the shell, which fires EXIT) covers Ctrl-C too; meanwhile `count` prints `0` because the `while` runs in a subshell of the pipeline, so its variable updates are lost in the parent." },
+    { "id": "b", "text": "Use `trap 'rm -rf \"$tmp\"' KILL` so that even `kill -9` is intercepted; `count` will print the correct total because Bash runs every pipeline stage in the current shell." },
+    { "id": "c", "text": "Only `trap 'rm -rf \"$tmp\"' INT TERM` is needed; a normal exit does not require a trap because Bash auto-removes anything created by `mktemp`, and `count` is correct because `while` does not start a subshell." },
+    { "id": "d", "text": "Register `trap 'rm -rf \"$tmp\"' EXIT INT TERM KILL` to be safe; the `count` value is reliable as long as `pipefail` is set." }
+  ],
+  "correct_option": "a",
+  "explanation": "An `EXIT` trap is the canonical \"always run\" cleanup: it fires on normal completion, on explicit `exit`, and when `set -e` aborts the script. A Ctrl-C sends SIGINT; the default action terminates the shell, and shell termination runs the EXIT trap — so a single `trap ... EXIT` already covers the interactive-interrupt case (you may additionally trap INT/TERM if you want custom behaviour before exiting). SIGKILL (signal 9) and SIGSTOP **cannot be caught, blocked, or ignored** by any process, so trapping `KILL` is meaningless — this eliminates (b) and (d). mktemp does **not** auto-clean its output, and Bash does not auto-remove temp dirs, so (c) is wrong on cleanup. The second issue is the classic subshell pitfall: in a pipeline, each stage (including the `while`) runs in its own child process, so `count` is incremented in a subshell and the parent still sees `0` — (a) describes this correctly. (Bash's `lastpipe` option, with job control off, would run the last stage in the current shell, but it is not enabled by default.) Options (b)/(c) wrongly claim the while body runs in the current shell.",
+  "hints": [
+    { "title": "Which signals are uncatchable", "body": "SIGKILL (9) and SIGSTOP cannot be trapped, blocked, or ignored. Any cleanup that 'handles KILL' is fiction." },
+    { "title": "EXIT covers a lot", "body": "An EXIT trap runs for normal exit, explicit exit, and errexit aborts. Because the default SIGINT action terminates the shell, EXIT also fires on Ctrl-C." },
+    { "title": "Pipelines spawn subshells", "body": "Each stage of a pipeline runs in a child process by default, so variables modified in a piped while-read loop don't propagate to the parent unless you use lastpipe or process substitution." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

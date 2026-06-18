@@ -1,0 +1,18 @@
+{
+  "id": "devops-observability-advanced",
+  "subject": "devops",
+  "name": "Observability (Advanced)",
+  "icon": "♾️",
+  "tagline": "PromQL, SLOs, tracing and alerting rules",
+  "color": "#6d28d9",
+  "colorDim": "rgba(109,40,217,0.14)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "devops-promql-mcq",
+    "devops-slo-sli-mcq",
+    "devops-tracing-mcq",
+    "devops-prometheus-rules-task",
+    "devops-alertmanager-task",
+    "devops-logfmt-task"
+  ]
+}

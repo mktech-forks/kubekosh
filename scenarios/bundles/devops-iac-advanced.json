@@ -1,0 +1,18 @@
+{
+  "id": "devops-iac-advanced",
+  "subject": "devops",
+  "name": "IaC & Config (Advanced)",
+  "icon": "♾️",
+  "tagline": "State, modules, handlers and templating",
+  "color": "#6d28d9",
+  "colorDim": "rgba(109,40,217,0.14)",
+  "exam_minutes": 55,
+  "scenario_ids": [
+    "devops-terraform-state-mcq",
+    "devops-terraform-modules-mcq",
+    "devops-ansible-advanced-mcq",
+    "devops-tf-variables-task",
+    "devops-ansible-handlers-task",
+    "devops-helm-values-task"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "devops-idempotency-mcq",
+  "title": "Idempotency in Configuration Management",
+  "category": "Configuration Management",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Why Re-running Is Safe\n\nA core property of good configuration management is **idempotency**. An on-call engineer reruns the same Ansible playbook three times in a row during an incident, worried it might break something. Which statement correctly defines idempotency and explains why re-running is safe?",
+  "options": [
+    { "id": "a", "text": "Running the same playbook repeatedly converges to the same desired state; if a host already matches, the run makes no changes — so re-running is safe." },
+    { "id": "b", "text": "Idempotency means the playbook can run only once and refuses to run a second time." },
+    { "id": "c", "text": "Idempotency means every run always makes changes, applying the configuration fresh each time regardless of current state." },
+    { "id": "d", "text": "Idempotency means the playbook automatically rolls back all changes after it finishes." }
+  ],
+  "correct_option": "a",
+  "explanation": "**Idempotency** means an operation can be applied many times with the same end result: the tool checks the current state and only changes what doesn't already match the desired state. If everything is already correct, a re-run reports 'ok'/no changes and is harmless — which is exactly why the engineer can safely rerun the playbook. Option (b) confuses idempotency with 'runs only once' — idempotent operations are explicitly *meant* to be re-run. Option (c) is the opposite of idempotent: always making changes regardless of state is non-idempotent and unsafe. Option (d) describes rollback, a different concept entirely. Idempotency is what makes declarative configuration management dependable.",
+  "hints": [
+    {
+      "title": "Converge to a target state",
+      "body": "Idempotent = same result no matter how many times you run it. Already-correct hosts get no changes; only drift is fixed. It is not 'run once' and not 'always change'."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

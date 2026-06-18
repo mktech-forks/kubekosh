@@ -1,0 +1,25 @@
+{
+  "id": "devops-dns-mcq",
+  "title": "DNS Record Types",
+  "category": "Networking",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Pointing a Name at Another Name\n\nDNS maps names to data using typed records: **A** (IPv4 address), **AAAA** (IPv6 address), **CNAME** (alias to another name), **MX** (mail exchange), **TXT** (arbitrary text, e.g. SPF/verification).\n\nYou want **`shop.example.com`** to resolve to whatever **`store-platform.vendor.net`** resolves to, so that if the vendor changes their IP you don't have to update anything. Which record type should you create?",
+  "options": [
+    { "id": "a", "text": "An **A** record pointing `shop.example.com` at the vendor's current IPv4 address." },
+    { "id": "b", "text": "A **CNAME** record making `shop.example.com` an alias of `store-platform.vendor.net`." },
+    { "id": "c", "text": "An **MX** record for `shop.example.com`." },
+    { "id": "d", "text": "A **TXT** record containing `store-platform.vendor.net`." }
+  ],
+  "correct_option": "b",
+  "explanation": "A **CNAME** (Canonical Name) record makes one hostname an **alias** of another hostname. Resolving `shop.example.com` then follows the alias to `store-platform.vendor.net` and uses *its* address — so if the vendor changes their IP, you never touch your record. An **A** record (a) hard-codes a specific IPv4 address, which breaks the moment the vendor's IP changes (that's exactly what you're avoiding). **MX** records (c) only direct email delivery, and **TXT** records (d) hold free-form text (like SPF policies) and are not used for resolving a host to an address. (Note: A/AAAA differ only in IP version — A is IPv4, AAAA is IPv6.)",
+  "hints": [
+    {
+      "title": "Alias vs fixed address",
+      "body": "You want to point at a *name*, not a number, so that the underlying IP can change without your involvement. Which record type aliases one name to another?"
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

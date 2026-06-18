@@ -1,0 +1,39 @@
+{
+  "id": "devops-prometheus-config-task",
+  "title": "Write a Prometheus Config",
+  "category": "Monitoring",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Configure Metric Scraping\n\nPrometheus is configured in YAML: a **`global`** section (e.g. `scrape_interval`) and a **`scrape_configs`** list of scrape jobs.\n\n**Your task:** write **`/root/prometheus.yml`** that:\n1. has a **`global`** section with a **`scrape_interval`**\n2. has a **`scrape_configs`** list with a job named **`prometheus`** that scrapes a target on **`localhost:9090`**\n\n> 💡 Validate the YAML with `python3 -c \"import yaml; yaml.safe_load(open('/root/prometheus.yml'))\"`.",
+  "hints": [
+    {
+      "title": "Prometheus config skeleton",
+      "body": "Set a global scrape_interval, then list scrape jobs; each job has a job_name and static targets.",
+      "command": "printf 'global:\\n  scrape_interval: 15s\\n\\nscrape_configs:\\n  - job_name: prometheus\\n    static_configs:\\n      - targets:\\n          - localhost:9090\\n' > /root/prometheus.yml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/prometheus.yml" }
+  ],
+  "validation": {
+    "description": "Checks for a global scrape_interval and a 'prometheus' scrape job.",
+    "commands": [
+      {
+        "description": "global.scrape_interval is set",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/prometheus.yml')); print('ok' if 'scrape_interval' in (d.get('global') or {}) else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      },
+      {
+        "description": "A scrape job named 'prometheus' exists",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/prometheus.yml')); jobs=[j.get('job_name') for j in (d.get('scrape_configs') or [])]; print('ok' if 'prometheus' in jobs else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/prometheus.yml" }
+  ]
+}

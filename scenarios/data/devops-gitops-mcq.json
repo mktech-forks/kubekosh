@@ -1,0 +1,25 @@
+{
+  "id": "devops-gitops-mcq",
+  "title": "The GitOps Model",
+  "category": "GitOps",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## How Does GitOps Deliver Changes?\n\nA team adopts **GitOps** for their Kubernetes cluster using a tool like Argo CD or Flux. Which statement best describes how their declarative configuration actually reaches the cluster?",
+  "options": [
+    { "id": "a", "text": "A Git repository is the single source of truth for the desired declarative state, and an in-cluster agent continuously **pulls** from Git and reconciles the live cluster to match it" },
+    { "id": "b", "text": "Engineers run `kubectl apply` by hand from their laptops whenever a change is needed, and Git is only used as a backup" },
+    { "id": "c", "text": "The CI server SSHes into each node and edits the running configuration directly" },
+    { "id": "d", "text": "The cluster polls Docker Hub and applies whatever the newest image's defaults happen to be" }
+  ],
+  "correct_option": "a",
+  "explanation": "**GitOps** makes a **Git repository the single source of truth** for declarative infrastructure and app configuration. An **in-cluster agent** (Argo CD, Flux) continuously watches that repo, compares the desired state in Git to the live state in the cluster, and **reconciles** any drift — a *pull-based* model. Because every change is a reviewed, audited Git commit, the cluster is reproducible and you can roll back by reverting. Manual `kubectl apply` from a laptop (b) bypasses Git as the source of truth and causes drift; (c) and (d) are not declarative reconciliation at all.",
+  "hints": [
+    {
+      "title": "Source of truth + reconciliation",
+      "body": "Two ideas define GitOps: Git holds the *desired* state, and an agent inside the cluster constantly works to make the *actual* state match it."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

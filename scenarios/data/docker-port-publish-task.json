@@ -1,0 +1,44 @@
+{
+  "id": "docker-port-publish-task",
+  "title": "Publish a Container Port",
+  "category": "Running Containers",
+  "difficulty": "Easy",
+  "type": "task",
+  "weight": 4,
+  "description": "## Expose a Container to the Host\n\nA container's ports are isolated by default. To reach a containerised web server from the host you must **publish** its port.\n\n**Requirements:**\n1. Run an **`nginx:alpine`** container named **`web-pub`** in the background\n2. Publish the container's port **80** to host port **8080**\n\n> 💡 The publish flag is `-p <host>:<container>`, e.g. `-p 8080:80`. Verify with `docker port web-pub`.",
+  "hints": [
+    {
+      "title": "Publish a port at run time",
+      "body": "Combine -d, --name and -p to run detached, named, with port 80 mapped to host 8080.",
+      "command": "docker run -d --name web-pub -p 8080:80 nginx:alpine"
+    },
+    {
+      "title": "Inspect the published port",
+      "body": "docker port shows the host mapping for a container port.",
+      "command": "docker port web-pub 80"
+    }
+  ],
+  "setup_commands": [
+    { "command": "docker rm -f web-pub 2>/dev/null || true" }
+  ],
+  "validation": {
+    "description": "Checks that 'web-pub' is running with container port 80 published to host port 8080.",
+    "commands": [
+      {
+        "description": "Container 'web-pub' is running",
+        "command": "docker inspect -f '{{.State.Running}}' web-pub 2>/dev/null",
+        "expected_output": "true",
+        "match": "exact"
+      },
+      {
+        "description": "Container port 80 is published to host port 8080",
+        "command": "docker port web-pub 80",
+        "expected_output": "8080",
+        "match": "contains"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "docker rm -f web-pub 2>/dev/null || true" }
+  ]
+}

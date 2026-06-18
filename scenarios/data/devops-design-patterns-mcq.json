@@ -1,0 +1,25 @@
+{
+  "id": "devops-design-patterns-mcq",
+  "title": "Resilience Design Patterns",
+  "category": "Cloud",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Stop Hammering a Failing Dependency\n\nYour service calls a downstream payment API that has started failing repeatedly. Right now every request keeps trying it, piling load onto the struggling dependency and tying up your own threads waiting for timeouts. You want a pattern that **detects repeated failures and temporarily stops sending requests**, then periodically tests whether the dependency has recovered. Which cloud design pattern is this?",
+  "options": [
+    { "id": "a", "text": "**Circuit Breaker** — after a failure threshold it 'trips open' and fails fast without calling the dependency, then probes for recovery." },
+    { "id": "b", "text": "**Retry** — keep re-issuing the failed request, possibly with backoff, until it succeeds." },
+    { "id": "c", "text": "**Sidecar** — deploy a helper process alongside the main app to offload cross-cutting concerns." },
+    { "id": "d", "text": "**Bulkhead** — isolate resources into pools so one failure can't consume them all." }
+  ],
+  "correct_option": "a",
+  "explanation": "The **Circuit Breaker** pattern wraps a call to a dependency and tracks failures. Once failures cross a threshold the breaker 'trips open' and immediately fails (or returns a fallback) without even attempting the call — protecting both the caller and the struggling dependency. After a cooldown it allows a trial request to test recovery. **Retry** alone is the opposite of what's wanted here: it keeps hammering the failing service. **Sidecar** is a deployment pattern for attaching helper functionality to an app, unrelated to failure handling. **Bulkhead** isolates resource pools to contain failures, but it doesn't stop sending requests to a failing dependency. Retry and Circuit Breaker are often combined: retry transient blips, trip the breaker on sustained failure.",
+  "hints": [
+    {
+      "title": "What should happen after repeated failures",
+      "body": "The goal is to STOP calling the failing dependency for a while, not to keep trying. Think of an electrical breaker that trips to cut the circuit."
+    }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

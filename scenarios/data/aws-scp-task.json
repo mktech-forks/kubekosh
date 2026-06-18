@@ -1,0 +1,33 @@
+{
+  "id": "aws-scp-task",
+  "title": "Write a Service Control Policy",
+  "category": "Organizations",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Guardrail: Deny Disabling CloudTrail\n\nSCPs are JSON guardrails that cap what member accounts can do — even their admins.\n\n**Your task:** write an SCP at **`/root/scp.json`** that **denies** the actions **`cloudtrail:StopLogging`** and **`cloudtrail:DeleteTrail`** on all resources, so no one in a member account can disable audit logging.\n\n> 💡 An SCP is an IAM-style policy document: `Version`, then a `Statement` with `Effect: \"Deny\"`, the `Action` list, and `Resource: \"*\"`.",
+  "hints": [
+    {
+      "title": "Deny statement",
+      "body": "Use Effect Deny with the two CloudTrail actions and a wildcard resource.",
+      "command": "printf '{\\n  \"Version\": \"2012-10-17\",\\n  \"Statement\": [\\n    {\\n      \"Effect\": \"Deny\",\\n      \"Action\": [\"cloudtrail:StopLogging\", \"cloudtrail:DeleteTrail\"],\\n      \"Resource\": \"*\"\\n    }\\n  ]\\n}\\n' > /root/scp.json"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/scp.json" }
+  ],
+  "validation": {
+    "description": "Checks for a valid policy with a Deny statement covering the CloudTrail actions.",
+    "commands": [
+      {
+        "description": "Valid JSON with a Deny statement for cloudtrail:StopLogging",
+        "command": "python3 -c \"import json; d=json.load(open('/root/scp.json')); s=d['Statement']; s=s if isinstance(s,list) else [s]; ok=any(st.get('Effect')=='Deny' and 'cloudtrail:StopLogging' in (st['Action'] if isinstance(st['Action'],list) else [st['Action']]) for st in s); print('ok' if ok else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/scp.json" }
+  ]
+}

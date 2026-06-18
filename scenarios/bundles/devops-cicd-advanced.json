@@ -1,0 +1,18 @@
+{
+  "id": "devops-cicd-advanced",
+  "subject": "devops",
+  "name": "CI/CD & GitOps (Advanced)",
+  "icon": "♾️",
+  "tagline": "Deployment strategies, matrices and supply chain",
+  "color": "#6d28d9",
+  "colorDim": "rgba(109,40,217,0.14)",
+  "exam_minutes": 55,
+  "scenario_ids": [
+    "devops-deployment-strategies-mcq",
+    "devops-gitops-reconcile-mcq",
+    "devops-pipeline-security-mcq",
+    "devops-gha-matrix-task",
+    "devops-gitlab-rules-task",
+    "devops-makefile-advanced-task"
+  ]
+}

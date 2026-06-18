@@ -1,0 +1,18 @@
+{
+  "id": "devops-git-advanced",
+  "subject": "devops",
+  "name": "Git (Advanced)",
+  "icon": "♾️",
+  "tagline": "History surgery, hooks and recovery",
+  "color": "#6d28d9",
+  "colorDim": "rgba(109,40,217,0.14)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "devops-git-rebase-mcq",
+    "devops-git-internals-mcq",
+    "devops-git-cherry-pick-task",
+    "devops-git-squash-task",
+    "devops-git-hook-task",
+    "devops-git-merge-resolve-task"
+  ]
+}

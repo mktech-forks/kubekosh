@@ -1,0 +1,23 @@
+{
+  "id": "aws-shared-responsibility-mcq",
+  "title": "Who Patches What?",
+  "category": "Foundations",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Drawing the Responsibility Line\n\nDuring a security audit, two questions come up about the **Shared Responsibility Model**:\n\n1. Who is responsible for patching the **guest operating system** on a company-managed **EC2** instance running Linux?\n2. Who is responsible for patching the **underlying operating system and database engine host** of a managed **Amazon RDS** instance?\n\nWhich statement correctly assigns responsibility for both?",
+  "options": [
+    { "id": "a", "text": "1) The **customer** patches the EC2 guest OS; 2) **AWS** patches the underlying OS and engine of RDS (the customer still manages data, access, and engine-level configuration)." },
+    { "id": "b", "text": "1) **AWS** patches the EC2 guest OS automatically; 2) the **customer** must SSH into the RDS host to patch its operating system." },
+    { "id": "c", "text": "AWS is responsible for everything in both cases because both run on AWS hardware (\"security of the cloud\" covers all patching)." },
+    { "id": "d", "text": "The customer is responsible for everything in both cases, including the physical hosts and hypervisor underneath RDS." }
+  ],
+  "correct_option": "a",
+  "explanation": "The model splits responsibility at the service boundary. AWS is responsible for **security OF the cloud** — the physical facilities, hardware, hypervisor, and the managed-service infrastructure. The customer is responsible for **security IN the cloud** — their data, IAM configuration, network/firewall rules, and, crucially, the **guest OS on EC2** (EC2 is IaaS, so OS patching is yours). With **RDS** (a managed PaaS), AWS operates the host OS and database engine binaries and applies engine patches, so **AWS** handles that OS patching; the customer still owns the data, accounts, security groups, parameter groups, and choosing/scheduling engine version upgrades. Option B inverts both: you never SSH into an RDS host, and AWS does not patch your EC2 guest OS. Options C and D incorrectly collapse the shared line entirely to one party.",
+  "hints": [
+    { "title": "IaaS vs. managed service", "body": "On EC2 (IaaS) you own the OS upward. On RDS (managed) AWS runs the OS and engine for you; you stay responsible for data and access." },
+    { "title": "The phrasing to remember", "body": "AWS = security OF the cloud (hardware, hypervisor, managed-service infra). Customer = security IN the cloud (data, IAM, EC2 OS patching)." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

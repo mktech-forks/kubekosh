@@ -1,0 +1,39 @@
+{
+  "id": "devops-ansible-playbook-task",
+  "title": "Write an Ansible Playbook",
+  "category": "Configuration Management",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Author a Valid Playbook\n\nAnsible playbooks are YAML: a **list of plays**, each with a `hosts` target and a list of `tasks`.\n\n**Your task:** write a playbook at **`/root/playbook.yml`** that:\n1. is a YAML **list** of one or more plays\n2. targets the host group **`webservers`** (the `hosts:` key)\n3. contains a **`tasks`** list (e.g. one task using the `apt` or `package` module to install nginx)\n\n> 💡 It just needs to be a valid playbook structure — it won't actually run. Validate your YAML with `python3 -c \"import yaml; yaml.safe_load(open('/root/playbook.yml'))\"`.",
+  "hints": [
+    {
+      "title": "Playbook skeleton",
+      "body": "A play is a YAML mapping in a top-level list. It needs hosts and tasks; each task names a module.",
+      "command": "printf -- '- hosts: webservers\\n  become: true\\n  tasks:\\n    - name: Install nginx\\n      apt:\\n        name: nginx\\n        state: present\\n' > /root/playbook.yml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/playbook.yml" }
+  ],
+  "validation": {
+    "description": "Checks that /root/playbook.yml is a valid playbook list targeting 'webservers' with tasks.",
+    "commands": [
+      {
+        "description": "Valid playbook structure (list of plays with hosts and tasks)",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/playbook.yml')); print('ok' if isinstance(d,list) and len(d)>0 and 'hosts' in d[0] and 'tasks' in d[0] else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      },
+      {
+        "description": "First play targets the 'webservers' group",
+        "command": "python3 -c \"import yaml; d=yaml.safe_load(open('/root/playbook.yml')); print(d[0]['hosts'])\"",
+        "expected_output": "webservers",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/playbook.yml" }
+  ]
+}
