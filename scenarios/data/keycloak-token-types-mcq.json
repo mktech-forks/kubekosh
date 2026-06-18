@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-token-types-mcq",
+  "title": "Which Token Does an API Validate?",
+  "category": "OIDC & OAuth",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Picking the Right Token at the API\n\nA **resource server (an API)** receives a request from a client and must decide whether the caller is authorized. **Which token** should the API expect and validate?",
+  "options": [
+    { "id": "a", "text": "The **access token** — it carries the roles/scopes the API uses to authorize the request, and is sent as a Bearer token." },
+    { "id": "b", "text": "The **ID token** — it identifies the user, so the API should authorize based on it." },
+    { "id": "c", "text": "The **refresh token** — the API exchanges it for permissions on each call." },
+    { "id": "d", "text": "Any of the three; they are interchangeable as long as the signature is valid." }
+  ],
+  "correct_option": "a",
+  "explanation": "APIs authorize requests using the **access token**, which carries the scopes and roles and is sent in the `Authorization: Bearer` header. Option **b** is a classic mistake: the **ID token** is intended for **the client** to learn who logged in — it is *not* meant for API authorization, and its audience is the client, not the API. Option **c** is wrong — the **refresh token** is used only against Keycloak's token endpoint to get new access tokens; an API never accepts it. Option **d** is false: the tokens have different audiences and purposes and are **not** interchangeable, even when all signatures verify.",
+  "hints": [
+    { "title": "Check the audience", "body": "An access token's `aud` targets the API; an ID token's audience is the client. The audience tells you who's supposed to consume it." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

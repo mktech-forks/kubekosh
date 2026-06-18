@@ -1,0 +1,39 @@
+{
+  "id": "keycloak-jwt-decode-task",
+  "title": "Decode a Keycloak Access Token",
+  "category": "OIDC & OAuth",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Inspect a JWT\n\nKeycloak issues access tokens as **JWTs**: three base64url parts (`header.payload.signature`) joined by dots. The middle part is a base64url-encoded JSON payload of claims.\n\nA token has been placed at **`/root/token.jwt`**.\n\n**Your task:** decode the **payload** and write the value of the **`preferred_username`** claim to **`/root/username.txt`**.\n\n> 💡 Take the 2nd dot-separated field and base64url-decode it. The hint shows a one-liner; you must add back base64 padding (URL-safe base64 strips it).",
+  "hints": [
+    {
+      "title": "Decode the payload claim",
+      "body": "Split on dots, base64url-decode the payload (re-add padding), parse the JSON, and print the claim.",
+      "command": "python3 -c \"import base64,json; p=open('/root/token.jwt').read().strip().split('.')[1]; p+='='*(-len(p)%4); print(json.loads(base64.urlsafe_b64decode(p))['preferred_username'])\" > /root/username.txt"
+    },
+    {
+      "title": "Pure shell alternative",
+      "body": "You can also do it with cut, tr (url-safe to standard), base64 -d and jq.",
+      "command": "cut -d. -f2 /root/token.jwt | tr '_-' '/+' | base64 -d 2>/dev/null | jq -r .preferred_username"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/username.txt" },
+    { "command": "printf '%s\\n' 'eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiYWJjIn0.eyJzdWIiOiAiZjoxMjM0OmFsaWNlIiwgInByZWZlcnJlZF91c2VybmFtZSI6ICJhbGljZSIsICJlbWFpbCI6ICJhbGljZUBuZW94YW0uY29tIiwgInJlYWxtX2FjY2VzcyI6IHsicm9sZXMiOiBbImFkbWluIiwgInVzZXIiLCAib2ZmbGluZV9hY2Nlc3MiXX0sICJpc3MiOiAiaHR0cHM6Ly9rYy9yZWFsbXMvZmFsY29uIiwgImF1ZCI6ICJmYWxjb24tYXBwIn0.SIGNATURE_PLACEHOLDER' > /root/token.jwt" }
+  ],
+  "validation": {
+    "description": "Checks that /root/username.txt holds the preferred_username claim (alice).",
+    "commands": [
+      {
+        "description": "username.txt contains 'alice'",
+        "command": "cat /root/username.txt 2>/dev/null | tr -d ' '",
+        "expected_output": "alice",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/username.txt /root/token.jwt" }
+  ]
+}

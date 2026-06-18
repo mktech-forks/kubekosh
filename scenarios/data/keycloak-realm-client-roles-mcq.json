@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-realm-client-roles-mcq",
+  "title": "Realm Roles vs Client Roles",
+  "category": "Authorization",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Scoping a Role to One App\n\nYou run several applications in a single realm. You need to define a role called `report-editor` that is **only meaningful inside one specific application** — the *Billing* app — and should not pollute the global role list shared by every client.\n\nHow should you define `report-editor`?",
+  "options": [
+    { "id": "a", "text": "As a **client role** on the Billing client — client roles are namespaced to that one client and only appear under `resource_access.billing.roles` in tokens" },
+    { "id": "b", "text": "As a **realm role** — realm roles are the only kind that can be assigned to users" },
+    { "id": "c", "text": "As a **group** named `report-editor`, since groups replace roles in Keycloak" },
+    { "id": "d", "text": "As a **realm role** with a name prefixed by the client, e.g. `billing_report-editor`, since client roles cannot be assigned to users" }
+  ],
+  "correct_option": "a",
+  "explanation": "**Realm roles** are global to the realm and shared across every client, while **client roles** are *namespaced* to a single client — perfect for a role that only means something inside one application. Defining `report-editor` as a client role on the Billing client keeps it out of the global realm-role list and surfaces it in tokens under `resource_access.billing.roles`. (a) is correct. (b) is wrong — *both* realm and client roles can be assigned to users. (c) is wrong — groups are a way to *bundle and assign* roles, not a replacement for them. (d) works mechanically but defeats the purpose: it still creates a global realm role and just fakes namespacing with a naming convention, which is exactly what client roles exist to avoid.",
+  "hints": [
+    { "title": "Where does it show up in the token?", "body": "Realm roles land in `realm_access.roles`; client roles land in `resource_access.<clientId>.roles`. The token layout itself tells you which scope a role belongs to." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

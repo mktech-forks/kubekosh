@@ -1,0 +1,33 @@
+{
+  "id": "keycloak-client-config-task",
+  "title": "Define an OIDC Client",
+  "category": "Foundations",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Register a Confidential Web App\n\nA server-side web application needs to delegate login to Keycloak. That means a **confidential** OpenID Connect client using the Authorization Code flow.\n\n**Your task:** write a client definition at **`/root/client.json`** with:\n1. **`clientId`** = `falcon-app`\n2. **`protocol`** = `openid-connect`\n3. **`publicClient`** = `false` (confidential — it can keep a secret)\n4. **`standardFlowEnabled`** = `true` (Authorization Code flow)\n5. a non-empty **`redirectUris`** array\n\n> 💡 A confidential client has `publicClient: false`; a SPA/mobile app would be `true` and use PKCE instead.",
+  "hints": [
+    {
+      "title": "Confidential OIDC client JSON",
+      "body": "Set the protocol, mark it confidential, enable the standard (auth code) flow, and list valid redirect URIs.",
+      "command": "printf '{\\n  \"clientId\": \"falcon-app\",\\n  \"protocol\": \"openid-connect\",\\n  \"publicClient\": false,\\n  \"standardFlowEnabled\": true,\\n  \"redirectUris\": [\"https://falcon.example.com/*\"]\\n}\\n' > /root/client.json"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/client.json" }
+  ],
+  "validation": {
+    "description": "Checks for a confidential openid-connect client with redirect URIs.",
+    "commands": [
+      {
+        "description": "Confidential OIDC client 'falcon-app' with redirect URIs",
+        "command": "python3 -c \"import json; d=json.load(open('/root/client.json')); print('ok' if d.get('clientId')=='falcon-app' and d.get('protocol')=='openid-connect' and d.get('publicClient') is False and isinstance(d.get('redirectUris'),list) and len(d['redirectUris'])>0 else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/client.json" }
+  ]
+}

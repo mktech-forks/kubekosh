@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-client-types-mcq",
+  "title": "Choosing a Client Access Type",
+  "category": "Foundations",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Configuring a Client for a Single-Page App\n\nYou are registering a **browser-based single-page application (SPA)** — JavaScript running in the user's browser — as a client in Keycloak. The code is fully downloaded to the browser, so it **cannot keep any secret confidential**.\n\nWhich client configuration is correct?",
+  "options": [
+    { "id": "a", "text": "**Confidential** client with a client secret embedded in the JavaScript bundle." },
+    { "id": "b", "text": "**Public** client using the Authorization Code flow with **PKCE**." },
+    { "id": "c", "text": "**Bearer-only** client, so it can initiate the login redirect." },
+    { "id": "d", "text": "**Confidential** client using the Client Credentials grant for each user." }
+  ],
+  "correct_option": "b",
+  "explanation": "A SPA's source ships to the browser, so it **cannot hold a client secret** — that rules out a confidential configuration. The correct choice is a **public** client (no secret) using the **Authorization Code flow with PKCE**, which protects the flow against authorization-code interception without needing a secret. Option **a** is insecure: a secret baked into client-side JavaScript is trivially extractable, so it provides no protection. Option **c** is wrong because a **bearer-only** client *only validates tokens* (typical for an API) and can never initiate a login. Option **d** misuses the Client Credentials grant, which is for machine-to-machine access with **no user** — it can't authenticate the human using the SPA.",
+  "hints": [
+    { "title": "Can it keep a secret?", "body": "Confidential = server-side app that can store a secret. Public = browser/mobile app that can't. Bearer-only = an API that just checks tokens." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

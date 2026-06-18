@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-roles-groups-mcq",
+  "title": "Roles and Groups for Bulk Management",
+  "category": "Foundations",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Granting the Same Roles to Many Users\n\nYour `acme` realm has 200 support agents who all need the same set of roles (`ticket-read`, `ticket-write`, `kb-edit`). New agents are onboarded weekly, and occasionally the role set changes for the whole team.\n\nWhat is the cleanest way to manage this in Keycloak?",
+  "options": [
+    { "id": "a", "text": "Create a **group** (e.g. `support-agents`), map the needed roles onto the group, and add each agent to the group." },
+    { "id": "b", "text": "Assign each of the three roles **individually to every user**, and repeat for each new hire." },
+    { "id": "c", "text": "Create a separate **client** per agent so each gets its own roles." },
+    { "id": "d", "text": "Put all the roles into a single **realm setting** that applies to everyone in the realm." }
+  ],
+  "correct_option": "a",
+  "explanation": "**Groups** are collections of users that can carry **role mappings** and shared attributes. By mapping the roles onto a `support-agents` group, every member automatically inherits them, onboarding is just *add user to group*, and changing the team's roles is a single edit on the group. Option **b** works but is error-prone and doesn't scale — you must touch every user and risk drift. Option **c** misuses clients (which represent applications, not people). Option **d** doesn't exist as a feature — realm settings configure realm-wide policy, not blanket role grants to all users (and you rarely want *everyone* to have the same roles).\n\nNote: Keycloak distinguishes **realm roles** (defined at the realm level) from **client roles** (scoped to a specific client). Groups can map either kind.",
+  "hints": [
+    { "title": "Bundle once, reuse many times", "body": "If you find yourself assigning the same roles to user after user, that's the signal to use a group with role mappings instead." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

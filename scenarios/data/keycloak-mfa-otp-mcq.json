@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-mfa-otp-mcq",
+  "title": "Enforcing TOTP for All Users",
+  "category": "Authentication",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Make Everyone Set Up and Use TOTP\n\nSecurity requires that **all users** in the realm set up an authenticator app (TOTP) and use it at every login, starting **at their next login**. How do you enforce this in Keycloak?",
+  "options": [
+    { "id": "a", "text": "Set the **OTP execution to REQUIRED** in the browser flow, and add the **Configure OTP** required action (as a default) so users without OTP are forced to enroll." },
+    { "id": "b", "text": "Do nothing — Keycloak prompts every user for OTP automatically by default." },
+    { "id": "c", "text": "Enable a checkbox in the **client** settings; OTP is a per-client toggle only." },
+    { "id": "d", "text": "Email each user a static code and ask them to keep entering it." }
+  ],
+  "correct_option": "a",
+  "explanation": "Keycloak supports **TOTP/HOTP** via authenticator apps, governed by the realm's **OTP Policy**. To *enforce* it you make the **OTP execution REQUIRED** (or CONDITIONAL) in the browser authentication flow, and you add the **Configure OTP** required action — set as a default required action so every user who hasn't enrolled is forced to set up TOTP at next login. Option **b** is false: OTP is **not** on by default; you must enable it. Option **c** is wrong — MFA enforcement is driven by authentication flows and required actions at the realm level, not a simple per-client checkbox. Option **d** describes a static shared code, which is not OTP and defeats the purpose of a per-login one-time password.",
+  "hints": [
+    { "title": "Two levers", "body": "Required action = force enrollment; OTP execution requirement in the flow = force its use at login. You usually need both." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

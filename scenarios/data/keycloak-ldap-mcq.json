@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-ldap-mcq",
+  "title": "Using Corporate Active Directory",
+  "category": "Federation",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Reusing Existing AD Credentials\n\nYour company already manages all employee accounts in **Active Directory**. You want staff to sign in to a Keycloak-protected app with their **existing AD username and password**, while AD remains the system of record.\n\nWhat is the most direct way to set this up?",
+  "options": [
+    { "id": "a", "text": "Configure an **LDAP/AD User Federation** provider (connection URL, bind credentials, users DN, and attribute mappers), choosing import vs read-only and a sync policy" },
+    { "id": "b", "text": "Manually create a Keycloak user for each employee and keep their passwords in sync by hand" },
+    { "id": "c", "text": "Set up **identity brokering** to AD over SAML — the only supported way to connect to Active Directory" },
+    { "id": "d", "text": "Add a **social login** provider, since AD is treated as a social identity provider" }
+  ],
+  "correct_option": "a",
+  "explanation": "Active Directory speaks **LDAP**, and Keycloak ships a built-in **LDAP user federation** provider (with an AD vendor preset). You point it at the directory (connection URL, bind DN/credentials, users DN), add **mappers** for attributes and groups, and pick **import** (keep a synced local copy) or **read-only / on-demand** access plus a **sync policy**. Authentication then validates against AD via an LDAP bind. (a) is correct and the direct case. (b) is the manual nightmare federation exists to avoid and can't sync passwords anyway. (c) is wrong as stated — SAML brokering to AD is *possible* (via AD FS) but it is not the only way, and for a raw AD directory LDAP federation is the direct fit. (d) is wrong — AD is a corporate directory, not a built-in social provider.",
+  "hints": [
+    { "title": "AD = LDAP under the hood", "body": "In User Federation, add an 'ldap' provider and choose the 'Active Directory' vendor preset to get sensible defaults for object classes and username attributes." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

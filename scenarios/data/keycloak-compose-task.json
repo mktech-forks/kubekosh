@@ -1,0 +1,33 @@
+{
+  "id": "keycloak-compose-task",
+  "title": "Run Keycloak With Docker Compose",
+  "category": "Operations",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Stand Up a Dev Keycloak\n\n**Your task:** write a Docker Compose file at **`/root/keycloak-compose.yml`** with a service that:\n1. uses the official image **`quay.io/keycloak/keycloak`** (any tag)\n2. sets the bootstrap admin via **`KEYCLOAK_ADMIN`** and **`KEYCLOAK_ADMIN_PASSWORD`** environment variables\n3. publishes a port (e.g. `8080:8080`)\n\n> 💡 For local dev the command is `start-dev`. Validate the YAML with `python3 -c \"import yaml; yaml.safe_load(open('/root/keycloak-compose.yml'))\"`.",
+  "hints": [
+    {
+      "title": "Compose service for Keycloak",
+      "body": "Define one service with the quay.io/keycloak/keycloak image, the start-dev command, the admin env vars, and a published port.",
+      "command": "printf 'services:\\n  keycloak:\\n    image: quay.io/keycloak/keycloak:latest\\n    command: start-dev\\n    environment:\\n      KEYCLOAK_ADMIN: admin\\n      KEYCLOAK_ADMIN_PASSWORD: admin\\n    ports:\\n      - \"8080:8080\"\\n' > /root/keycloak-compose.yml"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/keycloak-compose.yml" }
+  ],
+  "validation": {
+    "description": "Checks for a Keycloak service with the admin env var.",
+    "commands": [
+      {
+        "description": "A keycloak service uses the official image and sets KEYCLOAK_ADMIN",
+        "command": "python3 -c \"import yaml,json; d=yaml.safe_load(open('/root/keycloak-compose.yml')); svcs=d.get('services',{}); print('ok' if any('keycloak' in str(s.get('image','')).lower() and 'KEYCLOAK_ADMIN' in json.dumps(s.get('environment')) for s in svcs.values()) else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/keycloak-compose.yml" }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-admin-rest-mcq",
+  "title": "Provisioning Clients as Code",
+  "category": "Administration",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Reproducible Provisioning\n\nYou must create **50 clients** across several environments, reproducibly, from a CI pipeline — and be able to recreate them identically if an environment is rebuilt.\n\nWhat is the right approach?",
+  "options": [
+    { "id": "a", "text": "Script the **Admin REST API** (or **kcadm.sh**) with an admin access token, checked into version control and run from CI" },
+    { "id": "b", "text": "Open the Admin Console and click through creating each of the 50 clients by hand in every environment" },
+    { "id": "c", "text": "Connect to Keycloak's database and `INSERT` the client rows directly with SQL" },
+    { "id": "d", "text": "Create one client and tell all 50 applications to share its credentials" }
+  ],
+  "correct_option": "a",
+  "explanation": "Reproducible, scripted provisioning is exactly what the **Admin REST API** and the **kcadm.sh** CLI are for: authenticate with an **admin access token** (e.g. as `admin-cli`), and create/update realms, clients, and users from code stored in git and executed by CI. (a) is correct. (b) is manual, slow, and error-prone — and it isn't reproducible across environments. (c) is **unsupported and dangerous**: Keycloak's schema is an internal detail, direct writes bypass validation/caching and can corrupt the realm. (d) is a security and operational anti-pattern — distinct applications should have distinct clients.",
+  "hints": [
+    { "title": "Treat config as code", "body": "Get a token from `/realms/master/protocol/openid-connect/token` (client_id=admin-cli), then POST to `/admin/realms/{realm}/clients`. kcadm.sh wraps this so your pipeline can declare clients declaratively." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

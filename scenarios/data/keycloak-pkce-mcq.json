@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-pkce-mcq",
+  "title": "Securing Public Clients with PKCE",
+  "category": "OIDC & OAuth",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Auth Code Flow for a Mobile App\n\nYou are building a **native mobile app**. It is a public client and **cannot keep a client secret** confidential. You still want the security of the Authorization Code flow and protection against someone intercepting the returned authorization code.\n\nWhich approach should you use?",
+  "options": [
+    { "id": "a", "text": "Authorization Code flow with **PKCE** (a `code_verifier` / `code_challenge` pair)." },
+    { "id": "b", "text": "Authorization Code flow secured with a **client secret** shipped inside the app binary." },
+    { "id": "c", "text": "The **implicit flow**, returning tokens directly in the redirect." },
+    { "id": "d", "text": "The **Client Credentials** grant, since the app can't hold a secret." }
+  ],
+  "correct_option": "a",
+  "explanation": "**PKCE (Proof Key for Code Exchange)** is designed exactly for public clients. The app generates a random **`code_verifier`**, sends its hash as the **`code_challenge`** when starting the flow, and later presents the original verifier when exchanging the code. An attacker who intercepts the authorization code cannot redeem it without the verifier — so PKCE secures the code flow **without any client secret**. Option **b** is unsafe: a secret in a distributed binary can be extracted, so it provides no real protection. Option **c** (implicit flow) is **deprecated** and exposes tokens in the redirect URL. Option **d** is wrong because Client Credentials is for **machine-to-machine** access with no user — it can't log a human in. Today PKCE is recommended for *all* clients, but it is **essential** for public ones.",
+  "hints": [
+    { "title": "Bind the request to the redeemer", "body": "PKCE ties the authorization request to the party that will redeem the code, so a stolen code is useless on its own." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

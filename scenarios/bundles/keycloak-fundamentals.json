@@ -1,0 +1,19 @@
+{
+  "id": "keycloak-fundamentals",
+  "subject": "keycloak",
+  "name": "Keycloak Foundations",
+  "icon": "🔐",
+  "tagline": "Realms, clients, users and roles",
+  "color": "#16a394",
+  "colorDim": "rgba(22,163,148,0.13)",
+  "exam_minutes": 35,
+  "scenario_ids": [
+    "keycloak-intro-lesson",
+    "keycloak-realms-lesson",
+    "keycloak-iam-concepts-mcq",
+    "keycloak-realm-vs-client-mcq",
+    "keycloak-client-types-mcq",
+    "keycloak-roles-groups-mcq",
+    "keycloak-client-config-task"
+  ]
+}

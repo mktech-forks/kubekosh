@@ -570,13 +570,37 @@ app.get('/api/subjects', (req, res) => {
   res.json(result);
 });
 
+// Order bundles by their subject's `bundle_order` (then subject file order).
+// Bundles not listed in a subject's bundle_order fall to the end, stably.
+function orderBundles(list) {
+  const subjects = loadSubjects();
+  const subjPos = new Map(subjects.map((s, i) => [s.id, i]));
+  const END = Number.MAX_SAFE_INTEGER;
+  const bundlePos = (b) => {
+    const s = subjects.find(x => x.id === b.subject);
+    const idx = s?.bundle_order?.indexOf(b.id);
+    return (idx === undefined || idx < 0) ? END : idx;
+  };
+  return list
+    .map((b, i) => ({ b, i }))   // keep original index for stable tiebreak
+    .sort((x, y) => {
+      const sx = subjPos.has(x.b.subject) ? subjPos.get(x.b.subject) : END;
+      const sy = subjPos.has(y.b.subject) ? subjPos.get(y.b.subject) : END;
+      if (sx !== sy) return sx - sy;
+      const bx = bundlePos(x.b), by = bundlePos(y.b);
+      if (bx !== by) return bx - by;
+      return x.i - y.i;
+    })
+    .map(({ b }) => b);
+}
+
 // GET /api/bundles — list bundles with per-bundle progress stats; optional ?subject filter
 app.get('/api/bundles', (req, res) => {
   let bundles     = loadBundles();
   const progress  = loadProgress();
   const { subject } = req.query;
   if (subject) bundles = bundles.filter(b => b.subject === subject);
-  const result = bundles.map(b => {
+  const result = orderBundles(bundles).map(b => {
     const total     = b.scenario_ids.length;
     const completed = b.scenario_ids.filter(id => progress[id]?.status === 'completed').length;
     return { ...b, stats: { total, completed } };

@@ -1,0 +1,19 @@
+{
+  "id": "keycloak-admin-ops",
+  "subject": "keycloak",
+  "name": "Administration & Operations",
+  "icon": "🔐",
+  "tagline": "Admin REST API, events, deployment and hardening",
+  "color": "#16a394",
+  "colorDim": "rgba(22,163,148,0.13)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "keycloak-admin-lesson",
+    "keycloak-admin-rest-mcq",
+    "keycloak-events-audit-mcq",
+    "keycloak-deployment-mcq",
+    "keycloak-production-hardening-mcq",
+    "keycloak-realm-export-task",
+    "keycloak-compose-task"
+  ]
+}

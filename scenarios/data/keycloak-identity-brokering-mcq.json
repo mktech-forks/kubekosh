@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-identity-brokering-mcq",
+  "title": "Letting Partner Users Log In",
+  "category": "Federation",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## B2B Federation\n\nA partner company wants **its** employees to access your application **using their own corporate SAML Identity Provider** — you should not store their credentials, and accounts should be created or linked the first time they log in.\n\nWhat do you configure in Keycloak?",
+  "options": [
+    { "id": "a", "text": "Add the partner's **SAML IdP as an Identity Provider** (identity brokering); Keycloak redirects to it and, on first login, creates or links a local account via the first-login flow" },
+    { "id": "b", "text": "Configure **LDAP user federation** pointed at the partner's directory" },
+    { "id": "c", "text": "Manually create accounts for all partner employees and share passwords with them" },
+    { "id": "d", "text": "Create a separate realm for the partner and have them rebuild their users there" }
+  ],
+  "correct_option": "a",
+  "explanation": "This is classic **identity brokering**: Keycloak acts as the **broker** and delegates authentication to the partner's external **SAML IdP**. You register that IdP under Identity Providers, and the **first-login flow** can automatically **create** a new local user or **link** to an existing one. You never hold the partner's credentials. (a) is correct. (b) is wrong — LDAP federation reaches into a user *store* you have network/bind access to, not a partner's SSO; you typically can't (and shouldn't) bind directly into another company's directory. (c) defeats the entire point of federated SSO and is unmanageable. (d) just relocates the problem; the partner still wants to use *their* IdP, not re-create users.",
+  "hints": [
+    { "title": "Broker, don't store", "body": "Under 'Identity Providers' add a SAML v2.0 provider and import the partner's metadata. The give-away is that you trust *their* IdP to authenticate, rather than verifying credentials yourself." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

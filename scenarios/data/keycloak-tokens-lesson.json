@@ -1,0 +1,12 @@
+{
+  "id": "keycloak-tokens-lesson",
+  "title": "Access, ID, and Refresh Tokens",
+  "category": "OIDC & OAuth",
+  "difficulty": "Medium",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## The Three Tokens Keycloak Issues\n\nAfter a successful login, Keycloak's token endpoint typically returns **three** tokens. Knowing which one to use where is essential.\n\n| Token | Audience | Purpose | Typical lifespan |\n|---|---|---|---|\n| **Access token** | Resource servers / APIs | **Authorize API calls** — carries roles & scopes. Usually a signed **JWT**. Sent as `Authorization: Bearer <token>`. | Short (e.g. ~5 min) |\n| **ID token** | The **client app** | **Proves authentication** — identity claims (`sub`, `email`, `name`). Not meant for API authorization. | Short |\n| **Refresh token** | Keycloak's token endpoint | **Get new access tokens** without forcing the user to log in again. | Longer (bounded by session limits) |\n\n> **Common mistake:** sending the **ID token** to an API. APIs should validate the **access token**. The ID token exists to tell *the client* who logged in.\n\n### What a decoded access-token JWT looks like\n\nA JWT has three dot-separated parts (`header.payload.signature`). The **payload** is just base64url-encoded JSON:\n\n```json\n{\n  \"iss\": \"https://sso.example.com/realms/acme\",\n  \"aud\": \"orders-api\",\n  \"sub\": \"f9a3...e21\",\n  \"exp\": 1718700000,\n  \"iat\": 1718699700,\n  \"azp\": \"web-store\",\n  \"scope\": \"openid profile orders:read\",\n  \"realm_access\": { \"roles\": [\"support-agent\"] },\n  \"resource_access\": { \"orders-api\": { \"roles\": [\"orders.read\"] } },\n  \"preferred_username\": \"asmith\"\n}\n```\n\n### How a resource server validates an access token\n\n1. **Signature** — verify the JWT signature against the realm's public keys from **JWKS** (`jwks_uri`). Keys rotate, so fetch/cache them rather than hard-coding.\n2. **`exp`** — reject expired tokens (short lifespan limits exposure if leaked).\n3. **`iss`** — must equal the expected realm issuer.\n4. **`aud` / `azp`** — confirm the token was intended for *this* API.\n5. **Roles/scopes** — finally, check the caller has the permission the endpoint requires.\n\n> Because access tokens are short-lived, the client silently uses the **refresh token** to obtain fresh ones in the background — until the SSO session reaches its maximum lifetime or is revoked.",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

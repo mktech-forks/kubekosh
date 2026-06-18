@@ -20,18 +20,24 @@
   z-index: 5;
 }
 
-/* Horizontal scroll container — no visible scrollbar */
+/* Horizontal scroll container — thin visible scrollbar */
 .track {
   display: flex;
   flex: 1;
   overflow-x: auto;
   overflow-y: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2, #8b949e) transparent;
   gap: 4px;
-  padding: 8px 10px;
+  padding: 8px 10px 6px;
 }
-.track::-webkit-scrollbar { display: none; }
+.track::-webkit-scrollbar { height: 8px; }
+.track::-webkit-scrollbar-track { background: transparent; }
+.track::-webkit-scrollbar-thumb {
+  background: var(--border2, #8b949e);
+  border-radius: 4px;
+}
+.track::-webkit-scrollbar-thumb:hover { background: var(--text-3, #6e7681); }
 
 .track {
   cursor: grab;

@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-brute-force-mcq",
+  "title": "Stopping Password-Guessing Attacks",
+  "category": "Authentication",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Defending Against Credential Stuffing\n\nYour logs show repeated failed login attempts against many accounts — a password-guessing / credential-stuffing attack. You want Keycloak to **automatically slow down or stop** these attempts. What should you enable?",
+  "options": [
+    { "id": "a", "text": "**Brute force detection** in Realm Settings → Security Defenses, which temporarily locks an account after repeated failed logins." },
+    { "id": "b", "text": "Just a stronger **password policy**; complexity rules alone stop guessing attacks." },
+    { "id": "c", "text": "Rely solely on a **WAF** in front of Keycloak; the IdP itself can't help." },
+    { "id": "d", "text": "Increase the **access-token lifespan** so attackers re-authenticate less often." }
+  ],
+  "correct_option": "a",
+  "explanation": "Keycloak has built-in **brute force detection**, configured under **Realm Settings → Security Defenses**. After a configurable number of failed attempts it can **temporarily lock** the account (with options for permanent lockout, wait increments, and quick-login checks), directly throttling guessing attacks. Option **b** helps but doesn't *stop* automated guessing — strong passwords can still be attacked at volume, and reused passwords from breaches bypass complexity entirely. Option **c** is wrong because the IdP *can* and should defend itself; a WAF is complementary, not a replacement, and can't see per-account failure counts. Option **d** is unrelated — token lifespan has nothing to do with login-attempt throttling.",
+  "hints": [
+    { "title": "Where to look", "body": "It's a realm-level toggle under Security Defenses. Tune the failure threshold and lockout duration to balance security against locking out legitimate users." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

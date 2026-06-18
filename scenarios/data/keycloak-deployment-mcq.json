@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-deployment-mcq",
+  "title": "From start-dev to Production",
+  "category": "Operations",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## A Risky Production Setup\n\nSomeone deployed Keycloak to production by running the container with **`start-dev`** and the default **H2** database. It works in the demo but is neither safe nor scalable.\n\nWhat is the correct production configuration?",
+  "options": [
+    { "id": "a", "text": "Run **`start`** (production mode) with a configured **hostname**, an **external production database** like **PostgreSQL** (not H2), and **TLS** — and run it clustered/HA as needed" },
+    { "id": "b", "text": "Keep using **`start-dev`** but add more memory so H2 can scale" },
+    { "id": "c", "text": "Stay on **H2** but run several instances pointed at separate H2 files for redundancy" },
+    { "id": "d", "text": "Disable TLS to reduce CPU load and speed up logins in production" }
+  ],
+  "correct_option": "a",
+  "explanation": "`start-dev` exists **only for development**: it enables dev conveniences and defaults to the in-memory/file **H2** database, which is not for production. Production uses **`start`** with: an explicitly configured **hostname**, an **external, production-grade database** such as **PostgreSQL** (also MySQL/MariaDB/Oracle/MSSQL), and **TLS**; instances can be run **clustered (HA)** behind a load balancer sharing the same DB. (a) is correct. (b) and (c) cling to H2 — which can't be the shared, durable store a clustered deployment needs (separate H2 files means inconsistent, un-shared state). (d) disabling TLS exposes credentials and tokens and is the opposite of hardening.",
+  "hints": [
+    { "title": "dev vs prod entrypoint", "body": "The container image is quay.io/keycloak/keycloak. `start-dev` = development; `start` = production and will refuse to boot until required settings (db, hostname, TLS/proxy) are configured." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,33 @@
+{
+  "id": "keycloak-authz-policy-task",
+  "title": "Author an Authorization Permission",
+  "category": "Authorization",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Tie a Resource to a Policy\n\nIn Keycloak Authorization Services, a **permission** binds protected **resources** (and/or scopes) to the **policies** that must be satisfied for access.\n\n**Your task:** write a resource-based permission at **`/root/permission.json`** that:\n1. has a **`name`**\n2. has **`type`** = `resource`\n3. protects a non-empty **`resources`** list (e.g. `\"Reports\"`)\n4. references a non-empty **`policies`** list (e.g. `\"admin-policy\"`)\n\n> 💡 This is the JSON shape Keycloak uses for a resource-based permission on a resource server.",
+  "hints": [
+    {
+      "title": "Resource permission JSON",
+      "body": "A resource-type permission lists the resources it protects and the policies that grant access, plus a decision strategy.",
+      "command": "printf '{\\n  \"name\": \"reports-permission\",\\n  \"type\": \"resource\",\\n  \"resources\": [\"Reports\"],\\n  \"policies\": [\"admin-policy\"],\\n  \"decisionStrategy\": \"UNANIMOUS\"\\n}\\n' > /root/permission.json"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/permission.json" }
+  ],
+  "validation": {
+    "description": "Checks a resource-type permission with non-empty resources and policies.",
+    "commands": [
+      {
+        "description": "Resource permission links resources and policies",
+        "command": "python3 -c \"import json; d=json.load(open('/root/permission.json')); print('ok' if d.get('type')=='resource' and isinstance(d.get('resources'),list) and d['resources'] and isinstance(d.get('policies'),list) and d['policies'] else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/permission.json" }
+  ]
+}

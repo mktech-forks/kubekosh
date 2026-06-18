@@ -1,0 +1,20 @@
+{
+  "id": "keycloak-oidc-oauth",
+  "subject": "keycloak",
+  "name": "OIDC & OAuth 2.0",
+  "icon": "🔐",
+  "tagline": "Flows, tokens, scopes and endpoints",
+  "color": "#16a394",
+  "colorDim": "rgba(22,163,148,0.13)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "keycloak-oidc-lesson",
+    "keycloak-tokens-lesson",
+    "keycloak-auth-code-flow-mcq",
+    "keycloak-pkce-mcq",
+    "keycloak-client-credentials-mcq",
+    "keycloak-token-types-mcq",
+    "keycloak-scopes-mappers-mcq",
+    "keycloak-jwt-decode-task"
+  ]
+}

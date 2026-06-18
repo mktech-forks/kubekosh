@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-production-hardening-mcq",
+  "title": "Production Hardening",
+  "category": "Operations",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Hardening a Production Realm\n\nYou are securing a Keycloak deployment before go-live. Which of the following is a **legitimate production hardening step**?",
+  "options": [
+    { "id": "a", "text": "Properly configure the **hostname and TLS** (terminating TLS or running behind a reverse proxy with correct proxy/hostname settings) and define **specific, non-wildcard redirect URIs** for each client" },
+    { "id": "b", "text": "Run with **`start-dev`** because it boots faster and skips strict checks" },
+    { "id": "c", "text": "Set client redirect URIs to **`*`** so any new app can plug in without a config change" },
+    { "id": "d", "text": "**Disable TLS** between the proxy and Keycloak since traffic stays inside the firewall" }
+  ],
+  "correct_option": "a",
+  "explanation": "Real hardening means: configure the **hostname** and **TLS** correctly — either terminate TLS at Keycloak or run behind a reverse proxy with the right **proxy headers and hostname** settings — and lock down **redirect URIs** to **specific, non-wildcard** patterns per client. (Other good steps in the same spirit: short access-token lifespans, restricting/securing the **master realm** admin, key rotation, and enabling **brute force detection**.) (a) is correct. (b) `start-dev` is for development and *weakens* security — the opposite of hardening. (c) wildcard `**`/`*` redirect URIs enable **open-redirect** and token-theft attacks and are a top misconfiguration to avoid. (d) disabling TLS exposes tokens and credentials on the internal network; 'inside the firewall' is not a substitute for transport encryption.",
+  "hints": [
+    { "title": "Tighten, don't loosen", "body": "Anything that adds convenience by widening trust (wildcards, dev mode, plaintext) is the wrong answer. Hardening narrows redirect URIs, enforces TLS, and reduces token/admin exposure." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

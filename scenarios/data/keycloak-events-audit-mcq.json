@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-events-audit-mcq",
+  "title": "Auditing and Shipping Events",
+  "category": "Operations",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Security Wants an Audit Trail\n\nSecurity asks you to record **who logged in** (and failed logins) and **what administrators changed**, and to forward that activity to the company **SIEM**.\n\nWhich Keycloak feature satisfies this?",
+  "options": [
+    { "id": "a", "text": "Enable **Login events** and **Admin events**, persist them, and attach an **Event Listener SPI** (e.g. one that forwards to the SIEM)" },
+    { "id": "b", "text": "Rely only on the server's stdout **application logs** and grep them later" },
+    { "id": "c", "text": "Turn on **brute force detection** — it logs every login and admin change" },
+    { "id": "d", "text": "Increase the **access token lifespan** so sessions are easier to trace" }
+  ],
+  "correct_option": "a",
+  "explanation": "Keycloak's **Events** subsystem is purpose-built for audit. **Login events** capture authentication activity (including failures), and **Admin events** capture administrative changes (optionally with the request representation). These can be **stored** and exposed via the Admin Console/REST API, and an **Event Listener SPI** can stream them to external systems such as a **SIEM**. (a) is correct. (b) server logs are unstructured and not a reliable audit source. (c) **brute force detection** only protects against repeated failed logins — it is not an audit/event-shipping mechanism. (d) token lifespan is a session-security setting and has nothing to do with auditing.",
+  "hints": [
+    { "title": "Two event types + a listener", "body": "Under Realm Settings → Events you toggle 'Login Events' and 'Admin Events' and register event listeners. A custom Event Listener provider is the hook to push events to a SIEM." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

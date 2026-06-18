@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-required-actions-mcq",
+  "title": "Forcing a Password Reset at Next Login",
+  "category": "Authentication",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Make One User Reset Their Password\n\nA single user's password may have been compromised. You want to force **that user** to set a new password the **next time they log in**, without disrupting anyone else. What do you do in Keycloak?",
+  "options": [
+    { "id": "a", "text": "Set the **Update Password** required action on that user, so they must reset it at next login." },
+    { "id": "b", "text": "**Delete the user** and ask them to register again." },
+    { "id": "c", "text": "Change the **realm password policy** for everyone in the realm." },
+    { "id": "d", "text": "Lengthen the SSO session so the old password is used less often." }
+  ],
+  "correct_option": "a",
+  "explanation": "**Required actions** are tasks a user must complete at their next login (verify email, configure OTP, update profile, update password). To force one user to reset their password, add the **Update Password** required action on that user — they'll be prompted to set a new password before getting a session, and nobody else is affected. Option **b** is heavy-handed and loses the account's profile, roles, and history. Option **c** changes the policy for the **entire realm**, which is broader than needed and still wouldn't force *this* user to reset right now. Option **d** is irrelevant to forcing a password change.",
+  "hints": [
+    { "title": "Per-user, at next login", "body": "Required actions live on the individual user (or as realm defaults) and fire on the next authentication — exactly the surgical tool for one account." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

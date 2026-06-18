@@ -1,0 +1,17 @@
+{
+  "id": "keycloak",
+  "name": "Keycloak",
+  "icon": "🔐",
+  "tagline": "Identity & Access Management with Keycloak",
+  "color": "#16a394",
+  "colorDim": "rgba(22,163,148,0.13)",
+  "environment": "bash",
+  "bundle_order": [
+    "keycloak-fundamentals",
+    "keycloak-oidc-oauth",
+    "keycloak-authn",
+    "keycloak-authz",
+    "keycloak-federation",
+    "keycloak-admin-ops"
+  ]
+}

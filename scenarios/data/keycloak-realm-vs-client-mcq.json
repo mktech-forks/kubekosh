@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-realm-vs-client-mcq",
+  "title": "Realm vs Client",
+  "category": "Foundations",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Where Does My Web App Go?\n\nYou are integrating a web application that wants to delegate user login to Keycloak. In Keycloak's model, **where do you register that application** so it can use Keycloak for authentication?",
+  "options": [
+    { "id": "a", "text": "As a **realm** — each application needs its own realm to authenticate users." },
+    { "id": "b", "text": "As a **user** inside the master realm, since the app must have an account to log in." },
+    { "id": "c", "text": "As a **client** within a realm — the realm is the isolated security domain (users, roles, clients), and a client represents an app/service that delegates login to Keycloak." },
+    { "id": "d", "text": "As a **role**, because the app's permissions define how it authenticates." }
+  ],
+  "correct_option": "c",
+  "explanation": "A **realm** is the isolated security domain that *contains* users, roles, and clients. A **client** represents a single application or service that wants Keycloak to authenticate its users (or that validates tokens). So you create the app as a **client inside the appropriate realm**. Option **a** confuses the container (realm) with the thing it contains (client) — you don't spin up a realm per app just to integrate one. Option **b** confuses an application with a human user account. Option **d** confuses a permission (role) with a registered application.",
+  "hints": [
+    { "title": "Container vs occupant", "body": "Think of the realm as the building and the client as one tenant application inside it. Many clients live in one realm." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

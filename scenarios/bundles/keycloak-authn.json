@@ -1,0 +1,18 @@
+{
+  "id": "keycloak-authn",
+  "subject": "keycloak",
+  "name": "Authentication",
+  "icon": "🔐",
+  "tagline": "Flows, MFA, sessions and hardening",
+  "color": "#16a394",
+  "colorDim": "rgba(22,163,148,0.13)",
+  "exam_minutes": 45,
+  "scenario_ids": [
+    "keycloak-authn-flows-lesson",
+    "keycloak-mfa-otp-mcq",
+    "keycloak-webauthn-mcq",
+    "keycloak-brute-force-mcq",
+    "keycloak-sessions-mcq",
+    "keycloak-required-actions-mcq"
+  ]
+}

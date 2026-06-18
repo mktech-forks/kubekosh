@@ -1,0 +1,12 @@
+{
+  "id": "keycloak-intro-lesson",
+  "title": "What Is Keycloak?",
+  "category": "Foundations",
+  "difficulty": "Easy",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## Identity and Access Management, Done for You\n\n**Keycloak** is an open-source **Identity and Access Management (IAM)** server. Instead of every application building its own login screen, password storage, and session handling, your apps **delegate authentication to Keycloak** and trust the tokens it issues. This gives you centralized **Single Sign-On (SSO)**: a user signs in once and can reach many applications without logging in again.\n\nKeycloak speaks the industry-standard protocols so almost any app or library can integrate with it:\n\n| Protocol | What it's for |\n|---|---|\n| **OpenID Connect (OIDC)** | Modern authentication layer built on OAuth 2.0 — the default for web/mobile/SPA apps |\n| **OAuth 2.0** | Delegated authorization / issuing access tokens for APIs |\n| **SAML 2.0** | Legacy/enterprise SSO, often for older or B2B applications |\n\n### Core concepts you will meet constantly\n\n| Term | What it is |\n|---|---|\n| **Realm** | An isolated tenant — its own users, clients, roles, and signing keys. Everything lives inside a realm. |\n| **Client** | An application or service that asks Keycloak to authenticate users (or that validates tokens). |\n| **User** | An account that can log in: credentials, profile attributes, role assignments. |\n| **Role** | A named permission (`admin`, `viewer`) that you map to users or groups. |\n| **Group** | A collection of users that can carry role mappings and attributes, for bulk management. |\n\n### Two built-in UIs\n\n- **Admin Console** — where operators configure realms, clients, users, roles, flows, and policies.\n- **Account Console** — where end users manage their own profile, password, MFA devices, and active sessions.\n\n> **Mental model:** Keycloak is the *trusted front door*. Apps don't check passwords themselves — they redirect users to Keycloak, and then trust the signed **tokens** Keycloak hands back.\n\nThis Keycloak track sits alongside the platform's broader **DevOps** and **AWS** subjects, so you can connect identity concepts to the systems you build and deploy. When the vocabulary feels familiar, mark this lesson complete and continue.",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

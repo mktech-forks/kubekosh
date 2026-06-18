@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-mappers-federation-mcq",
+  "title": "Mapping External Claims to Roles",
+  "category": "Federation",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Granting a Role from an Incoming Claim\n\nUsers who log in through an **external OIDC Identity Provider** arrive with a claim `org_type=partner`. You want every such user to **automatically receive the Keycloak `partner` role** as they are brokered in.\n\nWhich kind of mapper do you configure?",
+  "options": [
+    { "id": "a", "text": "An **Identity Provider mapper** (e.g. 'Claim to Role' / advanced claim-to-role) on that IdP, mapping `org_type=partner` to the `partner` role" },
+    { "id": "b", "text": "A **protocol mapper** on the client, since protocol mappers translate incoming IdP claims into roles" },
+    { "id": "c", "text": "No mapper — manually assign the `partner` role to each brokered user after they appear" },
+    { "id": "d", "text": "A **client scope** mapper, which reads claims from the upstream IdP and assigns roles" }
+  ],
+  "correct_option": "a",
+  "explanation": "Mapping an **incoming** identity (a claim from an external IdP, or an LDAP attribute/group) into a Keycloak attribute or role is the job of an **Identity Provider mapper** (or LDAP mapper for federation). A 'Claim to Role' / advanced claim-to-role IdP mapper assigns the `partner` role whenever the incoming token carries `org_type=partner`. (a) is correct. (b) and (d) confuse direction: **protocol mappers** (and client-scope mappers) shape the **outgoing** tokens Keycloak issues to *your* clients — they do not read or transform an upstream IdP's incoming claims. (c) is the manual approach the mapper exists to automate.",
+  "hints": [
+    { "title": "Incoming vs outgoing", "body": "IdP/LDAP mappers transform identities coming *into* Keycloak; protocol mappers shape tokens going *out* to your applications. The claim is arriving from an external IdP, so you need an IdP mapper." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

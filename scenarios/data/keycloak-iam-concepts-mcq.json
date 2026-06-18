@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-iam-concepts-mcq",
+  "title": "Authentication vs Authorization",
+  "category": "Foundations",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Two Words People Constantly Mix Up\n\nIn IAM, **authentication** and **authorization** are distinct steps, and **Single Sign-On (SSO)** is something different again.\n\nWhich statement describes these terms **correctly**?",
+  "options": [
+    { "id": "a", "text": "Authentication decides *what* you are allowed to do; authorization proves *who* you are." },
+    { "id": "b", "text": "Authentication proves *who you are*; authorization decides *what you are allowed to do*; SSO lets you sign in once and reach many apps." },
+    { "id": "c", "text": "Authentication and authorization are the same thing, and SSO simply means using a strong password." },
+    { "id": "d", "text": "Authorization proves *who you are*; SSO means each app stores its own copy of your password." }
+  ],
+  "correct_option": "b",
+  "explanation": "**Authentication (authN)** answers *who are you?* — verifying identity, e.g. by checking a password or an MFA device. **Authorization (authZ)** answers *what may you do?* — checking roles, scopes, or permissions once identity is established. **SSO** means a single authentication establishes a session that multiple applications trust, so the user signs in once and accesses many apps. Option **a** swaps the two definitions. Option **c** wrongly conflates them (and SSO is not just a strong password). Option **d** assigns identity proof to authorization and describes the opposite of SSO (SSO avoids each app storing credentials).",
+  "hints": [
+    { "title": "Order matters", "body": "Authentication always happens first — you must establish identity before a system can decide what that identity is permitted to do." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-sessions-mcq",
+  "title": "Limiting the Window of a Leaked Token",
+  "category": "Authentication",
+  "difficulty": "Medium",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## An Access Token Just Leaked\n\nAn **access token** for a user has been exposed. You want to **limit how long the leaked token remains useful**, while keeping the user experience reasonable. Which approach is sound?",
+  "options": [
+    { "id": "a", "text": "Keep the **access-token lifespan short** so it expires quickly, and revoke the user's session / push a **not-before** to invalidate already-issued tokens immediately." },
+    { "id": "b", "text": "**Lengthen** all token lifespans so tokens don't need refreshing." },
+    { "id": "c", "text": "**Disable refresh tokens** entirely for everyone, forcing constant re-login." },
+    { "id": "d", "text": "Do nothing; once a JWT is signed there is no way to limit its exposure." }
+  ],
+  "correct_option": "a",
+  "explanation": "Two levers limit exposure. First, a **short access-token lifespan** means a leaked token self-expires quickly; clients transparently obtain new ones via the **refresh token** until the SSO session idle/max limits are hit. Second, to act *immediately*, an admin can **revoke the user's session** and/or push a **not-before (notBefore)** policy so Keycloak rejects any token issued before that timestamp — effectively invalidating outstanding tokens. Option **b** does the opposite: longer lifespans *widen* the exposure window. Option **c** harms usability with no real security gain, and refresh tokens aren't the leaked credential here. Option **d** is wrong — short lifespans, session revocation, and not-before all exist precisely to bound exposure of bearer tokens.",
+  "hints": [
+    { "title": "Short by default, revoke when needed", "body": "Routine safety comes from short access-token lifespans; an active incident calls for session revocation or a not-before push." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

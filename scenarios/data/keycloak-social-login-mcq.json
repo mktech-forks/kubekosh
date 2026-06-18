@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-social-login-mcq",
+  "title": "Adding Sign in with Google",
+  "category": "Federation",
+  "difficulty": "Easy",
+  "type": "mcq",
+  "weight": 2,
+  "description": "## Social Login\n\nProduct wants a **\"Sign in with Google\"** button on your login page so end users can authenticate with their Google account.\n\nWhat do you do in Keycloak?",
+  "options": [
+    { "id": "a", "text": "Configure **Google** as an **Identity Provider** (a built-in social provider), supplying the OAuth **client ID and client secret** from Google Cloud" },
+    { "id": "b", "text": "Set up **LDAP user federation** pointed at Google" },
+    { "id": "c", "text": "Create a brand-new **realm** dedicated to Google users" },
+    { "id": "d", "text": "Manually create a Keycloak user for every Google account that might sign in" }
+  ],
+  "correct_option": "a",
+  "explanation": "Keycloak ships **built-in social identity providers** (Google, GitHub, Microsoft, Facebook, and more). You add **Google** under Identity Providers and paste the **client ID and client secret** obtained from a Google Cloud OAuth credential; Keycloak then shows a 'Sign in with Google' option and brokers the login, creating/linking a local account on first sign-in. (a) is correct. (b) is wrong — Google isn't an LDAP store you bind to; social login is identity brokering over OAuth/OIDC. (c) is unnecessary and wrong — a new realm doesn't add Google login. (d) defeats the purpose of social login entirely.",
+  "hints": [
+    { "title": "It's just an identity provider", "body": "Social login is identity brokering with a preconfigured provider. Add Google under 'Identity Providers' and fill in the client ID/secret from your Google OAuth app." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

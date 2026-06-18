@@ -1,0 +1,33 @@
+{
+  "id": "keycloak-realm-export-task",
+  "title": "Author a Realm Definition",
+  "category": "Administration",
+  "difficulty": "Medium",
+  "type": "task",
+  "weight": 5,
+  "description": "## Realm as Code\n\nKeycloak realms can be imported from JSON (realm export/import), which is how you version realm config and bootstrap environments reproducibly.\n\n**Your task:** write a minimal realm definition at **`/root/realm.json`** that:\n1. names the realm **`falcon`** (`realm` field)\n2. is **enabled** (`enabled: true`)\n3. requires SSL for external requests (`sslRequired: \"external\"`)\n\n> 💡 It just needs to be a valid realm JSON object with those fields — it won't be imported here.",
+  "hints": [
+    {
+      "title": "Minimal realm JSON",
+      "body": "A realm export is a JSON object keyed by realm settings; the realm name and enabled flag are the essentials.",
+      "command": "printf '{\\n  \"realm\": \"falcon\",\\n  \"enabled\": true,\\n  \"sslRequired\": \"external\",\\n  \"registrationAllowed\": false\\n}\\n' > /root/realm.json"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/realm.json" }
+  ],
+  "validation": {
+    "description": "Checks for a valid realm JSON named falcon that is enabled.",
+    "commands": [
+      {
+        "description": "Realm is 'falcon' and enabled",
+        "command": "python3 -c \"import json; d=json.load(open('/root/realm.json')); print('ok' if d.get('realm')=='falcon' and d.get('enabled') is True else 'no')\"",
+        "expected_output": "ok",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/realm.json" }
+  ]
+}

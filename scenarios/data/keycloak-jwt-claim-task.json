@@ -1,0 +1,39 @@
+{
+  "id": "keycloak-jwt-claim-task",
+  "title": "Check a Realm Role in a Token",
+  "category": "Authorization",
+  "difficulty": "Hard",
+  "type": "task",
+  "weight": 6,
+  "description": "## Does This Token Grant a Role?\n\nKeycloak puts a user's realm roles in the access token under **`realm_access.roles`**. A resource server reads that claim to authorize requests.\n\nA token is at **`/root/token.jwt`**.\n\n**Your task:** decode it and decide whether it grants the **`admin`** realm role. Write **`granted`** (if `admin` is present) or **`denied`** (if not) to **`/root/role.txt`**.\n\n> 💡 Decode the payload (as in the OIDC bundle), then test membership in `realm_access.roles`.",
+  "hints": [
+    {
+      "title": "Decode then test the roles array",
+      "body": "Parse the payload JSON and check whether 'admin' is in realm_access.roles.",
+      "command": "python3 -c \"import base64,json; p=open('/root/token.jwt').read().strip().split('.')[1]; p+='='*(-len(p)%4); d=json.loads(base64.urlsafe_b64decode(p)); print('granted' if 'admin' in d.get('realm_access',{}).get('roles',[]) else 'denied')\" > /root/role.txt"
+    },
+    {
+      "title": "With jq",
+      "body": "Decode the payload to JSON and use jq's index() to test membership.",
+      "command": "cut -d. -f2 /root/token.jwt | tr '_-' '/+' | base64 -d 2>/dev/null | jq -r 'if (.realm_access.roles | index(\"admin\")) then \"granted\" else \"denied\" end'"
+    }
+  ],
+  "setup_commands": [
+    { "command": "rm -f /root/role.txt" },
+    { "command": "printf '%s\\n' 'eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiYWJjIn0.eyJzdWIiOiAiZjoxMjM0OmFsaWNlIiwgInByZWZlcnJlZF91c2VybmFtZSI6ICJhbGljZSIsICJlbWFpbCI6ICJhbGljZUBuZW94YW0uY29tIiwgInJlYWxtX2FjY2VzcyI6IHsicm9sZXMiOiBbImFkbWluIiwgInVzZXIiLCAib2ZmbGluZV9hY2Nlc3MiXX0sICJpc3MiOiAiaHR0cHM6Ly9rYy9yZWFsbXMvZmFsY29uIiwgImF1ZCI6ICJmYWxjb24tYXBwIn0.SIGNATURE_PLACEHOLDER' > /root/token.jwt" }
+  ],
+  "validation": {
+    "description": "Checks that /root/role.txt reports the admin role as granted.",
+    "commands": [
+      {
+        "description": "role.txt contains 'granted'",
+        "command": "cat /root/role.txt 2>/dev/null | tr -d ' '",
+        "expected_output": "granted",
+        "match": "exact"
+      }
+    ]
+  },
+  "teardown_commands": [
+    { "command": "rm -f /root/role.txt /root/token.jwt" }
+  ]
+}

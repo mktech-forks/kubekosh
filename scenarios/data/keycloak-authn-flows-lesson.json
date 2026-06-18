@@ -1,0 +1,12 @@
+{
+  "id": "keycloak-authn-flows-lesson",
+  "title": "Authentication Flows and Executions",
+  "category": "Authentication",
+  "difficulty": "Medium",
+  "type": "lesson",
+  "weight": 1,
+  "description": "## Login as a Configurable Pipeline\n\nIn Keycloak, **how a user logs in is not hard-coded** — it's an **authentication flow**: an ordered sequence of **executions** (steps) that Keycloak walks through. You can inspect, copy, and customize these flows in the Admin Console.\n\n### The built-in browser flow (typical shape)\n\n| Step (execution) | What it does |\n|---|---|\n| **Cookie** | If a valid SSO session cookie exists, log in silently (this is SSO in action) |\n| **Identity Provider Redirect** | Offer/redirect to external IdPs (Google, SAML, etc.) |\n| **Username/Password Form** | Prompt for credentials |\n| **OTP Form** | Prompt for a one-time code (MFA), often conditional |\n\n### Requirement types control each execution\n\nEvery execution has a **requirement** setting:\n\n| Requirement | Meaning |\n|---|---|\n| **REQUIRED** | Must succeed for the flow to pass |\n| **ALTERNATIVE** | One of several interchangeable options at the same level must succeed |\n| **CONDITIONAL** | Runs only if a sub-flow's condition is met (e.g. *user has OTP configured*) |\n| **DISABLED** | Skipped entirely |\n\n> The **CONDITIONAL** type is powerful: it's how you say \"require OTP **only if** the user has set one up\", by pairing a condition execution with the OTP execution inside a conditional sub-flow.\n\n### Required actions\n\nSeparate from flows, **required actions** are tasks a user must complete **at next login** before the session is granted:\n\n- **Verify Email**\n- **Update Password**\n- **Configure OTP**\n- **Update Profile**\n- **Terms and Conditions**\n\nRequired actions can be set on an individual user, or enabled as a **default** so they apply to new users.\n\n### Customizing safely\n\n> You **cannot edit the built-in flows directly**. Instead you **duplicate** a built-in flow, modify the copy (reorder steps, change requirements, add executions like WebAuthn), and then **bind** your custom flow to the realm (e.g. as the Browser flow) — or to a specific client. This keeps a known-good original to fall back on.",
+  "hints": [],
+  "setup_commands": [],
+  "teardown_commands": []
+}

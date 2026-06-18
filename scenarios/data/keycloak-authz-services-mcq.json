@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-authz-services-mcq",
+  "title": "Centralizing Fine-Grained Decisions",
+  "category": "Authorization",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Getting Access Logic Out of the App\n\nYour API has grown a tangle of hardcoded `if (hasRole(...))` checks. Product wants access rules to change frequently and depend on more than roles, and security wants the rules managed **centrally** rather than redeployed with the app each time.\n\nWhich Keycloak capability is designed for this?",
+  "options": [
+    { "id": "a", "text": "**Keycloak Authorization Services**: turn the confidential client into a resource server, model **Resources** and **Scopes**, write **Policies**, and combine them into **Permissions**; the app delegates the decision to Keycloak (request an RPT or use the Policy Enforcer)" },
+    { "id": "b", "text": "Add more **realm roles** and keep enforcing them with role checks in the application code" },
+    { "id": "c", "text": "Switch the client's protocol to **SAML** — SAML assertions natively carry permission decisions" },
+    { "id": "d", "text": "Store every rule as a custom claim via protocol mappers and let the app parse them at runtime" }
+  ],
+  "correct_option": "a",
+  "explanation": "**Authorization Services** is exactly the feature for externalizing fine-grained, condition-based access control. A confidential client becomes a **resource server**; you define **Resources** (protected things) and **Scopes** (actions), author reusable **Policies** (role, user, group, time, regex, JS, aggregate...), and bind them via **Permissions**. The app stops hardcoding decisions and instead delegates — requesting a **Requesting Party Token (RPT)** at the token endpoint (UMA grant) or letting the **Policy Enforcer** intercept requests. Rules then change in Keycloak without redeploying. (b) keeps the problem — still role-only and still enforced in code. (c) is wrong — SAML is an authentication protocol, not an authorization-decision engine. (d) just moves the tangle into claims; the app still hardcodes the evaluation logic instead of delegating it.",
+  "hints": [
+    { "title": "Resource server + RPT", "body": "Enable 'Authorization' on a confidential client to expose the Authorization tab (Resources, Scopes, Policies, Permissions). At runtime the client exchanges its access token for an RPT that encodes the granted permissions." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

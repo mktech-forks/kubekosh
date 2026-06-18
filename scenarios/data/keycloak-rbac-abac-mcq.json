@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-rbac-abac-mcq",
+  "title": "RBAC vs ABAC in Keycloak",
+  "category": "Authorization",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## When Roles Aren't Enough\n\nA new requirement: access to the payroll endpoint must depend on the user's **`department` attribute** (`finance`) **and the time of day** (only during business hours) — not merely on whether they hold a role.\n\nWhat is the appropriate Keycloak approach?",
+  "options": [
+    { "id": "a", "text": "Use **Authorization Services policies** (ABAC-style): combine a **user/attribute or JS policy** that checks `department == finance` with a **time policy** for business hours, via an aggregate permission" },
+    { "id": "b", "text": "Create more **roles** (e.g. `finance-9to5`) and assign them — roles alone cover any access requirement" },
+    { "id": "c", "text": "Build one large **composite role** that encodes the department and the schedule" },
+    { "id": "d", "text": "Move the check into the app and read the `department` claim manually, because Keycloak cannot evaluate attributes" }
+  ],
+  "correct_option": "a",
+  "explanation": "Plain roles give you **RBAC** — decisions based on role membership. This requirement is **ABAC**: it depends on a user *attribute* (`department`) and *contextual* state (time of day). Keycloak's **Authorization Services** support this through policy types such as **user/attribute** and **JavaScript** policies (evaluate `department`) combined with a **time** policy, joined by an **aggregate** policy/permission. (a) is correct. (b) and (c) try to fake attributes and context by minting ever more roles or one giant composite — roles can't express 'during business hours' or read arbitrary attributes, so this explodes combinatorially and still can't capture time. (d) is false: Keycloak *can* evaluate attributes and context server-side; pushing it into the app re-creates the hardcoded logic ABAC was meant to remove.",
+  "hints": [
+    { "title": "RBAC = role; ABAC = attributes + context", "body": "If the rule reads user attributes, group membership, time, or request context, it's ABAC territory — model it with Authorization Services policies rather than inventing new roles." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

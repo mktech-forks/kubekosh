@@ -1,0 +1,17 @@
+{
+  "id": "keycloak-federation",
+  "subject": "keycloak",
+  "name": "User Federation & Identity Brokering",
+  "icon": "🔐",
+  "tagline": "LDAP/AD, social login and IdP brokering",
+  "color": "#16a394",
+  "colorDim": "rgba(22,163,148,0.13)",
+  "exam_minutes": 40,
+  "scenario_ids": [
+    "keycloak-federation-lesson",
+    "keycloak-ldap-mcq",
+    "keycloak-identity-brokering-mcq",
+    "keycloak-social-login-mcq",
+    "keycloak-mappers-federation-mcq"
+  ]
+}

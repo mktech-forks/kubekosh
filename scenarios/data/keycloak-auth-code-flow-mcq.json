@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-auth-code-flow-mcq",
+  "title": "The Authorization Code Flow",
+  "category": "OIDC & OAuth",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Logging In a Server-Side Web App\n\nYou have a traditional **server-side web application** (a confidential client). Which sequence correctly describes the **Authorization Code flow** it should use to authenticate a user with Keycloak?",
+  "options": [
+    { "id": "a", "text": "The browser is redirected to Keycloak's authorization endpoint; the user authenticates; Keycloak redirects back with a short-lived **authorization code**; the app's backend **exchanges the code at the token endpoint** for the access/ID/refresh tokens." },
+    { "id": "b", "text": "The browser is redirected to Keycloak, which immediately returns the **access and ID tokens in the URL fragment** — no code exchange step." },
+    { "id": "c", "text": "The app collects the user's username and password directly and POSTs them to the token endpoint to get tokens." },
+    { "id": "d", "text": "The app sends its client secret to the userinfo endpoint and receives tokens for the logged-in user." }
+  ],
+  "correct_option": "a",
+  "explanation": "The **Authorization Code flow** redirects the browser to the **authorization endpoint**, the user authenticates at Keycloak, and Keycloak redirects back to the app's registered redirect URI with a **short-lived authorization code**. The app's backend then makes a **back-channel call to the token endpoint** to exchange that code (plus its credentials) for tokens. Keeping tokens off the front channel is what makes this flow secure. Option **b** describes the **implicit flow**, which is **deprecated** because tokens land in the URL where they can leak. Option **c** is the **Resource Owner Password Credentials** grant — discouraged because the app handles raw passwords and it bypasses MFA/SSO. Option **d** is not a real flow; the userinfo endpoint returns claims, not tokens.",
+  "hints": [
+    { "title": "Two channels", "body": "The code travels on the front channel (browser redirect); the token exchange happens on the back channel (server-to-server). That separation is the whole point." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

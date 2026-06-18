@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-scopes-mappers-mcq",
+  "title": "Client Scopes and Protocol Mappers",
+  "category": "OIDC & OAuth",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Adding a Groups Claim to the Access Token\n\nAn API needs to authorize based on the user's **group membership**, but the access tokens Keycloak issues currently contain **no `groups` claim**. How do you get the user's groups into the token?",
+  "options": [
+    { "id": "a", "text": "Add a **group-membership protocol mapper** (typically via a client scope) so the mapper injects a `groups` claim into the token." },
+    { "id": "b", "text": "Edit each user's profile and paste their group names into a custom attribute by hand." },
+    { "id": "c", "text": "Change a **realm setting** to make all claims appear in every token automatically." },
+    { "id": "d", "text": "Lengthen the access-token lifespan so it has room for more claims." }
+  ],
+  "correct_option": "a",
+  "explanation": "**Protocol mappers** are what put claims into tokens. To surface group membership you add a **Group Membership mapper**, usually packaged inside a **client scope** so it's reusable and can be assigned to clients as a default or optional scope. Optional scopes are pulled in by passing them in the OIDC `scope` parameter; default scopes are always applied. Option **b** is brittle manual work that doesn't reflect real-time membership and isn't how claims are produced. Option **c** doesn't exist — there is no realm switch that dumps every claim into every token; claims are controlled by mappers/scopes. Option **d** confuses token *lifetime* with token *contents*; lifespan has nothing to do with which claims are present.",
+  "hints": [
+    { "title": "Mappers shape tokens", "body": "Whenever a claim is missing from a token, the answer is almost always 'configure a protocol mapper' — and grouping mappers into a client scope makes them reusable." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

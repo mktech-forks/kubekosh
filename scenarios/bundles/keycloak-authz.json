@@ -1,0 +1,19 @@
+{
+  "id": "keycloak-authz",
+  "subject": "keycloak",
+  "name": "Authorization",
+  "icon": "🔐",
+  "tagline": "Roles, groups and Authorization Services",
+  "color": "#16a394",
+  "colorDim": "rgba(22,163,148,0.13)",
+  "exam_minutes": 50,
+  "scenario_ids": [
+    "keycloak-authz-lesson",
+    "keycloak-realm-client-roles-mcq",
+    "keycloak-composite-roles-mcq",
+    "keycloak-authz-services-mcq",
+    "keycloak-rbac-abac-mcq",
+    "keycloak-jwt-claim-task",
+    "keycloak-authz-policy-task"
+  ]
+}

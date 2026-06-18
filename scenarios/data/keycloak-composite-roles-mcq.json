@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-composite-roles-mcq",
+  "title": "Composite Roles",
+  "category": "Authorization",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## Granting Several Roles at Once\n\nEvery user who becomes a `manager` must also automatically receive the `employee` and `reports-viewer` roles — and if you later add a fourth role that managers should have, you want existing managers to pick it up **without re-touching every user**.\n\nWhat is the cleanest Keycloak feature for this?",
+  "options": [
+    { "id": "a", "text": "Make `manager` a **composite role** that includes `employee` and `reports-viewer`; assigning `manager` then grants the associated child roles automatically" },
+    { "id": "b", "text": "Assign `employee` and `reports-viewer` to each manager individually, in addition to `manager`" },
+    { "id": "c", "text": "Put all three roles in the same group and tell users to pick the right group at login" },
+    { "id": "d", "text": "Create three separate clients, one per role, and have managers authenticate against all three" }
+  ],
+  "correct_option": "a",
+  "explanation": "A **composite role** is a role that, when assigned, automatically confers its **associated (child) roles** — which may be realm or client roles. Making `manager` composite over `employee` and `reports-viewer` means a single `manager` assignment grants all three, and updating the composite later instantly propagates to everyone who has `manager`. (a) is correct. (b) works but is exactly the manual, error-prone duplication composites eliminate, and a future role would have to be re-applied to every user. (c) misunderstands groups — groups bundle role *assignments* for their members but users don't 'pick a group at login', and it doesn't make one role imply others. (d) is nonsensical for this purpose.",
+  "hints": [
+    { "title": "Look for the toggle on the role itself", "body": "In the Admin Console, open the role and enable 'Composite Roles', then add the child realm/client roles. The effective roles in a user's token will then include all the children." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}

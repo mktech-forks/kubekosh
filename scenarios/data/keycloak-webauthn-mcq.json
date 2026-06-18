@@ -1,0 +1,22 @@
+{
+  "id": "keycloak-webauthn-mcq",
+  "title": "Phishing-Resistant Passwordless Login",
+  "category": "Authentication",
+  "difficulty": "Hard",
+  "type": "mcq",
+  "weight": 3,
+  "description": "## A Hardware Security Key, No Password\n\nYou want to offer **phishing-resistant, passwordless** login: users authenticate with a **hardware security key** (or platform authenticator) and never type a password. Which Keycloak capability fits?",
+  "options": [
+    { "id": "a", "text": "The **WebAuthn (passwordless)** authenticator, added to the authentication flow." },
+    { "id": "b", "text": "**TOTP** via an authenticator app, since one-time codes are passwordless." },
+    { "id": "c", "text": "A stricter **password policy** (length, complexity, rotation)." },
+    { "id": "d", "text": "**Brute force detection** to lock accounts after failed logins." }
+  ],
+  "correct_option": "a",
+  "explanation": "Keycloak supports **WebAuthn**, including a **passwordless WebAuthn** authenticator that you add as an execution in an authentication flow. WebAuthn uses public-key cryptography bound to the origin, which makes it **phishing-resistant** — credentials can't be replayed on a fake site — and the passwordless variant lets the security key fully replace the password. Option **b** is wrong: **TOTP** still relies on a **shared secret** and a code the user can be tricked into entering on a phishing page, so it is **not** phishing-resistant (and it's a second factor, not passwordless on its own). Option **c** strengthens passwords but keeps a phishable password. Option **d** is a defense against guessing attacks, not an authentication method, and doesn't make login passwordless or phishing-resistant.",
+  "hints": [
+    { "title": "What makes it phishing-resistant?", "body": "WebAuthn binds the credential to the site's origin, so a key registered for the real site won't authenticate against a look-alike. Shared-secret OTP has no such binding." }
+  ],
+  "setup_commands": [],
+  "teardown_commands": []
+}
